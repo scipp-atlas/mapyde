@@ -18,7 +18,8 @@ To submit samples to a condor queue (specifically the UCSC Tier-3), an example c
 
 ```
 ./submit.sh \
-	    Gene/Bkg-Wjets-1 SM                  \ # Proc Card
+	    Gene/Bkg-Wjets-1                     \ # Proc Card
+	    SM                                   \ # Param Card
 	    RunCards/default.dat                 \ # Run Card
 	    DelphesCards/delphes_card_ATLAS.tcl  \ # Delphes Card
 	    10                                   \ # Number of jobs to submit
