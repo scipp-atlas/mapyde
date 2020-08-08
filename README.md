@@ -5,7 +5,7 @@ Tools run inside the docker image provided by Dockerfile, but you can pull it fr
 docker pull mhance:madgraph/pythiainterface
 ```
 
-For an example of how to run jobs, see ```test/wrapper_test.sh```:
+For an example of how to run madgraph, see ```test/wrapper_mgpy.sh```:
 
 ```
 tag="test"

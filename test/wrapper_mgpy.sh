@@ -24,3 +24,4 @@ docker run \
        -v $PWD:$PWD -w $PWD \
        mhance/madgraph:pythiainterface_002 \
        "cd output/${tag} && mg5_aMC run.mg5"
+
