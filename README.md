@@ -1,9 +1,10 @@
 
-Tools run inside the docker image provided by Dockerfile, but you can pull it from DockerHub:
+Tools run inside the docker image provided by Dockerfile, but you can pull them from DockerHub:
 
 ```
 docker pull mhance:madgraph/pythiainterface
-```
+docker pull mhance:delphes/001
+``` 
 
 For an example of how to run madgraph, see ```test/wrapper_mgpy.sh```:
 
@@ -33,3 +34,9 @@ The jobs will run in a dedicated "output" area once you check out the code.  Eac
 To do:
 * Collect the output of the job and store it somewhere
 * Clean up MadGraph/Pythia leftovers
+
+
+For an example of how to run delphes and a script to transform the delphes output into flat ntuples, see ```test/wrapper_delphes.sh```.
+
+To do:
+* Revisit ```SimpleAna.py``` for SUSY work
