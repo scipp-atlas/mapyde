@@ -27,3 +27,9 @@ docker run \
        mhance/madgraph:pythiainterface \
        "cd output/${tag} && mg5_aMC run.mg5"
 ```
+
+The jobs will run in a dedicated "output" area once you check out the code.  Each job gets its own tag.
+
+To do:
+* Collect the output of the job and store it somewhere
+* Clean up MadGraph/Pythia leftovers
