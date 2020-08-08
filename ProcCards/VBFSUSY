@@ -37,5 +37,6 @@ add process  p p > n2  n1   j j / susystrong QED=99 QCD=99 @5
 add process  p p > x1+ x1-  j j / susystrong QED=99 QCD=99 @6
 add process  p p > x1+ x1+  j j / susystrong QED=99 QCD=99 @7
 add process  p p > x1- x1-  j j / susystrong QED=99 QCD=99 @8
-output
+output -f
+
 

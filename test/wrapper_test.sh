@@ -5,7 +5,7 @@ if [[ $tag == "" ]]; then
 fi
 
 python mg5creator.py \
-       -P ProcCards/VBFSUSY_short \
+       -P ProcCards/charginos \
        -r RunCards/default_LO.dat \
        -p ParamCards/Higgsino.slha \
        -y PythiaCards/pythia8_card.dat \
@@ -18,7 +18,5 @@ python mg5creator.py \
 docker run \
        --rm \
        -v $PWD:$PWD -w $PWD \
-       mhance/madgraph:pythiainterface \
+       mhance/madgraph:pythiainterface_002 \
        "cd output/${tag} && mg5_aMC run.mg5"
-
-

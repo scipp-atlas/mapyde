@@ -12,7 +12,7 @@ parser.add_argument('-y', '--pythia' , default="PythiaCards/pythia8_card.dat", h
 
 # Options for customizing the run
 parser.add_argument('-m', '--mass'   , action='append', nargs=2,               help="pass in like '-m MN1 150'")
-parser.add_argument('-E', '--sqrts'  , default=13,                             help="Center of mass energy, in TeV")
+parser.add_argument('-E', '--sqrts'  , default=13,                             help="Center of mass energy, in GeV")
 parser.add_argument('-n', '--numev'  , default=10000,                          help="Number of events to process")
 
 # Tag for this run
@@ -83,10 +83,10 @@ shutil.copyfile(args.proc,"output/"+args.tag+"/"+args.proc.split("/")[-1])
 mg5config=open("output/"+args.tag+"/"+"run.mg5","w")
 
 for line in open(args.proc):
-    if line.strip()!="output":
+    if line.strip()!="output" and line.strip()!="output -f":
         mg5config.write(line)
     else:
-        mg5config.write("output PROC_%s" % args.tag)
+        mg5config.write("output PROC_%s\n" % args.tag)
     
 
 #mg5config.write("set run_mode 0\n")  # mg5_configuration.txt
