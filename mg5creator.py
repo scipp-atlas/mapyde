@@ -34,7 +34,7 @@ try:
     os.mkdir("output/%s"%args.tag)
 except FileExistsError:
     print("Output name %s already used, pick another." % args.tag)
-    exit
+    exit(1)
 
 # ===========================================================================================================================
 #

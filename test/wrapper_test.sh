@@ -15,6 +15,10 @@ python mg5creator.py \
        -t ${tag}
 
 
+if [[ $? == "1" ]]; then
+    exit
+fi
+
 docker run \
        --rm \
        -v $PWD:$PWD -w $PWD \
