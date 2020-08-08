@@ -30,12 +30,5 @@ define susyv~ = sve~ svm~ svt~
 define p = g u c d s u~ c~ d~ s~
 define f = e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~ u u~ d d~ c c~ s s~ b b~ g
 generate     p p > n2  x1+  j j / susystrong QED=99 QCD=99 @1
-add process  p p > n2  x1-  j j / susystrong QED=99 QCD=99 @2
-add process  p p > n1  x1+  j j / susystrong QED=99 QCD=99 @3
-add process  p p > n1  x1-  j j / susystrong QED=99 QCD=99 @4
-add process  p p > n2  n1   j j / susystrong QED=99 QCD=99 @5
-add process  p p > x1+ x1-  j j / susystrong QED=99 QCD=99 @6
-add process  p p > x1+ x1+  j j / susystrong QED=99 QCD=99 @7
-add process  p p > x1- x1-  j j / susystrong QED=99 QCD=99 @8
 output
 

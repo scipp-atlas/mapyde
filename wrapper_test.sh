@@ -1,14 +1,8 @@
+tag=${1}
 
-Tools run inside the docker image provided by Dockerfile, but you can pull it from DockerHub:
-
-```
-docker pull mhance:madgraph/pythiainterface
-```
-
-For an example of how to run jobs, see ```wrapper_test.sh```:
-
-```
-tag="test"
+if [[ $tag == "" ]]; then
+    tag="test_Higgsino_001"
+fi
 
 python mg5creator.py \
        -P ProcCards/VBFSUSY_short \
@@ -26,4 +20,5 @@ docker run \
        -v $PWD:$PWD -w $PWD \
        mhance/madgraph:pythiainterface \
        "cd output/${tag} && mg5_aMC run.mg5"
-```
+
+
