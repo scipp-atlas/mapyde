@@ -38,5 +38,4 @@ docker run \
        "cd /input && \
         export DELPHES_PATH=${delphes_path} && \
 	export ROOT_INCLUDE_PATH=\$ROOT_INCLUDE_PATH:${delphes_path}:${delphes_path}/external && \
-	env && \
 	./SimpleAna.py --input ${workdir}/${eventsdir}/delphes.${tag}.root --output ${workdir}/${eventsdir}/hist.${tag}.root"
