@@ -1,0 +1,20 @@
+ARG BUILDER_IMAGE=delphes/ubuntu:18.04
+FROM ${BUILDER_IMAGE} as builder
+
+USER root
+WORKDIR /home
+
+SHELL [ "/bin/bash", "-c" ]
+
+ARG DELPHES_VERSION=3.4.2
+RUN mkdir -p /usr/local/share/delphes && \
+    cd /usr/local/share/delphes && \
+    wget http://cp3.irmp.ucl.ac.be/downloads/Delphes-${DELPHES_VERSION}.tar.gz && \
+    tar -zxf Delphes-${DELPHES_VERSION}.tar.gz && \
+    cd Delphes-${DELPHES_VERSION} && \
+    make -j$(($(nproc) - 1)) && \
+    cd ../ && \
+    ln -s Delphes-${DELPHES_VERSION} ./delphes
+    
+ENTRYPOINT ["/bin/bash", "-l", "-c"]
+CMD ["/bin/bash"]
