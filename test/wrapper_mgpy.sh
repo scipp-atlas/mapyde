@@ -20,5 +20,5 @@ docker run \
        -v ${base}/cards:/cards \
        -v ${base}/${datadir}:/data \
        -w /output \
-       mhance/madgraph:pythiainterface_002 \
+       gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph \
        "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph"

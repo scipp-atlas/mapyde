@@ -9,6 +9,10 @@ docker pull mhance:delphes/001
 
 The jobs will run in a dedicated `output/` area once you check out the code.  Each job gets its own `${tag}`.
 
+## Docker Images
+
+Docker images are made available in our [container registry](../../../container_registry).
+
 ## Running
 
 For an example of how to run `MadGraph`, see [test/wrapper_mgpy.sh](./test/wrapper_mgpy.sh).
