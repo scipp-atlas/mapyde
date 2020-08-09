@@ -15,6 +15,9 @@ RUN mkdir -p /usr/local/share/delphes && \
     make -j$(($(nproc) - 1)) && \
     cd ../ && \
     ln -s Delphes-${DELPHES_VERSION} ./delphes
-    
+
+ENV DELPHES_PATH="/usr/local/share/delphes/delphes"
+ENV ROOT_INCLUDE_PATH=${ROOT_INCLUDE_PATH}:${DELPHES_PATH}:${DELPHES_PATH}/external
+
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
 CMD ["/bin/bash"]

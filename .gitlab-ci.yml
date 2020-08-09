@@ -1,18 +1,43 @@
 stages:
   - test
-
+  - build
 
 test_mg5creator:
   image: python:3.7-alpine
   script:
     - >
-    scripts/mg5creator.py -P cards/process/charginos \
-                             -r cards/run/default_LO.dat \
-                             -p cards/param/Higgsino.slha \
-                             -y cards/pythia/pythia8_card.dat \
-                             -m MN1 150.0 \
-                             -m MN2 155.0 \
-                             -m MC1 155.0 \
-                             -E 100000 \
-                             -n 1000 \
-                             -t test
+        scripts/mg5creator.py -P cards/process/charginos \
+                              -r cards/run/default_LO.dat \
+                              -p cards/param/Higgsino.slha \
+                              -y cards/pythia/pythia8_card.dat \
+                              -m MN1 150.0 \
+                              -m MN2 155.0 \
+                              -m MC1 155.0 \
+                              -E 100000 \
+                              -n 1000 \
+                              -t test
+
+# Push image to latest in docker-registry
+# If tagged, CI_COMMIT_REF_SLUG is the tag name with dashes
+# IMAGE_NAME comes from the CI_JOB_NAME variable (build_xyz -> IMAGE_NAME=xyz)
+.build_image:
+  stage: build
+  image:
+    name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context "${CI_PROJECT_DIR}"
+                       --dockerfile "${CI_PROJECT_DIR}/Dockerfiles/${CI_JOB_NAME:6}"
+                       --destination "${CI_REGISTRY_IMAGE}/${CI_JOB_NAME:6}:${CI_COMMIT_REF_SLUG}"
+  only:
+    refs:
+      - master
+    changes:
+      - "Dockerfiles/${CI_JOB_NAME:6}"
+
+build_madgraph:
+  extends: .build_image
+
+build_delphes:
+  extends: .build_image
