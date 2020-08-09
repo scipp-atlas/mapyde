@@ -8,14 +8,14 @@ parser = argparse.ArgumentParser(description="Process some arguments.")
 
 # Cards for the MadGraph run
 parser.add_argument(
-    "-r", "--run", default="RunCards/default_LO.dat", help="path to MG5 run card"
+    "-r", "--run", default="cards/run/default_LO.dat", help="path to MG5 run card"
 )
 parser.add_argument("-P", "--proc", help="path to MG5 proc card")
 parser.add_argument(
-    "-p", "--param", default="ParamCards/Higgsino.slha", help="path to SLHA/param card"
+    "-p", "--param", default="cards/param/Higgsino.slha", help="path to SLHA/param card"
 )
 parser.add_argument(
-    "-y", "--pythia", default="PythiaCards/pythia8_card.dat", help="path to pythia card"
+    "-y", "--pythia", default="cards/pythia/pythia8_card.dat", help="path to pythia card"
 )
 
 # Options for customizing the run

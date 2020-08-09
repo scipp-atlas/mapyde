@@ -5,10 +5,10 @@ if [[ $tag == "" ]]; then
 fi
 
 python mg5creator.py \
-       -P ProcCards/charginos \
-       -r RunCards/default_LO.dat \
-       -p ParamCards/Higgsino.slha \
-       -y PythiaCards/pythia8_card.dat \
+       -P cards/proc/charginos \
+       -r cards/run/default_LO.dat \
+       -p cards/param/Higgsino.slha \
+       -y cards/pythia/pythia8_card.dat \
        -m MN1 150.0 -m MN2 155.0 -m MC1 155.0 \
        -E 100000 \
        -n 1000 \

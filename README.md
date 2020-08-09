@@ -1,42 +1,22 @@
+# MadGraph-Pythia-Delphes
 
 Tools run inside the docker image provided by Dockerfile, but you can pull them from DockerHub:
 
 ```
 docker pull mhance:madgraph/pythiainterface
 docker pull mhance:delphes/001
-``` 
-
-For an example of how to run madgraph, see ```test/wrapper_mgpy.sh```:
-
-```
-tag="test"
-
-python mg5creator.py \
-       -P ProcCards/charginos \
-       -r RunCards/default_LO.dat \
-       -p ParamCards/Higgsino.slha \
-       -y PythiaCards/pythia8_card.dat \
-       -m MN1 150.0 -m MN2 155.0 -m MC1 155.0 \
-       -E 100000 \
-       -n 1000 \
-       -t ${tag}
-
-
-docker run \
-       --rm \
-       -v $PWD:$PWD -w $PWD \
-       mhance/madgraph:pythiainterface_002 \
-       "cd output/${tag} && mg5_aMC run.mg5"
 ```
 
-The jobs will run in a dedicated "output" area once you check out the code.  Each job gets its own tag.
+The jobs will run in a dedicated `output/` area once you check out the code.  Each job gets its own `${tag}`.
 
-To do:
+## Running
+
+For an example of how to run `MadGraph`, see [test/wrapper_mgpy.sh](./test/wrapper_mgpy.sh).
+
+For an example of how to run `Delphes` (and a script to transform the Delphes output into flat ntuples), see [test/wrapper_delphes.sh](./test/wrapper_delphes.sh).
+
+## To Do
+
 * Collect the output of the job and store it somewhere
 * Clean up MadGraph/Pythia leftovers
-
-
-For an example of how to run delphes and a script to transform the delphes output into flat ntuples, see ```test/wrapper_delphes.sh```.
-
-To do:
-* Revisit ```SimpleAna.py``` for SUSY work
+* Revisit `SimpleAna.py` for SUSY work

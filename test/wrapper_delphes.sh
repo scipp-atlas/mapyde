@@ -13,7 +13,7 @@ pythiaoutput="tag_1_pythia8_events"
 
 
 # to make delphes output
-cp DelphesCards/${delphes_card} ${workdir}
+cp cards/delphes/${delphes_card} ${workdir}
 docker run \
        --rm \
        -it \
