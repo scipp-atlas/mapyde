@@ -33,8 +33,8 @@ test_mg5creator:
   only:
     refs:
       - master
-#    changes:
-#      - "Dockerfiles/${CI_JOB_NAME:6}"
+    changes:
+      - "Dockerfiles/"
 
 build_madgraph:
   extends: .build_image
