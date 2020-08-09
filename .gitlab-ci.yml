@@ -1,21 +1,6 @@
 stages:
-  - test
   - build
-
-test_mg5creator:
-  image: python:3.7-alpine
-  script:
-    - >
-        scripts/mg5creator.py -P cards/process/charginos \
-                              -r cards/run/default_LO.dat \
-                              -p cards/param/Higgsino.slha \
-                              -y cards/pythia/pythia8_card.dat \
-                              -m MN1 150.0 \
-                              -m MN2 155.0 \
-                              -m MC1 155.0 \
-                              -E 100000 \
-                              -n 1000 \
-                              -t test
+  - test
 
 # Push image to latest in docker-registry
 # If tagged, CI_COMMIT_REF_SLUG is the tag name with dashes
@@ -41,3 +26,18 @@ build_madgraph:
 
 build_delphes:
   extends: .build_image
+
+test_mg5creator:
+  image: python:3.7-alpine
+  script:
+    - >
+        scripts/mg5creator.py -P cards/process/charginos \
+                              -r cards/run/default_LO.dat \
+                              -p cards/param/Higgsino.slha \
+                              -y cards/pythia/pythia8_card.dat \
+                              -m MN1 150.0 \
+                              -m MN2 155.0 \
+                              -m MC1 155.0 \
+                              -E 100000 \
+                              -n 1000 \
+                              -t test
