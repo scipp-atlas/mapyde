@@ -2,6 +2,8 @@
 set -e # exit when any command fails
 
 tag=${1:-"test_Higgsino_001"}
+base=${PWD}
+workdir=output/${tag}
 
 ./mg5creator.py \
        -P cards/process/charginos \
@@ -15,7 +17,7 @@ tag=${1:-"test_Higgsino_001"}
 
 docker run \
        --rm \
-       -v $PWD/output/${tag}:/input \
+       -v ${base}/${workdir}:/input \
        -w /input \
        mhance/madgraph:pythiainterface_002 \
        "mg5_aMC run.mg5"
