@@ -1,10 +1,9 @@
-tag=${1}
+#!/bin/bash
+set -e # exit when any command fails
 
-if [[ $tag == "" ]]; then
-    tag="test_Higgsino_001"
-fi
+tag=${1:-"test_Higgsino_001"}
 
-python mg5creator.py \
+./mg5creator.py \
        -P cards/process/charginos \
        -r cards/run/default_LO.dat \
        -p cards/param/Higgsino.slha \
@@ -14,15 +13,9 @@ python mg5creator.py \
        -n 1000 \
        -t ${tag}
 
-
-if [[ $? == "1" ]]; then
-    exit
-fi
-
 docker run \
        --rm \
-       -v $PWD:$PWD \
-       -w $PWD \
+       -v $PWD/output/${tag}:/input \
+       -w /input \
        mhance/madgraph:pythiainterface_002 \
-       "cd output/${tag} && mg5_aMC run.mg5"
-
+       "mg5_aMC run.mg5"
