@@ -3,7 +3,7 @@ set -e # exit when any command fails
 
 tag=${1:-"test_Higgsino_001"}
 base=${PWD}
-workdir=output/${tag}
+datadir=output/${tag}
 
 ./mg5creator.py \
        -P cards/process/charginos \
@@ -17,7 +17,8 @@ workdir=output/${tag}
 
 docker run \
        --rm \
-       -v ${base}/${workdir}:/input \
-       -w /input \
+       -v ${base}/cards:/cards \
+       -v ${base}/${datadir}:/data \
+       -w /output \
        mhance/madgraph:pythiainterface_002 \
-       "mg5_aMC run.mg5"
+       "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph"

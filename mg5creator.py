@@ -84,12 +84,12 @@ shutil.copyfile(proc_card_path, new_proc_card_path)
 
 # set run_mode 0   # mg5_configuration.txt
 config = f"""
-launch PROC_{args.tag}
+launch PROC_madgraph
 shower=Pythia8
 madspin=OFF
 reweight=OFF
-{new_param_card_path.name}
-{new_run_card_path.name}
+/data/{new_param_card_path.name}
+/data/{new_run_card_path.name}
 set iseed {args.seed}
 done
 """
@@ -99,6 +99,6 @@ with output_path.joinpath("run.mg5").open(mode="w") as mg5config:
         if not proc_line.strip():
             continue
         if proc_line.startswith("output"):
-            proc_line = f"output PROC_{args.tag}\n"
+            proc_line = f"output PROC_madgraph\n"
         mg5config.write(proc_line)
     mg5config.write(config)
