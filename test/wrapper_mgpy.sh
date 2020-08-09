@@ -5,7 +5,7 @@ tag=${1:-"test_Higgsino_001"}
 base=${PWD}
 datadir=output/${tag}
 
-./mg5creator.py \
+./scripts/mg5creator.py \
        -P cards/process/charginos \
        -r cards/run/default_LO.dat \
        -p cards/param/Higgsino.slha \

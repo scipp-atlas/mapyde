@@ -19,4 +19,4 @@ For an example of how to run `Delphes` (and a script to transform the Delphes ou
 
 * Collect the output of the job and store it somewhere
 * Clean up MadGraph/Pythia leftovers
-* Revisit `SimpleAna.py` for SUSY work
+* Revisit `scripts/SimpleAna.py` for SUSY work
