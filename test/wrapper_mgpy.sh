@@ -5,7 +5,7 @@ if [[ $tag == "" ]]; then
 fi
 
 python mg5creator.py \
-       -P cards/proc/charginos \
+       -P cards/process/charginos \
        -r cards/run/default_LO.dat \
        -p cards/param/Higgsino.slha \
        -y cards/pythia/pythia8_card.dat \
