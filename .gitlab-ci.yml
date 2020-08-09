@@ -6,7 +6,7 @@ test_mg5creator:
   image: python:3.7-alpine
   script:
     - >
-      /scripts/mg5creator.py -P cards/process/charginos \
+    scripts/mg5creator.py -P cards/process/charginos \
                              -r cards/run/default_LO.dat \
                              -p cards/param/Higgsino.slha \
                              -y cards/pythia/pythia8_card.dat \
