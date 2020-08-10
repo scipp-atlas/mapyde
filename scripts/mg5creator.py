@@ -79,7 +79,7 @@ new_run_card_path.write_text(
 )
 
 # -- now specific opts.  may want to reverse this order at some point, and do the specific before global.
-if len(args.runoption)>0:
+if args.runoption is not None:
     runsubstitution=dict(args.runoption)
     with in_place.InPlace(new_run_card_path) as file:
         for line in file:
