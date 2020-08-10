@@ -79,12 +79,13 @@ new_run_card_path.write_text(
 )
 
 # -- now specific opts.  may want to reverse this order at some point, and do the specific before global.
-runsubstitution=dict(args.runoption)
-with in_place.InPlace(new_run_card_path) as file:
-    for line in file:
-        if len(line.split())>=3 and (line.split()[2] in runsubstitution):
-            line = line.replace(line.split()[0], runsubstitution[line.split()[2]])
-        file.write(line)
+if len(args.runoption)>0:
+    runsubstitution=dict(args.runoption)
+    with in_place.InPlace(new_run_card_path) as file:
+        for line in file:
+            if len(line.split())>=3 and (line.split()[2] in runsubstitution):
+                line = line.replace(line.split()[0], runsubstitution[line.split()[2]])
+            file.write(line)
 
 
 # Copy the proc card
