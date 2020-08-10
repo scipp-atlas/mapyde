@@ -73,12 +73,12 @@ new_param_card_path.write_text(
 run_card_path = Path(args.run).resolve()
 new_run_card_path = output_path.joinpath(run_card_path.name)
 
-# first do global opts
+# -- first do global opts
 new_run_card_path.write_text(
     Template(run_card_path.read_text()).substitute(substitution)
 )
 
-# now specific opts.  may want to reverse this order at some point, and do the specific before global.
+# -- now specific opts.  may want to reverse this order at some point, and do the specific before global.
 runsubstitution=dict(args.runoption)
 with in_place.InPlace(new_run_card_path) as file:
     for line in file:
