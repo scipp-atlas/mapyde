@@ -15,6 +15,7 @@ stages:
     - /kaniko/executor --context "${CI_PROJECT_DIR}"
                        --dockerfile "${CI_PROJECT_DIR}/Dockerfiles/${CI_JOB_NAME:6}"
                        --destination "${CI_REGISTRY_IMAGE}/${CI_JOB_NAME:6}:${CI_COMMIT_REF_SLUG}"
+    - pip install in_place
   only:
     refs:
       - master
