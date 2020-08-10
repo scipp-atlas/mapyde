@@ -29,14 +29,14 @@ define susyv = sve svm svt
 define susyv~ = sve~ svm~ svt~
 define p = g u c d s u~ c~ d~ s~
 define f = e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~ u u~ d d~ c c~ s s~ b b~ g
-generate     p p > n2  x1+  j j / susystrong QED=99 QCD=99 @1
-add process  p p > n2  x1-  j j / susystrong QED=99 QCD=99 @2
-add process  p p > n1  x1+  j j / susystrong QED=99 QCD=99 @3
-add process  p p > n1  x1-  j j / susystrong QED=99 QCD=99 @4
-add process  p p > n2  n1   j j / susystrong QED=99 QCD=99 @5
-add process  p p > x1+ x1-  j j / susystrong QED=99 QCD=99 @6
-add process  p p > x1+ x1+  j j / susystrong QED=99 QCD=99 @7
-add process  p p > x1- x1-  j j / susystrong QED=99 QCD=99 @8
+generate     p p > n2  x1+  j j / susystrong QED=99 QCD=0 @1
+add process  p p > n2  x1-  j j / susystrong QED=99 QCD=0 @2
+add process  p p > n1  x1+  j j / susystrong QED=99 QCD=0 @3
+add process  p p > n1  x1-  j j / susystrong QED=99 QCD=0 @4
+add process  p p > n2  n2   j j / susystrong QED=99 QCD=0 @5
+add process  p p > n2  n1   j j / susystrong QED=99 QCD=0 @6
+add process  p p > n1  n1   j j / susystrong QED=99 QCD=0 @7
+add process  p p > x1+ x1-  j j / susystrong QED=99 QCD=0 @8
+add process  p p > x1+ x1+  j j / susystrong QED=99 QCD=0 @9
+add process  p p > x1- x1-  j j / susystrong QED=99 QCD=0 @10
 output -f
-
-

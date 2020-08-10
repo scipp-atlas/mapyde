@@ -4,6 +4,7 @@ import shutil
 from string import Template
 from pathlib import Path
 import pprint
+import in_place
 
 parser = argparse.ArgumentParser(description="Process some arguments.")
 
@@ -27,6 +28,7 @@ parser.add_argument(
     "-E", "--sqrts", default=13000.0, help="Center of mass energy, in GeV"
 )
 parser.add_argument("-n", "--numev", default=10000, help="Number of events to process")
+parser.add_argument("-R", "--runoption", action="append", nargs=2, help="pass in like '-R ptj 20'")
 
 # Tag for this run
 parser.add_argument("-t", "--tag", default="run", help="name for the job")
@@ -71,9 +73,19 @@ new_param_card_path.write_text(
 run_card_path = Path(args.run).resolve()
 new_run_card_path = output_path.joinpath(run_card_path.name)
 
+# first do global opts
 new_run_card_path.write_text(
     Template(run_card_path.read_text()).substitute(substitution)
 )
+
+# now specific opts.  may want to reverse this order at some point, and do the specific before global.
+runsubstitution=dict(args.runoption)
+with in_place.InPlace(new_run_card_path) as file:
+    for line in file:
+        if len(line.split())>=3 and (line.split()[2] in runsubstitution):
+            line = line.replace(line.split()[0], runsubstitution[line.split()[2]])
+        file.write(line)
+
 
 # Copy the proc card
 proc_card_path = Path(args.proc).resolve()
