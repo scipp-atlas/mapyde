@@ -11,6 +11,7 @@ datadir=output/${tag}
        -p cards/param/Higgsino.slha \
        -y cards/pythia/pythia8_card.dat \
        -m MN1 150.0 -m MN2 155.0 -m MC1 155.0 \
+       -R ptj 20 -R etaj 4.5 \
        -E 100000 \
        -n 1000 \
        -t ${tag}
@@ -22,3 +23,4 @@ docker run \
        -w /output \
        gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
        "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph"
+
