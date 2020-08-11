@@ -7,6 +7,7 @@ import pprint
 import in_place
 import re
 import logging
+import multiprocessing
 
 logging.basicConfig(format="[%(levelname)s] %(message)s (%(filename)s:%(lineno)d)")
 logging.getLogger().setLevel(logging.INFO)
@@ -46,6 +47,12 @@ parser.add_argument("-t", "--tag", default="run", help="name for the job")
 
 # Random seed for this job
 parser.add_argument("-s", "--seed", default=0, help="random seed")
+
+# control the number of cores for this job
+parser.add_argument("-c", "--cores", default=0, help="number of cores to use for madgraph and pythia")
+
+# set batch/cluster mode, limits number of cores to 1, and overrides -c
+parser.add_argument("-b", "--batch", action="store_true", help="set batch mode, only uses a single core")
 
 parser.add_argument(
     "-o", "--output", default="output", help="output directory for generated files"
@@ -130,8 +137,16 @@ shutil.copyfile(proc_card_path, new_proc_card_path)
 mgconfig_card_path = output_path.joinpath("run.mg5")
 log.info(f"MadGraph Config: {mgconfig_card_path}")
 
-# set run_mode 0   # mg5_configuration.txt
+# Figure out the run_mode.  0=single core, 1=cluster, 2=multicore.
+if args.batch:
+    run_mode="set run_mode 0" # we don't have MadGraph launch cluster jobs for us, we handle that ourselves.
+elif int(args.cores)>0:
+    run_mode="set run_mode 2\nset nb_core %d" % int(args.cores)
+else:
+    run_mode="set run_mode 2\nset nb_core %d" % int(multiprocessing.cpu_count()/2)
+
 config = f"""
+{run_mode}
 launch PROC_madgraph
 shower=Pythia8
 madspin=OFF
