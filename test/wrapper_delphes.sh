@@ -6,6 +6,8 @@ base=${PWD}
 datadir=output/${tag}
 
 docker run \
+       --log-driver=journald \
+       --name "${tag}__delphes" \
        --rm \
        -v ${base}/cards:/cards \
        -v ${base}/${datadir}:/data \
@@ -16,9 +18,13 @@ docker run \
         /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/delphes_card_ATLAS.tcl delphes.root hepmc && \
         rsync -rav --exclude hepmc . /data/delphes'
 
+# dump docker logs to text file
+journalctl -u docker CONTAINER_NAME="${tag}__delphes" > $datadir/docker_delphes.log
+
 # to analyze delphes output
 docker run \
-       --name "${tag}__delphes" \
+       --log-driver=journald
+       --name "${tag}__hists" \
        --rm \
        -v ${base}/cards:/cards \
        -v ${base}/scripts:/scripts \
@@ -27,3 +33,6 @@ docker run \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes \
        '/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root && \
         rsync -rav . /data/analysis'
+
+# dump docker logs to text file
+journalctl -u docker CONTAINER_NAME="${tag}__hists" > $datadir/docker_hists.log

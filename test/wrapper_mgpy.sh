@@ -17,11 +17,16 @@ datadir=output/${tag}
        -t ${tag}
 
 docker run \
-       --name "${tag}" \
+       --log-driver=journald \
+       --name "${tag}__mgpy" \
        --rm \
        -v ${base}/cards:/cards \
        -v ${base}/${datadir}:/data \
        -w /output \
        gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
        "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph"
+
+# dump docker logs to text file
+journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > $datadir/docker_mgpy.log
+
 
