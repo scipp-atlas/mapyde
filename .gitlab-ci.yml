@@ -79,7 +79,6 @@ run_delphes:
   stage: simulation
   dependencies: [run_madgraph]
   before_script:
-    - python3 -m pip install -r requirements.txt
     - ln -s ${CI_PROJECT_DIR}/cards /cards
     - ln -s ${CI_PROJECT_DIR}/output/gitlabci /data
     - mkdir /output && cd /output
@@ -101,7 +100,6 @@ run_analysis:
   stage: analysis
   dependencies: [run_delphes]
   before_script:
-    - python3 -m pip install -r requirements.txt
     - ln -s ${CI_PROJECT_DIR}/cards /cards
     - ln -s ${CI_PROJECT_DIR}/output/gitlabci /data
     - mkdir /output && cd /output
