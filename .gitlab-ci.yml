@@ -101,6 +101,7 @@ run_analysis:
   dependencies: [run_delphes]
   before_script:
     - ln -s ${CI_PROJECT_DIR}/cards /cards
+    - ln -s ${CI_PROJECT_DIR}/scripts /scripts
     - ln -s ${CI_PROJECT_DIR}/output/gitlabci /data
     - mkdir /output && cd /output
   script:
