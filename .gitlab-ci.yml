@@ -33,7 +33,7 @@ test_mg5creator:
   image: python:3.7-alpine
   stage: test
   script:
-    - pip install -r requirements.txt
+    - python3 -m pip install -r requirements.txt
     - >
         scripts/mg5creator.py -P cards/process/charginos \
                               -r cards/run/default_LO.dat \
@@ -52,6 +52,7 @@ run_madgraph:
     entrypoint: [""]
   stage: generation
   script:
+    - python3 -m pip install -r requirements.txt
     - test/wrapper_mgpy.sh gitlabci
   artifacts:
     name: "$CI_COMMIT_REF_NAME-madgraph"
