@@ -98,7 +98,7 @@ run_analysis:
   image:
     name: ${CI_REGISTRY_IMAGE}/delphes:${CI_COMMIT_REF_SLUG}
     entrypoint: [""]
-  stage: simulation
+  stage: analysis
   dependencies: [run_delphes]
   before_script:
     - python3 -m pip install -r requirements.txt
