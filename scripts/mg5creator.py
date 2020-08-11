@@ -5,6 +5,12 @@ from string import Template
 from pathlib import Path
 import pprint
 import in_place
+import re
+import logging
+
+logging.basicConfig()
+logging.getLogger().setLevel(logging.INFO)
+log = logging.getLogger("mg5creator")
 
 parser = argparse.ArgumentParser(description="Process some arguments.")
 
@@ -17,7 +23,10 @@ parser.add_argument(
     "-p", "--param", default="cards/param/Higgsino.slha", help="path to SLHA/param card"
 )
 parser.add_argument(
-    "-y", "--pythia", default="cards/pythia/pythia8_card.dat", help="path to pythia card"
+    "-y",
+    "--pythia",
+    default="cards/pythia/pythia8_card.dat",
+    help="path to pythia card",
 )
 
 # Options for customizing the run
@@ -28,7 +37,9 @@ parser.add_argument(
     "-E", "--sqrts", default=13000.0, help="Center of mass energy, in GeV"
 )
 parser.add_argument("-n", "--numev", default=10000, help="Number of events to process")
-parser.add_argument("-R", "--runoption", action="append", nargs=2, help="pass in like '-R ptj 20'")
+parser.add_argument(
+    "-R", "--runoption", action="append", nargs=2, help="pass in like '-R ptj 20'"
+)
 
 # Tag for this run
 parser.add_argument("-t", "--tag", default="run", help="name for the job")
@@ -47,7 +58,7 @@ output_path = Path(args.output).joinpath(args.tag).resolve()
 try:
     output_path.mkdir(parents=True, exist_ok=False)
 except FileExistsError:
-    print(f"{args.tag} is already used, pick another tag or delete the directory.")
+    log.error(f"{args.tag} is already used, pick another tag or delete the directory.")
     exit(1)
 
 substitution = dict(
@@ -59,7 +70,8 @@ for particle, mass in args.mass:
         raise KeyError(f"{particle} cannot be redefined.")
     substitution[particle] = float(mass)
 
-pprint.pprint(substitution)
+for key, value in substitution.items():
+    log.info(f"{key} = {value}")
 
 # Update the param card
 param_card_path = Path(args.param).resolve()
@@ -68,6 +80,7 @@ new_param_card_path = output_path.joinpath(param_card_path.name)
 new_param_card_path.write_text(
     Template(param_card_path.read_text()).substitute(substitution)
 )
+log.info(f"Param Card: {new_param_card_path}")
 
 # Update the run card
 run_card_path = Path(args.run).resolve()
@@ -79,21 +92,42 @@ new_run_card_path.write_text(
 )
 
 # -- now specific opts.  may want to reverse this order at some point, and do the specific before global.
-if args.runoption is not None:
-    runsubstitution=dict(args.runoption)
-    with in_place.InPlace(new_run_card_path) as file:
-        for line in file:
-            if len(line.split())>=3 and (line.split()[2] in runsubstitution):
-                line = line.replace(line.split()[0], runsubstitution[line.split()[2]])
-            file.write(line)
+if args.runoption:
+    runsubstitution = dict(args.runoption)
+    pattern = re.compile(
+        r"^\s*(?P<value>[^\s]+)\s*=\s*(?P<key>[a-z_]+)\s*\!.*$", re.DOTALL
+    )
+    with in_place.InPlace(new_run_card_path) as fp:
+        for line in fp:
+            match = pattern.match(line)
+            if match:
+                groups = match.groupdict()
+                span = match.span("value")
+                newvalue = runsubstitution.pop(groups["key"], groups["value"])
+                # update the line based on input from the user, default to what is in the file
+                line = line[: span[0]] + newvalue + line[span[1] :]
+                if not newvalue == groups["value"]:
+                    log.info(
+                        f"Replacing value for {groups['key']}: {groups['value']} -> {newvalue}"
+                    )
+            fp.write(line)
 
+    unused_keys = list(runsubstitution.keys())
+    if unused_keys:
+        log.error(f"Unused keys supplied by you: {unused_keys}")
+        raise KeyError(unused_keys[0])
+
+log.info(f"Run Card: {new_run_card_path}")
 
 # Copy the proc card
 proc_card_path = Path(args.proc).resolve()
 new_proc_card_path = output_path.joinpath(proc_card_path.name)
 shutil.copyfile(proc_card_path, new_proc_card_path)
 
+log.info(f"Process Card: {new_proc_card_path}")
+
 # Create the madgraph configuration card
+mgconfig_card_path = output_path.joinpath("run.mg5")
 
 # set run_mode 0   # mg5_configuration.txt
 config = f"""
@@ -107,7 +141,7 @@ set iseed {args.seed}
 done
 """
 
-with output_path.joinpath("run.mg5").open(mode="w") as mg5config:
+with mgconfig_card_path.open(mode="w") as mg5config:
     for proc_line in new_proc_card_path.open():
         if not proc_line.strip():
             continue
@@ -115,3 +149,5 @@ with output_path.joinpath("run.mg5").open(mode="w") as mg5config:
             proc_line = f"output PROC_madgraph\n"
         mg5config.write(proc_line)
     mg5config.write(config)
+
+log.info(f"MadGraph Config: {mgconfig_card_path}")
