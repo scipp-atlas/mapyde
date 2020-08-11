@@ -17,6 +17,7 @@ datadir=output/${tag}
        -t ${tag}
 
 docker run \
+       --name "${tag}" \
        --rm \
        -v ${base}/cards:/cards \
        -v ${base}/${datadir}:/data \

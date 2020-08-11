@@ -18,6 +18,7 @@ docker run \
 
 # to analyze delphes output
 docker run \
+       --name "${tag}__delphes" \
        --rm \
        -v ${base}/cards:/cards \
        -v ${base}/scripts:/scripts \
