@@ -8,7 +8,7 @@ import in_place
 import re
 import logging
 
-logging.basicConfig()
+logging.basicConfig(format="[%(levelname)s] %(message)s (%(filename)s:%(lineno)d)")
 logging.getLogger().setLevel(logging.INFO)
 log = logging.getLogger("mg5creator")
 
@@ -70,21 +70,23 @@ for particle, mass in args.mass:
         raise KeyError(f"{particle} cannot be redefined.")
     substitution[particle] = float(mass)
 
+log.info("The following values will be substituted in where possible:")
 for key, value in substitution.items():
-    log.info(f"{key} = {value}")
+    log.info(f"    ${key} = {value}")
 
 # Update the param card
 param_card_path = Path(args.param).resolve()
 new_param_card_path = output_path.joinpath(param_card_path.name)
+log.info(f"Param Card: {new_param_card_path}")
 
 new_param_card_path.write_text(
     Template(param_card_path.read_text()).substitute(substitution)
 )
-log.info(f"Param Card: {new_param_card_path}")
 
 # Update the run card
 run_card_path = Path(args.run).resolve()
 new_run_card_path = output_path.joinpath(run_card_path.name)
+log.info(f"Run Card: {new_run_card_path}")
 
 # -- first do global opts
 new_run_card_path.write_text(
@@ -108,7 +110,7 @@ if args.runoption:
                 line = line[: span[0]] + newvalue + line[span[1] :]
                 if not newvalue == groups["value"]:
                     log.info(
-                        f"Replacing value for {groups['key']}: {groups['value']} -> {newvalue}"
+                        f"    replacing value for {groups['key']}: {groups['value']} -> {newvalue}"
                     )
             fp.write(line)
 
@@ -117,17 +119,16 @@ if args.runoption:
         log.error(f"Unused keys supplied by you: {unused_keys}")
         raise KeyError(unused_keys[0])
 
-log.info(f"Run Card: {new_run_card_path}")
-
 # Copy the proc card
 proc_card_path = Path(args.proc).resolve()
 new_proc_card_path = output_path.joinpath(proc_card_path.name)
-shutil.copyfile(proc_card_path, new_proc_card_path)
-
 log.info(f"Process Card: {new_proc_card_path}")
+
+shutil.copyfile(proc_card_path, new_proc_card_path)
 
 # Create the madgraph configuration card
 mgconfig_card_path = output_path.joinpath("run.mg5")
+log.info(f"MadGraph Config: {mgconfig_card_path}")
 
 # set run_mode 0   # mg5_configuration.txt
 config = f"""
@@ -149,5 +150,3 @@ with mgconfig_card_path.open(mode="w") as mg5config:
             proc_line = f"output PROC_madgraph\n"
         mg5config.write(proc_line)
     mg5config.write(config)
-
-log.info(f"MadGraph Config: {mgconfig_card_path}")
