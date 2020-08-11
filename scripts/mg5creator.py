@@ -140,7 +140,7 @@ log.info(f"MadGraph Config: {mgconfig_card_path}")
 # Figure out the run_mode.  0=single core, 1=cluster, 2=multicore.
 if args.batch:
     run_mode="set run_mode 0" # we don't have MadGraph launch cluster jobs for us, we handle that ourselves.
-elif args.cores>0:
+elif int(args.cores)>0:
     run_mode="set run_mode 2\nset nb_core %d" % int(args.cores)
 else:
     run_mode="set run_mode 2\nset nb_core %d" % int(multiprocessing.cpu_count()/2)
