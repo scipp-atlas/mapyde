@@ -47,7 +47,9 @@ test_mg5creator:
                               -t gitlabci
 
 run_madgraph:
-  image: ${CI_REGISTRY_IMAGE}/madgraph:${CI_COMMIT_REF_SLUG}
+  image:
+    name: ${CI_REGISTRY_IMAGE}/madgraph:${CI_COMMIT_REF_SLUG}
+    entrypoint: [""]
   stage: generation
   script:
     - test/wrapper_mgpy.sh gitlabci
@@ -58,7 +60,9 @@ run_madgraph:
     expire_in: 1 week
 
 run_delphes:
-  image: ${CI_REGISTRY_IMAGE}/delphes:${CI_COMMIT_REF_SLUG}
+  image:
+    name: ${CI_REGISTRY_IMAGE}/delphes:${CI_COMMIT_REF_SLUG}
+    entrypoint: [""]
   stage: simulation
   dependencies: [run_madgraph]
   script:
