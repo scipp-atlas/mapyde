@@ -23,7 +23,7 @@ journalctl -u docker CONTAINER_NAME="${tag}__delphes" > $datadir/docker_delphes.
 
 # to analyze delphes output
 docker run \
-       --log-driver=journald
+       --log-driver=journald \
        --name "${tag}__hists" \
        --rm \
        -v ${base}/cards:/cards \
