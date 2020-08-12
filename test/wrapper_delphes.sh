@@ -2,6 +2,8 @@
 set -e # exit when any command fails
 
 tag=${1:-"test_Higgsino_001"}
+delphescard=${2:-"delphes_card_ATLAS.tcs"}
+lumi=${3:-"1000"}
 base=${PWD}
 datadir=output/${tag}
 
@@ -15,7 +17,7 @@ docker run \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
        'cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
         gunzip hepmc.gz && \
-        /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/delphes_card_ATLAS.tcl delphes.root hepmc && \
+        /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/${delphescard} delphes.root hepmc && \
         rsync -rav --exclude hepmc . /data/delphes'
 
 # dump docker logs to text file
@@ -31,7 +33,7 @@ docker run \
        -v ${base}/${datadir}:/data \
        -w /output \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
-       '/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root --lumi 140000 && \
+       '/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root --lumi ${lumi} && \
         rsync -rav . /data/analysis'
 
 # dump docker logs to text file
