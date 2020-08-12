@@ -79,9 +79,7 @@ class Hists:
         self.hists["jPT"]=ROOT.TH1F("h_"+tag+"_jPT",tag+"_jPT;p_{T,jets};Events/(10GeV)",50,0,500)
         self.hists["jPhi"]=ROOT.TH1F("h_"+tag+"_jPhi",tag+"_jPhi;#phi(jets);Events/(0.4)",20,-4,4)
         self.hists["jEta"]=ROOT.TH1F("h_"+tag+"_jEta",tag+"_jEta;#eta(jets);Events/(0.5)",20,-5,5)
-        self.hists["mjj12"]=ROOT.TH1F("h_"+tag+"_mjj12",tag+"_mjj12;m(j_{1}j_{2});Events/(10GeV)",50,0,500)
-        self.hists["mjj23"]=ROOT.TH1F("h_"+tag+"_mjj23",tag+"_mjj23;m(j_{2}j_{3});Events/(10GeV)",50,0,500)
-        self.hists["mjj13"]=ROOT.TH1F("h_"+tag+"_mjj13",tag+"_mjj13;m(j_{1}j_{3});Events/(10GeV)",50,0,500)
+        self.hists["mjj"]=ROOT.TH1F("h_"+tag+"_mjj",tag+"_mjj;m(jj);Events/(100 GeV)",100,0,10000)
 
         ### Electrons
         self.hists["ePT"]=ROOT.TH1F("h_"+tag+"_ePT",tag+"_ePT;p^{e}_{T};Events/(10GeV)",50,0,500)
@@ -106,25 +104,9 @@ class Hists:
         self.hists["ltPT"] =ROOT.TH1F("h_"+tag+"_ltPT",tag+"_ltPT;p^{lead-#tau}_{T};Events/(10GeV)",50,0,500)
         self.hists["ltPhi"]=ROOT.TH1F("h_"+tag+"_ltPhi",tag+"_ltPhi;#phi(leading-#tau);Events/(0.4)",20,-4,4)
         self.hists["ltEta"]=ROOT.TH1F("h_"+tag+"_ltEta",tag+"_ltEta;#eta(leading-#tau);Events/(0.5)",20,-5,5)
-        self.hists["sltPT"] =ROOT.TH1F("h_"+tag+"_sltPT",tag+"_sltPT;p^{sublead-#tau}_{T};Events/(10GeV)",50,0,500)
-        self.hists["sltPhi"]=ROOT.TH1F("h_"+tag+"_sltPhi",tag+"_sltPhi;#phi(subleading-#tau);Events/(0.4)",20,-4,4)
-        self.hists["sltEta"]=ROOT.TH1F("h_"+tag+"_sltEta",tag+"_sltEta;#eta(subleading-#tau);Events/(0.5)",20,-5,5)
 
         ### MET
         self.hists["MET"]       =ROOT.TH1F("h_"+tag+"_MET", tag+"_MET;E_{T}^{miss} [GeV];Events/(10 GeV)",100,0,1000)
-        self.hists["dPMET-Lep"] =ROOT.TH1F("h_"+tag+"_dPMET-Lep", tag+"_dPhi(MET-Lep);#Delta#phi(MET, leading lepton);Events/(0.4)", 20,-4,4)
-        self.hists["dPMET-b"]   =ROOT.TH1F("h_"+tag+"_dPMET-b", tag+"_dPhi(MET-bJet);#Delta#phi(MET, leading b-jet);Events/(0.4)", 20,-4,4)
-
-        ### MT2
-        self.hists["MT2"] =ROOT.TH1F("h_"+tag+"_mT2" ,tag+"_mT2;m_{T2};Events/(10GeV)",50,0,500)
-
-        ### Di-tau system (final state specific)
-        self.hists["ditauPT"] =ROOT.TH1F("h_"+tag+"_ditauPT" ,tag+"_ditauPT;p^{#tau#tau}_{T};Events/(10GeV)",50,0,500)
-        self.hists["dR_tautau"] =ROOT.TH1F("h_"+tag+"_dR_tautau" ,tag+"_dR_tau;#DeltaR(#tau#tau);Events/(0.4)",15,0,6)
-        self.hists["dR_ditau-lep"] =ROOT.TH1F("h_"+tag+"_dR_ditau-lep" , tag+"_dR_ditau-lep;#DeltaR(#tau#tau,leading lepton);Events/(0.4)",15,0,6)
-        self.hists["dP_ditau-MET"] =ROOT.TH1F("h_"+tag+"_dP_ditau-MET" , tag+"_dP_ditau-MET;#Delta#phi(#tau#tau,MET);Events/(0.4)",20,-4,4)
-        self.hists["dR_ditau-b"] =ROOT.TH1F("h_"+tag+"_dR_ditau-b" , tag+"_dR_ditau-b;#DeltaR(#tau#tau,b-jet);Events/(0.4)",15,0,6)
-        self.hists["mtautau"]=ROOT.TH1F("h_"+tag+"_mtautau",tag+"_mtautau;m(#tau#tau);Events/(10 GeV)",100,0,1000)
 
         for i,j in self.hists.iteritems():
             j.Sumw2()
@@ -140,9 +122,6 @@ class Hists:
         self.addbranch("nbjet",'i')
         self.addbranch("njet",'i')
         self.addbranch("nLep",'i')
-        self.addbranch("mtautau",'f')
-        self.addbranch("dRtautau",'f')
-        self.addbranch("pTtautau",'f')
 
         self.addbranch("lep1PT", 'f')
         self.addbranch("lep1Eta", 'f')
@@ -151,9 +130,13 @@ class Hists:
         self.addbranch("tau1PT", 'f')
         self.addbranch("tau1Eta", 'f')
         self.addbranch("tau1Phi", 'f')
-        self.addbranch("tau2PT", 'f')
-        self.addbranch("tau2Eta", 'f')
-        self.addbranch("tau2Phi", 'f')
+
+        self.addbranch("j1PT", 'f')
+        self.addbranch("j1Eta", 'f')
+        self.addbranch("j1Phi", 'f')
+        self.addbranch("j2PT", 'f')
+        self.addbranch("j2Eta", 'f')
+        self.addbranch("j2Phi", 'f')
 
         self.addbranch("bj1PT", 'f')
         self.addbranch("bj1Eta", 'f')
@@ -161,14 +144,6 @@ class Hists:
         self.addbranch("bj2PT", 'f')
         self.addbranch("bj2Eta", 'f')
         self.addbranch("bj2Phi", 'f')
-
-        self.addbranch("dphileadlepmet",'f')
-        self.addbranch("mindphilepmet",'f')
-        self.addbranch("dphileph",'f')
-        self.addbranch("mindphilepb",'f')
-        self.addbranch("dphibh",'f')
-
-        self.addbranch("mTleadlepmet",'f')
 
         self.addbranch("weight",'f')
         
@@ -239,10 +214,7 @@ class Hists:
             self.hists["jEta"].Fill(aJet.Eta,weight)
             self.hists["jPhi"].Fill(aJet.Phi,weight)
         if len(event.exclJets) > 1:
-            self.hists["mjj12"].Fill( (event.exclJets[0].P4() + event.exclJets[1].P4()).M(), weight )
-        if len(event.exclJets) > 2:
-            self.hists["mjj13"].Fill( (event.exclJets[0].P4() + event.exclJets[2].P4()).M(), weight )
-            self.hists["mjj23"].Fill( (event.exclJets[1].P4() + event.exclJets[2].P4()).M(), weight )
+            self.hists["mjj"].Fill( (event.exclJets[0].P4() + event.exclJets[1].P4()).M(), weight )
 
         ### Electrons
         for aElec in event.elecs:
@@ -280,28 +252,9 @@ class Hists:
             self.branches["tau1PT"][0]=defaultfill
             self.branches["tau1Eta"][0]=defaultfill
             self.branches["tau1Phi"][0]=defaultfill
-        if len(event.tautags)>1:
-            self.hists["sltPT"].Fill(event.tautags[1].PT,weight)
-            self.hists["sltEta"].Fill(event.tautags[1].Eta,weight)
-            self.hists["sltPhi"].Fill(event.tautags[1].Phi,weight)
-            self.branches["tau2PT"][0]=event.tautags[0].PT
-            self.branches["tau2Eta"][0]=event.tautags[0].Eta
-            self.branches["tau2Phi"][0]=event.tautags[0].Phi
-        else:
-            self.branches["tau2PT"][0]=defaultfill
-            self.branches["tau2Eta"][0]=defaultfill
-            self.branches["tau2Phi"][0]=defaultfill
 
-        ### MET
-        if leadingLep:
-            self.hists["dPMET-Lep"].Fill(event.met.DeltaPhi(leadingLep), weight)
-            self.branches["dphileadlepmet"][0]=abs(event.met.DeltaPhi(leadingLep))
-            self.branches["mTleadlepmet"][0]=math.sqrt(2*event.met.Pt()*leadingLep.Pt()*(1-math.cos(event.met.DeltaPhi(leadingLep))))
-        else:
-            self.branches["dphileadlepmet"][0]=defaultfill
-            self.branches["mTleadlepmet"][0]=defaultfill
+        ### b-jets
         if len(event.btags) > 0:
-            self.hists["dPMET-b"].Fill(event.met.DeltaPhi(event.btags[0].P4()), weight)
             self.branches["bj1PT"][0]=event.btags[0].P4().Pt()
             self.branches["bj1Eta"][0]=event.btags[0].P4().Eta()
             self.branches["bj1Phi"][0]=event.btags[0].P4().Phi()
@@ -318,6 +271,25 @@ class Hists:
             self.branches["bj2Eta"][0]=defaultfill
             self.branches["bj2Phi"][0]=defaultfill
 
+        ### non-b/tau-jets
+        if len(event.exclJets) > 0:
+            self.branches["j1PT"][0]=event.exclJets[0].P4().Pt()
+            self.branches["j1Eta"][0]=event.exclJets[0].P4().Eta()
+            self.branches["j1Phi"][0]=event.exclJets[0].P4().Phi()
+        else:
+            self.branches["j1PT"][0]=defaultfill
+            self.branches["j1Eta"][0]=defaultfill
+            self.branches["j1Phi"][0]=defaultfill
+        if len(event.exclJets) > 1:
+            self.branches["j2PT"][0]=event.exclJets[1].P4().Pt()
+            self.branches["j2Eta"][0]=event.exclJets[1].P4().Eta()
+            self.branches["j2Phi"][0]=event.exclJets[1].P4().Phi()
+        else:
+            self.branches["j2PT"][0]=defaultfill
+            self.branches["j2Eta"][0]=defaultfill
+            self.branches["j2Phi"][0]=defaultfill
+
+        ### Leptons
         if leadingLep:
             self.branches["lep1PT"][0] = leadingLep.Pt()
             self.branches["lep1Eta"][0] = leadingLep.Eta()
@@ -327,76 +299,8 @@ class Hists:
             self.branches["lep1Eta"][0] = defaultfill
             self.branches["lep1Phi"][0] = defaultfill
 
-        mindphilepmet=999
-        mindphilepb=999
-        for aLep in event.muons+event.elecs:
-            mindphilepmet=min(mindphilepmet,event.met.DeltaPhi(aLep.P4()))
-            for aBJet in event.btags:
-                mindphilepb=min(mindphilepb,aLep.P4().DeltaPhi(aBJet.P4()))
-        self.branches["mindphilepmet"][0]=abs(mindphilepmet)
-        self.branches["mindphilepb"][0]=abs(mindphilepb)
-
-        # how to define visap, visbp?
-        #MT2calc = ComputeMT2(Visap,Visbp,
-        #                     event.met,0.,80.)
-        #seld.hists["MT2"].Fill(MT2calc.Compute(),weight)
-
-        if len(event.tautags)>1:
-            # m_tautau
-            tau1 = event.tautags[0].P4()
-            tau2 = event.tautags[1].P4()
-            diTau = tau1 + tau2
-            self.hists["mtautau"].Fill( diTau.M(), weight )
-            self.hists["ditauPT"].Fill( diTau.Pt(), weight )
-            self.hists["dR_tautau"].Fill( tau1.DeltaR(tau2), weight )
-            #
-            self.hists["dP_ditau-MET"].Fill(diTau.DeltaPhi(event.met), weight )
-            if leadingLep:
-                self.hists["dR_ditau-lep"].Fill(diTau.DeltaR(leadingLep), weight )
-                self.branches["dphileph"][0] = diTau.DeltaR(leadingLep)
-            else:
-                self.branches["dphileph"][0] = defaultfill
-                
-            if len(event.btags) > 0:
-                self.hists["dR_ditau-b"].Fill(diTau.DeltaR(event.btags[0].P4()), weight )
-                self.branches["dphibh"][0] = diTau.DeltaR(event.btags[0].P4())
-            else:
-                self.branches["dphibh"][0] = defaultfill
-            self.branches["mtautau"][0] = diTau.M()
-            self.branches["dRtautau"][0] = tau1.DeltaR(tau2)
-            self.branches["pTtautau"][0] = diTau.Pt()
-        else:
-            self.branches["dphileph"][0] = defaultfill
-            self.branches["dphibh"][0] = defaultfill
-            self.branches["mtautau"][0] = defaultfill
-            self.branches["dRtautau"][0] = defaultfill
-            self.branches["pTtautau"][0] = defaultfill
-            
 
         self.tree.Fill()
-# Keeping simpler for now (no mh hypothesis)
-"""
-        if len(event.tautags)>=2:
-            if len(event.tautags)==2:
-                tau1=TLorentzVector()
-                tau1.SetPtEtaPhiM(event.tautags[0].PT,event.tautags[0].Eta,event.tautags[0].Phi,taumass)
-                tau2=TLorentzVector()
-                tau2.SetPtEtaPhiM(event.tautags[1].PT,event.tautags[1].Eta,event.tautags[1].Phi,taumass)
-                self.hists["mtautau"].Fill((tau1+tau2).M(),weight)
-            else:
-                # find two taus closest to 125 GeV
-                m_closest=0
-                for t1 in xrange(len(event.tautags)):
-                    for t2 in xrange(len(event.tautags)-t1-1):
-                        tau1=TLorentzVector()
-                        tau1.SetPtEtaPhiM(event.tautags[t1].PT,event.tautags[t1].Eta,event.tautags[t1].Phi,taumass)
-                        tau2=TLorentzVector()
-                        tau2.SetPtEtaPhiM(event.tautags[t2].PT,event.tautags[t2].Eta,event.tautags[t2].Phi,taumass)
-                        m=(tau1+tau2).M()
-                        if abs(100-m) < abs(100-m_closest):
-                            m_closest=m
-                self.hists["mtautau"].Fill(m_closest,weight)
-"""                
 
 #=====================================================================
         

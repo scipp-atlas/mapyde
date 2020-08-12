@@ -31,7 +31,7 @@ docker run \
        -v ${base}/${datadir}:/data \
        -w /output \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
-       '/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root && \
+       '/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root --lumi 140000 && \
         rsync -rav . /data/analysis'
 
 # dump docker logs to text file
