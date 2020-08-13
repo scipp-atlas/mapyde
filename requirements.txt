@@ -1,7 +1,8 @@
-pyhepmc-ng
-pybind11
+## for hepmcsplitter.py
+#pyhepmc-ng
+#pybind11
 #numpy
-graphviz
-particle
-pytest
+#graphviz
+#particle
+#pytest
 in-place==0.4.0
