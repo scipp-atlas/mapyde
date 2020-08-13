@@ -1,1 +1,7 @@
+pyhepmc-ng
+pybind11
+numpy
+graphviz
+particle
+pytest
 in-place==0.4.0
