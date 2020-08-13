@@ -19,5 +19,8 @@ RUN mkdir -p /usr/local/share/delphes && \
 ENV DELPHES_PATH="/usr/local/share/delphes/delphes"
 ENV ROOT_INCLUDE_PATH=${ROOT_INCLUDE_PATH}:${DELPHES_PATH}:${DELPHES_PATH}/external
 
+RUN python -m pip install --no-cache-dir pip setuptools wheel && \
+    python -m pip install --no-cache-dir pyhepmc-ng pybind11 numpy graphviz particle pytest
+
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
 CMD ["/bin/bash"]
