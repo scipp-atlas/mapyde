@@ -1,6 +1,6 @@
 pyhepmc-ng
 pybind11
-numpy
+#numpy
 graphviz
 particle
 pytest
