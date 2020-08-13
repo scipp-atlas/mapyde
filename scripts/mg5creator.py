@@ -72,10 +72,11 @@ substitution = dict(
     ecms=float(args.sqrts) / 2, nevents=int(args.numev), iseed=int(args.seed)
 )
 
-for particle, mass in args.mass:
-    if particle in substitution:
-        raise KeyError(f"{particle} cannot be redefined.")
-    substitution[particle] = float(mass)
+if args.mass:
+    for particle, mass in args.mass:
+        if particle in substitution:
+            raise KeyError(f"{particle} cannot be redefined.")
+        substitution[particle] = float(mass)
 
 log.info("The following values will be substituted in where possible:")
 for key, value in substitution.items():
