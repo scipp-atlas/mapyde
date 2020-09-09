@@ -28,7 +28,7 @@ met_selections = {
 }
 
 variable = "mjj"
-binning = [0, 100, 200, 300, 400, 500, 600]
+binning = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
 
 for jet_name, jet_selection in jet_selections.items():
     for met_name, met_selection in met_selections.items():
