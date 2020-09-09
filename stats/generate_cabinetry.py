@@ -23,19 +23,19 @@ jet_selections = {
 
 met_selections = {
     "lowMET": "(MET < 200)",
-    "medMET": "(MET >= 200) && (MET < 300)",
+    "medMET": "(MET >= 200) & (MET < 300)",
     "higMET": "(MET >=300)",
 }
 
 variable = "mjj"
-binning = [200, 300, 400, 500, 600]
+binning = [0, 100, 200, 300, 400, 500, 600]
 
 for jet_name, jet_selection in jet_selections.items():
     for met_name, met_selection in met_selections.items():
         config["Regions"].append(
             {
                 "Name": f"SR_{met_name}_{jet_name}",
-                "Filter": f"(nLep == 0) && (abs(j1Eta - j2Eta) > 3.0) && {jet_selection} && {met_selection}",
+                "Filter": f"(nLep == 0) & (abs(j1Eta - j2Eta) > 3.0) & {jet_selection} & {met_selection}",
                 "Variable": variable,
                 "Binning": binning,
             }
@@ -44,7 +44,7 @@ for jet_name, jet_selection in jet_selections.items():
         config["Regions"].append(
             {
                 "Name": f"CRW_{met_name}_{jet_name}",
-                "Filter": f"(nLep == 1) && (abs(j1Eta - j2Eta) > 3.0) && {jet_selection} && {met_selection}",
+                "Filter": f"(nLep == 1) & (abs(j1Eta - j2Eta) > 3.0) & {jet_selection} & {met_selection}",
                 "Variable": variable,
                 "Binning": binning,
             }
@@ -53,7 +53,7 @@ for jet_name, jet_selection in jet_selections.items():
         config["Regions"].append(
             {
                 "Name": f"CRZ_{met_name}_{jet_name}",
-                "Filter": f"(nLep == 2) && (abs(j1Eta - j2Eta) > 3.0) && {jet_selection} && {met_selection}",
+                "Filter": f"(nLep == 2) & (abs(j1Eta - j2Eta) > 3.0) & {jet_selection} & {met_selection}",
                 "Variable": variable,
                 "Binning": binning,
             }
@@ -66,7 +66,7 @@ for path in pathlib.Path("/home/mhance/mario-mapyde/output/").glob("*_13_*"):
     config["Samples"].append(
         {
             "Name": path.name,
-            "Tree": "SR/hftree",
+            "Tree": "presel/hftree",
             "SamplePath": path.name,
             "Weight": "weight",
             "Data": False,
@@ -75,7 +75,7 @@ for path in pathlib.Path("/home/mhance/mario-mapyde/output/").glob("*_13_*"):
 
 # Add a "Data" Sample (just use last one in)
 config["Samples"].append(
-    {"Name": "data", "Tree": "SR/hftree", "SamplePath": samples[-1], "Data": True}
+    {"Name": "data", "Tree": "presel/hftree", "SamplePath": samples[-1], "Data": True}
 )
 
 # Define Systematics
