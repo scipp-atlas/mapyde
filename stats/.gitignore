@@ -1,2 +1,5 @@
-cabinetry.yml
-workspace.json
+*.yml
+*.json
+*.root
+histograms/
+output/
