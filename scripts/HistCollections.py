@@ -137,6 +137,7 @@ class Hists:
         self.addbranch("j2PT", 'f')
         self.addbranch("j2Eta", 'f')
         self.addbranch("j2Phi", 'f')
+        self.addbranch("mjj", 'f')
 
         self.addbranch("bj1PT", 'f')
         self.addbranch("bj1Eta", 'f')
@@ -214,8 +215,9 @@ class Hists:
             self.hists["jEta"].Fill(aJet.Eta,weight)
             self.hists["jPhi"].Fill(aJet.Phi,weight)
         if len(event.exclJets) > 1:
-            self.hists["mjj"].Fill( (event.exclJets[0].P4() + event.exclJets[1].P4()).M(), weight )
-
+            mjj = (event.exclJets[0].P4() + event.exclJets[1].P4()).M()
+            self.hists["mjj"].Fill( mjj, weight )
+            self.branches["mjj"] = mjj
         ### Electrons
         for aElec in event.elecs:
             self.hists["ePT"].Fill(aElec.PT,weight)
