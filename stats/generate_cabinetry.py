@@ -61,7 +61,7 @@ for jet_name, jet_selection in jet_selections.items():
 
 samples = []
 # Define Samples
-for path in pathlib.Path("/home/mhance/mario-mapyde/output/").glob("*"):
+for path in pathlib.Path("/home/mhance/mario-mapyde/output/").glob("*_13_*"):
     samples.append(path.name)
     config["Samples"].append(
         {
