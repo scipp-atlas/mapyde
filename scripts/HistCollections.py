@@ -217,7 +217,7 @@ class Hists:
         if len(event.exclJets) > 1:
             mjj = (event.exclJets[0].P4() + event.exclJets[1].P4()).M()
             self.hists["mjj"].Fill( mjj, weight )
-            self.branches["mjj"] = mjj
+            self.branches["mjj"][0] = mjj
         ### Electrons
         for aElec in event.elecs:
             self.hists["ePT"].Fill(aElec.PT,weight)

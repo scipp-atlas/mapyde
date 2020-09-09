@@ -70,7 +70,7 @@ for event in chain :
   # fill histograms for all events
   allev.fill(de,weight)
 
-  # preselection: MET>120, 2 jets
+  # preselection: MET>120, >=2 jets
   if de.met.Pt()<150 or len(de.jets)<2:
     continue
   presel.fill(de,weight)
@@ -82,7 +82,7 @@ for event in chain :
     continue
   if len(de.muons) != 0:
     continue
-  if len(de.exclJets) != 2:
+  if len(de.exclJets)<2:
     continue
   mjj=(de.exclJets[0].P4()+de.exclJets[1].P4()).M()
   if mjj<1000:
