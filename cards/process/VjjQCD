@@ -1,0 +1,10 @@
+import model sm
+define vl = ve vm vt
+define vl~ = ve~ vm~ vt~
+define l+=e+ mu+ ta+
+define l-=e- mu- ta-
+generate     p p > l+ l-  j j @1
+add process  p p > vl vl~ j j @2
+add process  p p > l+ vl  j j @3
+add process  p p > l- vl~ j j @4
+output -f

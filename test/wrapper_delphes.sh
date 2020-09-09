@@ -7,6 +7,12 @@ cores=${3:-"1"}
 base=${PWD}
 datadir=output/${tag}
 
+# first check if delphes output is already there.  If so, then don't clobber it unless told to.
+if [[ -e ${datadir}/delphes && $4 != clobber ]]; then
+    echo "Delphes area in ${datadir} already exists, not running job.  Remove or rename it, or force clobbering."
+    exit 0
+fi
+
 set -x
 
 docker run \

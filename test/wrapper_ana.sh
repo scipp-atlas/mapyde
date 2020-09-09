@@ -6,6 +6,12 @@ lumi=${2:-"1000"}
 base=${PWD}
 datadir=output/${tag}
 
+# first check if analysis output is already there.  If so, then don't clobber it unless told to.
+if [[ -e ${datadir}/analysis && $3 != clobber ]]; then
+    echo "Analysis area in ${datadir} already exists, not running job.  Remove or rename it, or force clobbering."
+    exit 0
+fi
+
 set -x
 
 # to analyze delphes output
