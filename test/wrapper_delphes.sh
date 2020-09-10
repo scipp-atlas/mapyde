@@ -22,6 +22,7 @@ docker run \
        -v ${base}/cards:/cards \
        -v ${base}/${datadir}:/data \
        -w /output \
+       --user $(id -u):$(id -g) \
        --env delphescard=${delphescard} \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
        'set -x && \

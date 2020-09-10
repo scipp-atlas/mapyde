@@ -23,6 +23,7 @@ docker run \
        -v ${base}/cards:/cards \
        -v ${base}/${datadir}:/data \
        -w /output \
+       --user $(id -u):$(id -g) \
        gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
        "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph"
 

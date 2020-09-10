@@ -1,6 +1,7 @@
 import cabinetry
+import sys
 
-cabinetry_config = cabinetry.configuration.read('cabinetry.yml')
+cabinetry_config = cabinetry.configuration.read(sys.argv[1])
 
 # create template histograms
 cabinetry.template_builder.create_histograms(cabinetry_config)
@@ -13,4 +14,4 @@ cabinetry.template_postprocessor.run(cabinetry_config)
 
 # build a workspace
 ws = cabinetry.workspace.build(cabinetry_config)
-cabinetry.workspace.save(ws, "workspace.json")
+cabinetry.workspace.save(ws, sys.argv[1].replace(".yml", ".json"))
