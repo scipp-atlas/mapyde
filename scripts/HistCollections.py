@@ -106,7 +106,8 @@ class Hists:
         self.hists["ltEta"]=ROOT.TH1F("h_"+tag+"_ltEta",tag+"_ltEta;#eta(leading-#tau);Events/(0.5)",20,-5,5)
 
         ### MET
-        self.hists["MET"]       =ROOT.TH1F("h_"+tag+"_MET", tag+"_MET;E_{T}^{miss} [GeV];Events/(10 GeV)",100,0,1000)
+        self.hists["MET"]        =ROOT.TH1F("h_"+tag+"_MET", tag+"_MET;E_{T}^{miss} [GeV];Events/(10 GeV)",100,0,1000)
+        self.hists["MET_invismu"]=ROOT.TH1F("h_"+tag+"_MET_invismu", tag+"_MET;E_{T}^{miss} [GeV];Events/(10 GeV)",100,0,1000)
 
         for i,j in self.hists.iteritems():
             j.Sumw2()
@@ -115,6 +116,8 @@ class Hists:
         self.tree = ROOT.TTree("hftree","hftree")
         self.addbranch("MET", 'f')
         self.addbranch("METPhi", 'f')
+        self.addbranch("MET_invismu", 'f')
+        self.addbranch("METPhi_invismu", 'f')
         
         self.addbranch("nElec",'i')
         self.addbranch("nMuon",'i')
@@ -185,6 +188,11 @@ class Hists:
             else:
                 leadingLep = event.muons[0].P4()
 
+        muonsmomentum=ROOT.TLorentzVector()
+        muonsmomentum.SetPtEtaPhiM(0,0,0,0)
+        for m in event.muons:
+            muonsmomentum+=m.P4()
+                
         ### Fill generic hists
         self.hists["nElec"].Fill(len(event.elecs),weight)
         self.hists["nMuon"].Fill(len(event.muons),weight)
@@ -193,9 +201,12 @@ class Hists:
         self.hists["njet"].Fill(len(event.jets),weight)
         self.hists["nLep"].Fill(len(event.elecs)+len(event.muons),weight)
         self.hists["MET"].Fill(event.met.Pt(),weight)
+        self.hists["MET_invismu"].Fill((event.met+muonsmomentum).Pt(),weight)
 
         self.branches["MET"][0] = event.met.Pt()
         self.branches["METPhi"][0]=event.met.Phi()
+        self.branches["MET_invismu"][0] = (event.met+muonsmomentum).Pt()
+        self.branches["METPhi_invismu"][0]=(event.met+muonsmomentum).Phi()
         self.branches["nElec"][0] = len(event.elecs)
         self.branches["nMuon"][0] = len(event.muons)
         self.branches["nTau"][0] = len(event.tautags)
