@@ -10,8 +10,6 @@ First we need to combine the output background slices with `hadd`, so we'll put 
 
 ```
 docker run \
-       --log-driver=journald \
-       --name "${tag}__hadd" \
        --rm \
        -v ~mhance/mario-mapyde/output:/data \
        -v $PWD/output:/output \
@@ -20,6 +18,20 @@ docker run \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
        'for KIND in EWK QCD; do for COM in 13 14 100; do hadd Vjj${KIND}_${COM}.root /data/Vjj${KIND}_${COM}_*/analysis/histograms.root; done; done'
 ```
+
+Next, we need to do the same for the signal slices
+
+```
+docker run \
+       --rm \
+       -v ~mhance/mario-mapyde/output:/data \
+       -v $PWD/output:/output \
+       -w /output \
+       --user $(id -u):$(id -g) \
+       gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
+       'for KIND in Higgsino WinoBino; do for MASS in 150 250; do for COM in 13 14 100; do hadd VBFSUSY_${COM}_${KIND}_${MASS}.root /data/VBFSUSY_${COM}_${KIND}_${MASS}*/analysis/histograms.root; done; done; done'
+```
+
 
 ## generate cabinetry configs
 
