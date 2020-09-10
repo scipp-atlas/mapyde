@@ -73,9 +73,7 @@ for center_of_mass in ["13", "14", "100"]:
             {
                 "Name": sig_path.name,
                 "Tree": "presel/hftree",
-                "SamplePath": str(
-                    sig_path.joinpath("analysis/histograms.root").resolve()
-                ),
+                "SamplePath": str(sig_path.resolve()),
                 "Weight": "weight",
                 "Data": False,
             }
@@ -96,9 +94,7 @@ for center_of_mass in ["13", "14", "100"]:
             {
                 "Name": "data",
                 "Tree": "presel/hftree",
-                "SamplePath": str(
-                    sig_path.joinpath("analysis/histograms.root").resolve()
-                ),
+                "SamplePath": str(sig_path.resolve()),
                 "Data": True,
             }
         )
