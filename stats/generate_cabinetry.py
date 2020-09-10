@@ -123,6 +123,6 @@ for center_of_mass in ["13", "14", "100"]:
             }
         )
 
-        pathlib.Path(f"{sig_path.name}.yml").write_text(
+        pathlib.Path(sig_path.name.replace(".root", ".yml")).write_text(
             json.dumps(config, indent=4, sort_keys=True)
         )
