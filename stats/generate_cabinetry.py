@@ -38,7 +38,7 @@ for jet_name, jet_selection in jet_selections.items():
         base_config["Regions"].append(
             {
                 "Name": f"SR_{met_name}_{jet_name}",
-                "Filter": f"(nLep == 0) & (abs(j1Eta - j2Eta) > 3.0) & {jet_selection} & {met_selection}",
+                "Filter": f"(nMuon == 0) & (abs(j1Eta - j2Eta) > 3.0) & {jet_selection} & {met_selection}",
                 "Variable": variable,
                 "Binning": binning,
             }
@@ -47,7 +47,7 @@ for jet_name, jet_selection in jet_selections.items():
         base_config["Regions"].append(
             {
                 "Name": f"CRW_{met_name}_{jet_name}",
-                "Filter": f"(nLep == 1) & (abs(j1Eta - j2Eta) > 3.0) & {jet_selection} & {met_selection}",
+                "Filter": f"(nMuon == 1) & (abs(j1Eta - j2Eta) > 3.0) & {jet_selection} & {met_selection}",
                 "Variable": variable,
                 "Binning": binning,
             }
@@ -56,7 +56,7 @@ for jet_name, jet_selection in jet_selections.items():
         base_config["Regions"].append(
             {
                 "Name": f"CRZ_{met_name}_{jet_name}",
-                "Filter": f"(nLep == 2) & (abs(j1Eta - j2Eta) > 3.0) & {jet_selection} & {met_selection.replace('MET','MET_invismu')}",
+                "Filter": f"(nMuon == 2) & (abs(j1Eta - j2Eta) > 3.0) & {jet_selection} & {met_selection.replace('MET','MET_invismu')}",
                 "Variable": variable,
                 "Binning": binning,
             }
