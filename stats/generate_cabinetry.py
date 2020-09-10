@@ -64,7 +64,7 @@ for jet_name, jet_selection in jet_selections.items():
 
 
 for center_of_mass in ["13", "14", "100"]:
-    for sig_path in pathlib.Path("/home/mhance/mario-mapyde/output/").glob(
+    for sig_path in pathlib.Path("./output").glob(
         f"{SIGNAL_SAMPLE_PREFIX}_{center_of_mass}_*"
     ):
         config = copy.deepcopy(base_config)
