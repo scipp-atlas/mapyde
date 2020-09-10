@@ -71,7 +71,7 @@ for center_of_mass in ["13", "14", "100"]:
         # Define Samples
         config["Samples"].append(
             {
-                "Name": sig_path.name,
+                "Name": sig_path.name.replace(".root", ""),
                 "Tree": "presel/hftree",
                 "SamplePath": str(sig_path.resolve()),
                 "Weight": "weight",

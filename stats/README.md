@@ -29,7 +29,7 @@ docker run \
        -w /output \
        --user $(id -u):$(id -g) \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
-       'for KIND in Higgsino WinoBino; do for MASS in 150 250; do for COM in 13 14 100; do hadd VBFSUSY_${COM}_${KIND}_${MASS}.root /data/VBFSUSY_${COM}_${KIND}_${MASS}*/analysis/histograms.root; done; done; done'
+       'for KIND in Higgsino WinoBino; do for MASS in 150 250; do for COM in 13 14 100; do hadd VBFSUSY_${COM}_${KIND}_${MASS}.root /data/VBFSUSY_${COM}_${KIND}_${MASS}_*/analysis/histograms.root; done; done; done'
 ```
 
 
