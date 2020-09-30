@@ -10,7 +10,7 @@ cabinetry.template_builder.create_histograms(cabinetry_config)
 cabinetry.template_postprocessor.run(cabinetry_config)
 
 # visualize templates and data
-# cabinetry.visualize.data_MC_from_histograms(cabinetry_config, "figures/")
+cabinetry.visualize.data_MC_from_histograms(cabinetry_config, "figures/")
 
 # build a workspace
 ws = cabinetry.workspace.build(cabinetry_config)
