@@ -2,6 +2,8 @@
 set -e # exit when any command fails
 
 tag=${1:-"test_Higgsino_001"}
+proc=${2:-"tt"}
+events=${3:-"1000"}
 base=${PWD}
 datadir=output/${tag}
 
@@ -22,7 +24,7 @@ docker run \
        -v ${base}/${datadir}/sherpa:/output \
        -w /output \
        sherpamc/sherpa:2.2.7 \
-       Sherpa -f /cards/sherpa/tt -e 1000
+       Sherpa -f /cards/sherpa/${proc} -e ${events}
 
 #       "ls /cards/sherpa/ && cp /cards/sherpa/tt ./Run.dat && Sherpa && ls -Rltrh"
 
