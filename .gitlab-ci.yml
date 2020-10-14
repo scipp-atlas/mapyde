@@ -22,7 +22,7 @@ stages:
     refs:
       - master
     changes:
-      - "Dockerfiles/"
+      - Dockerfiles/*
 
 build_madgraph:
   extends: .build_image
