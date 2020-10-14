@@ -8,6 +8,10 @@ stages:
 # Push image to latest in docker-registry
 # If tagged, CI_COMMIT_REF_SLUG is the tag name with dashes
 # IMAGE_NAME comes from the CI_JOB_NAME variable (build_xyz -> IMAGE_NAME=xyz)
+#
+# The "Dockerfiles/*" is a bit of a hack, since it rebuilds all images for any changes in that
+# directory.  Tried "Dockerfiles/${CI_JOB_NAME:6}" to only check for that specific file, but
+# that didn't build anything.  Will investigate more later.
 .build_image:
   stage: build
   image:
@@ -22,7 +26,7 @@ stages:
     refs:
       - master
     changes:
-      - "Dockerfiles/${CI_JOB_NAME:6}"
+      - Dockerfiles/*
 
 build_madgraph:
   extends: .build_image
