@@ -30,6 +30,9 @@ build_madgraph:
 build_delphes:
   extends: .build_image
 
+build_pyplotting:
+  extends: .build_image
+
 prepare_inputs:
   image: python:3.7-alpine
   stage: prepare
