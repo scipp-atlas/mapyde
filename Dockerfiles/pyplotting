@@ -6,7 +6,7 @@ WORKDIR /home
 
 SHELL [ "/bin/bash", "-c" ]
 
-RUN python -m pip install --no-cache-dir pandas matplotlib
+RUN python -m pip install --no-cache-dir  pandas matplotlib
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
 CMD ["/bin/bash"]

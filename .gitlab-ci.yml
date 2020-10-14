@@ -22,7 +22,7 @@ stages:
     refs:
       - master
     changes:
-      - Dockerfiles/*
+      - Dockerfiles/${CI_JOB_NAME:6}
 
 build_madgraph:
   extends: .build_image
