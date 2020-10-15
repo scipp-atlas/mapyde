@@ -6,7 +6,7 @@ WORKDIR /home
 
 SHELL ["/bin/bash", "-c"]
 
-RUN python3 -m pip install --no-cache-dir -U setuptools wheel pip && \
+RUN python3 -m pip install --no-cache-dir -U pip setuptools wheel && \
     python3 -m pip install --no-cache-dir pandas matplotlib numpy
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
