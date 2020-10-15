@@ -14,8 +14,9 @@ def make_job(dockerfile_path):
                 "entrypoint": [""],
             },
             "script": [
-                'echo "{"auths":{"$CI_REGISTRY":{"username":"$CI_REGISTRY_USER","password":"$CI_REGISTRY_PASSWORD"}}}" > /kaniko/.docker/config.json',
-                f'/kaniko/executor --context "${{CI_PROJECT_DIR}}" --dockerfile "{dockerfile_path.resolve()}" --destination "${{CI_REGISTRY_IMAGE}}/{job_name}:${{CI_COMMIT_REF_SLUG}}"',
+                'echo $CI_REGISTRY',
+                #'echo "{"auths":{"$CI_REGISTRY":{"username":"$CI_REGISTRY_USER","password":"$CI_REGISTRY_PASSWORD"}}}" > /kaniko/.docker/config.json',
+                #f'/kaniko/executor --context "${{CI_PROJECT_DIR}}" --dockerfile "{dockerfile_path.resolve()}" --destination "${{CI_REGISTRY_IMAGE}}/{job_name}:${{CI_COMMIT_REF_SLUG}}"',
             ],
         }
     }

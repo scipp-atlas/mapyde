@@ -13,8 +13,8 @@ stages:
   only:
     refs:
       - master
-    changes:
-      - Dockerfiles/*
+    #changes:
+    #  - Dockerfiles/*
 
 generate_build_images:
   extends: .dockerfile_changed
@@ -23,8 +23,9 @@ generate_build_images:
   before_script:
     - apk add git
   script:
-    - python ci/generateYaml_dockerBuild.py $(git diff-tree --no-commit-id --name-only -r $CI_COMMIT_SHA --diff-filter=ACMR Dockerfiles/ | tr '\n' ' ')
-                                            --output-file .build_images.yml
+    #- python ci/generateYaml_dockerBuild.py $(git diff-tree --no-commit-id --name-only -r $CI_COMMIT_SHA --diff-filter=ACMR Dockerfiles/ | tr '\n' ' ')
+    #                                        --output-file .build_images.yml
+    - python ci/generateYaml_dockerBuild.py Dockerfiles/pyplotting --output-file .build_images.yml
     - cat .build_images.yml
   artifacts:
     paths:
