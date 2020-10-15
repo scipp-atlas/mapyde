@@ -24,7 +24,7 @@ def make_job(dockerfile_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Build CI configs for dockerfiles.")
     parser.add_argument(
-        "files",
+        "--files",
         metavar="f",
         type=pathlib.Path,
         nargs="+",
