@@ -21,7 +21,7 @@ generate_build_images:
   stage: prebuild
   image: python:3.7-alpine
   script:
-    - python ci/generateYaml_dockerBuild.py  $(git diff-tree --no-commit-id --name-only -r origin/master..HEAD --diff-filter=ACMR Dockerfiles/ | tr '\n' ' ')
+    - python ci/generateYaml_dockerBuild.py $(git diff-tree --no-commit-id --name-only -r HEAD^ --diff-filter=ACMR Dockerfiles/ | tr '\n' ' ')
                                             --output-file .build_images.yml
     - cat .build_images.yml
   artifacts:
