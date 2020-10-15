@@ -1,4 +1,4 @@
-ARG BUILDER_IMAGE=gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master
+ARG BUILDER_IMAGE=atlasamglab/root-base
 FROM ${BUILDER_IMAGE} as builder
 
 USER root
@@ -6,7 +6,7 @@ WORKDIR /home
 
 SHELL [ "/bin/bash", "-c" ]
 
-RUN python -m pip install --no-cache-dir pandas matplotlib
+RUN python3 -m pip install --no-cache-dir pandas matplotlib numpy
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
 CMD ["/bin/bash"]

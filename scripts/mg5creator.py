@@ -20,6 +20,7 @@ parser.add_argument(
     "-r", "--run", default="cards/run/default_LO.dat", help="path to MG5 run card"
 )
 parser.add_argument("-P", "--proc", help="path to MG5 proc card")
+parser.add_argument("-S", "--madspin", help="path to MG5 madspin card", default=None)
 parser.add_argument(
     "-p", "--param", default="cards/param/Higgsino.slha", help="path to SLHA/param card"
 )
@@ -146,11 +147,35 @@ elif int(args.cores)>0:
 else:
     run_mode="set run_mode 2\nset nb_core %d" % int(multiprocessing.cpu_count()/2)
 
-config = f"""
+# figure out if running with madspin or not, and if so, put the card in the right place
+madspin_on="OFF"
+if args.madspin:
+    # Copy the madspin card
+    madspin_card_path = Path(args.madspin).resolve()
+    new_madspin_card_path = output_path.joinpath("madspin_card.dat")
+    log.info(f"MadSpin Card: {new_madspin_card_path}")
+    shutil.copyfile(madspin_card_path, new_madspin_card_path)
+    madspin_on="ON"
+
+    config = f"""
 {run_mode}
 launch PROC_madgraph
+madspin=ON
 shower=Pythia8
+reweight=OFF
+/data/{new_madspin_card_path.name}
+/data/{new_param_card_path.name}
+/data/{new_run_card_path.name}
+set iseed {args.seed}
+done
+"""
+    
+else:
+    config = f"""
+{run_mode}
+launch PROC_madgraph
 madspin=OFF
+shower=Pythia8
 reweight=OFF
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}

@@ -12,6 +12,7 @@ if [ -e ${base}/${datadir} ]; then
     exit
 else
     mkdir -p ${base}/${datadir}/sherpa
+    cp -p ${base}/cards/sherpa/${proc} ${base}/${datadir}/sherpa
 fi
 
 docker run \
@@ -19,14 +20,14 @@ docker run \
        --log-driver=journald \
        --name "${tag}__sherpa" \
        --rm \
-       -v ${base}/cards:/cards \
-       -v ${base}/${datadir}:/data \
        -v ${base}/${datadir}/sherpa:/output \
        -w /output \
        sherpamc/sherpa:2.2.7 \
-       Sherpa -f /cards/sherpa/${proc} -e ${events}
+       /bin/bash -c "Sherpa -f ${proc} -e ${events}"
 
-#       "ls /cards/sherpa/ && cp /cards/sherpa/tt ./Run.dat && Sherpa && ls -Rltrh"
+#       /bin/bash -c "ls -ltrh && ls -ltrh /cards/sherpa/sherpa.tar && tar -xvf /cards/sherpa/sherpa.tar && Sherpa -f /cards/sherpa/${proc} -e ${events}"
+
+mv ${base}/${datadir}/sherpa/sherpa.hepmc.hepmc2g ${base}/${datadir}/sherpa/sherpa.hepmc.gz 
 
 # dump docker logs to text file
 journalctl -u docker CONTAINER_NAME="${tag}__sherpa" > $datadir/docker_sherpa.log

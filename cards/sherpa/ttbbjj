@@ -6,7 +6,7 @@
   FSF:=1.; RSF:=1.; QSF:=1.;                                                                          
   SCALES LOOSE_METS{FSF*MU_F2}{RSF*MU_R2}{QSF*MU_Q2};       
 
-  QCUT:=30.; NJET:=2; LJET:=0;
+  QCUT:=30.; NJET:=0; LJET:=0;
 
   % decays
   HARD_DECAYS=1
@@ -24,7 +24,13 @@
 }(run)
 
 (processes){
-  Process 93 93 -> 6 -6 5 -5 93{NJET}
+  Process 93 93 -> 6 -6 5 -5 5 -5 93{NJET}
+  CKKW sqr(QCUT/E_CMS)
+  Order (*,0); 
+  Integration_Error 0.1;
+  End process;
+
+  Process 93 93 -> 6 -6 5 -5 4 -4 93{NJET}
   CKKW sqr(QCUT/E_CMS)
   Order (*,0); 
   Integration_Error 0.1;
@@ -36,7 +42,14 @@
 }(me)
 
 (selector){
-PT 5 15 E_CMS
-PT -5 15 E_CMS
-Mass 5 -5 30 10000000000
-    }(selector)
+PT 5 20 E_CMS
+PseudoRapidity 5 -5 5
+PT -5 20 E_CMS
+PseudoRapidity -5 -5 5
+Mass 5 -5 10 10000000000
+PT 4 20 E_CMS
+PseudoRapidity 4 -5 5
+PT -4 20 E_CMS
+PseudoRapidity -4 -5 5
+Mass 4 -4 10 10000000000
+}(selector)

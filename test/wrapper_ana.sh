@@ -23,7 +23,6 @@ docker run \
        -v ${base}/scripts:/scripts \
        -v ${base}/${datadir}:/data \
        -w /output \
-       --user $(id -u):$(id -g) \
        --env lumi=${lumi} \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
        'set -x && \
