@@ -20,6 +20,8 @@ generate_build_images:
   extends: .dockerfile_changed
   stage: prebuild
   image: python:3.7-alpine
+  before_script:
+    - apk add git
   script:
     - python ci/generateYaml_dockerBuild.py $(git diff-tree --no-commit-id --name-only -r $CI_COMMIT_SHA --diff-filter=ACMR Dockerfiles/ | tr '\n' ' ')
                                             --output-file .build_images.yml
