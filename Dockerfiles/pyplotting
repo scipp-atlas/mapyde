@@ -9,4 +9,4 @@ SHELL ["/bin/bash", "-c"]
 RUN python3 -m pip install --no-cache-dir pandas matplotlib numpy
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
-CMD ["/bin/bash"]
+CMD [ "/bin/bash" ]
