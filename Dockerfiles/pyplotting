@@ -1,5 +1,4 @@
-ARG BUILDER_IMAGE=atlasamglab/root-base
-FROM ${BUILDER_IMAGE} as builder
+FROM atlasamglab/stats-base:root6.22.02-python3.8
 
 USER root
 WORKDIR /home
