@@ -7,6 +7,8 @@ import array
 import argparse
 import os
 
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -43,7 +45,7 @@ outfile=ROOT.TFile.Open(args.output,"RECREATE")
 h_MET = ROOT.TH1F("MET","MET",100,0,1000)
 
 # make an array to keep MET vals for matplotlib
-a_MET = np.array([])
+a_MET = []
 
 ### Loop through all events in chain
 entry = 0
@@ -64,14 +66,13 @@ for event in chain:
   if event.mjj > 100:
     # if the event passes, fill the histogram.
     h_MET.Fill(MET,weight)
-    np.append(a_MET,MET)
+    a_MET.append(MET)
 
 # write the histogram to the output file.
 h_MET.Write()
 
 # show a matplotlib example
-plt.hist(a_MET,100,(0,1000))
-
+plt.hist(np.array(a_MET),bins=100,range=(0,1000),density=1)
 plt.show()
 
 # close the output file.
