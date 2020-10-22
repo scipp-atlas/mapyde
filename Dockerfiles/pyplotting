@@ -7,7 +7,10 @@ SHELL ["/bin/bash", "-c"]
 
 RUN apt-get -qq -y update && \
     DEBIAN_FRONTEND=noninteractive apt-get -qq -y install --no-install-recommends \
-    tk
+    tk && \
+    apt-get -y autoclean && \
+    apt-get -y autoremove && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install --no-cache-dir -U pip wheel setuptools && \
     python3 -m pip install --no-cache-dir pandas matplotlib numpy
