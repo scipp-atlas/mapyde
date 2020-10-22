@@ -5,6 +5,10 @@ WORKDIR /home
 
 SHELL ["/bin/bash", "-c"]
 
+RUN apt-get install -y \
+    python3-tk \
+    tk
+
 RUN python3 -m pip install --no-cache-dir -U pip wheel setuptools && \
     python3 -m pip install --no-cache-dir pandas matplotlib numpy
 
