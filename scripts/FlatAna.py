@@ -46,6 +46,7 @@ h_MET = ROOT.TH1F("MET","MET",100,0,1000)
 
 # make an array to keep MET vals for matplotlib
 a_MET = []
+a_weights = []
 
 ### Loop through all events in chain
 entry = 0
@@ -67,12 +68,13 @@ for event in chain:
     # if the event passes, fill the histogram.
     h_MET.Fill(MET,weight)
     a_MET.append(MET)
+    a_weights.append(weight)
 
 # write the histogram to the output file.
 h_MET.Write()
 
 # show a matplotlib example
-plt.hist(np.array(a_MET),bins=100,range=(0,1000),density=1)
+plt.hist(np.array(a_MET),bins=100,range=(0,1000),density=1,weights=np.array(a_weights))
 plt.show()
 
 # close the output file.
