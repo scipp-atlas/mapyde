@@ -7,6 +7,9 @@ import array
 import argparse
 import os
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', action='store', default="input.txt")
 parser.add_argument('--inputTree', action='store', default="allev/hftree")
@@ -39,6 +42,9 @@ outfile=ROOT.TFile.Open(args.output,"RECREATE")
 # make a histogram
 h_MET = ROOT.TH1F("MET","MET",100,0,1000)
 
+# make an array to keep MET vals for matplotlib
+a_MET = np.array([])
+
 ### Loop through all events in chain
 entry = 0
 for event in chain:
@@ -58,9 +64,15 @@ for event in chain:
   if event.mjj > 100:
     # if the event passes, fill the histogram.
     h_MET.Fill(MET,weight)
+    np.append(a_MET,MET)
 
 # write the histogram to the output file.
 h_MET.Write()
+
+# show a matplotlib example
+plt.hist(a_MET,100,(0,1000))
+
+plt.show()
 
 # close the output file.
 outfile.Close()
