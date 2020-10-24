@@ -36,7 +36,7 @@ numFiles=chain.GetNtrees()
 print ( "Loaded %s chains..." % numFiles )
 
 # Prevent the canvas from displaying
-ROOT.gROOT.SetBatch(True)
+#ROOT.gROOT.SetBatch(True)
 
 # a histogram for our output
 outfile=ROOT.TFile.Open(args.output,"RECREATE")
@@ -70,6 +70,12 @@ for event in chain:
     a_MET.append(MET)
     a_weights.append(weight)
 
+# show the ROOT output on a TCanvas.  To get the canvas to show up while running the script,
+# make sure to run in interactive python mode: "python -i FlatAna.py --input ..."
+canvas = ROOT.TCanvas("MET_canvas","MET canvas",800,600)
+canvas.SetLogy(ROOT.kTRUE)
+h_MET.Draw()
+    
 # write the histogram to the output file.
 h_MET.Write()
 
@@ -78,6 +84,6 @@ plt.hist(np.array(a_MET),bins=100,range=(0,1000),density=1,weights=np.array(a_we
 plt.show()
 
 # close the output file.
-outfile.Close()
+#outfile.Close()
   
 print ("Done!")
