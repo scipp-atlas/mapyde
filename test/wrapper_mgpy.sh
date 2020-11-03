@@ -77,7 +77,7 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph"
     
     # dump docker logs to text file
-    journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > $datadir/docker_mgpy.log
+    journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > ${database}/${datadir}/docker_mgpy.log
 fi
 
 
