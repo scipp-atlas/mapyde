@@ -4,11 +4,13 @@ set -e # exit when any command fails
 tag=${1:-"test_Higgsino_001"}
 delphescard=${2:-"delphes_card_ATLAS.tcl"}
 cores=${3:-"1"}
+clobber_delphes=${4:-"false"}
 base=${PWD}
-datadir=output/${tag}
+database=/data/users/mhance/SUSY
+datadir=${tag}
 
 # first check if delphes output is already there.  If so, then don't clobber it unless told to.
-if [[ -e ${datadir}/delphes && $4 != clobber ]]; then
+if [[ -e ${database}/${datadir}/delphes && $clobber_delphes != true ]]; then
     echo "Delphes area in ${datadir} already exists, not running job.  Remove or rename it, or force clobbering."
     exit 0
 fi
@@ -21,7 +23,7 @@ docker run \
        --name "${tag}__delphes" \
        --rm \
        -v ${base}/cards:/cards \
-       -v ${base}/${datadir}:/data \
+       -v ${database}/${datadir}:/data \
        -w /output \
        --env delphescard=${delphescard} \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
@@ -33,5 +35,5 @@ docker run \
         rsync -rav --exclude hepmc . /data/delphes'
 
 # dump docker logs to text file
-journalctl -u docker CONTAINER_NAME="${tag}__delphes" > $datadir/docker_delphes.log
+journalctl -u docker CONTAINER_NAME="${tag}__delphes" > ${database}/${datadir}/docker_delphes.log
 

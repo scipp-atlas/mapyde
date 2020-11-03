@@ -103,6 +103,7 @@ new_run_card_path.write_text(
 )
 
 # -- now specific opts.  may want to reverse this order at some point, and do the specific before global.
+# Note: this will only work with options in the run card that contain a "!" in the line, indicating a comment at the end of the line.
 if args.runoption:
     runsubstitution = dict(args.runoption)
     pattern = re.compile(
