@@ -21,11 +21,11 @@ clobber_mgpy=false
 clobber_delphes=false
 clobber_ana=false
 database=/data/users/mhance/SUSY
-ktdurham=-1
+ktdurham="-1"
 pythia_card="cards/pythia/pythia8_card.dat"
 base=${PWD}
 
-while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:" opt; do
+while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -42,6 +42,7 @@ while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:" opt; do
 	j) ptj=$OPTARG;;
 	S) dM=$OPTARG;;
 	y) pythia_card=$OPTARG;;
+	k) ktdurham=$OPTARG;;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -79,5 +80,3 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
     # dump docker logs to text file
     journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > ${database}/${datadir}/docker_mgpy.log
 fi
-
-
