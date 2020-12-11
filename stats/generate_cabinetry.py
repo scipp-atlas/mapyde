@@ -64,8 +64,8 @@ for jet_name, jet_selection in jet_selections.items():
 
 
 for center_of_mass in ["13", "14", "100"]:
-    for sig_path in pathlib.Path("./output").glob(
-        f"{SIGNAL_SAMPLE_PREFIX}_{center_of_mass}_*"
+    for sig_path in pathlib.Path("./o2").glob(
+        f"{SIGNAL_SAMPLE_PREFIX}_{center_of_mass}_*mjj_all.root"
     ):
         config = copy.deepcopy(base_config)
         # Define Samples
@@ -78,7 +78,7 @@ for center_of_mass in ["13", "14", "100"]:
                 "Data": False,
             }
         )
-        for path in pathlib.Path("./output").glob(f"Vjj*_{center_of_mass}.root"):
+        for path in pathlib.Path("./o2").glob(f"Vjj*_{center_of_mass}*.root"):
             config["Samples"].append(
                 {
                     "Name": path.name.replace(".root", ""),

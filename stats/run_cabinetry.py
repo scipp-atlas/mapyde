@@ -1,7 +1,7 @@
 import cabinetry
 import sys
 
-cabinetry_config = cabinetry.configuration.read(sys.argv[1])
+cabinetry_config = cabinetry.configuration.load(sys.argv[1])
 
 # create template histograms
 cabinetry.template_builder.create_histograms(cabinetry_config)
