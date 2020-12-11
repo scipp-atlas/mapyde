@@ -73,7 +73,7 @@ for center_of_mass in ["13", "14", "100"]:
             {
                 "Name": sig_path.name.replace(".root", ""),
                 "Tree": "presel/hftree",
-                "SamplePath": str(sig_path.resolve()),
+                "SamplePaths": str(sig_path.resolve()),
                 "Weight": "weight",
                 "Data": False,
             }
@@ -83,7 +83,7 @@ for center_of_mass in ["13", "14", "100"]:
                 {
                     "Name": path.name.replace(".root", ""),
                     "Tree": "presel/hftree",
-                    "SamplePath": str(path.resolve()),
+                    "SamplePaths": str(path.resolve()),
                     "Weight": "weight",
                     "Data": False,
                 }
@@ -94,7 +94,7 @@ for center_of_mass in ["13", "14", "100"]:
             {
                 "Name": "data",
                 "Tree": "presel/hftree",
-                "SamplePath": str(sig_path.resolve()),
+                "SamplePaths": str(sig_path.resolve()),
                 "Data": True,
             }
         )
