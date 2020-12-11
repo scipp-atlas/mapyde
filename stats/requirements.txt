@@ -1,0 +1,17 @@
+attrs==20.3.0
+awkward==1.0.0
+awkward1==1.0.0
+boost-histogram==0.11.1
+cabinetry==0.1.5
+click==7.1.2
+iminuit==1.5.4
+jsonpatch==1.28
+jsonpointer==2.0
+jsonschema==3.2.0
+numpy==1.19.4
+pyhf==0.5.3
+pyrsistent==0.17.3
+PyYAML==5.3.1
+scipy==1.5.4
+six==1.15.0
+tqdm==4.54.1
