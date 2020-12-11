@@ -9,7 +9,7 @@ base_config = {
         "Measurement": "main",
         "POI": "mu",
         "HistogramFolder": "histograms/",
-        "InputPath": "{SamplePath}",
+        "InputPath": "{SamplePaths}",
     },
     "Regions": [],
     "Samples": [],
