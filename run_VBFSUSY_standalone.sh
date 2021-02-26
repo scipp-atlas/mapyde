@@ -103,7 +103,7 @@ else
 	-x ${mmjjmax} \
 	-e ${deltaeta} \
 	-E ${ecms} \
-	-c 20 \
+	-c ${cores} \
 	-k ${ktdurham} \
 	-N ${nevents} \
 	-d ${seed} \
