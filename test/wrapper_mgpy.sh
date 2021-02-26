@@ -22,6 +22,7 @@ clobber_delphes=false
 clobber_ana=false
 database=/data/users/${USER}/SUSY
 ktdurham="-1"
+seed=0
 pythia_card="cards/pythia/pythia8_card.dat"
 base=${PWD}
 
@@ -44,6 +45,7 @@ while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:s" opt; do
 	y) pythia_card=$OPTARG;;
 	k) ktdurham=$OPTARG;;
 	s) slepton=true;;
+	d) seed=$OPTARG;;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -71,6 +73,7 @@ fi
     -c ${cores} \
     -E ${ecms}000 \
     -n ${nevents} \
+    -s ${seed} \
     -t ${tag}
 
 if [[ $? == 0 || ${clobber_mgpy} == true ]]; then

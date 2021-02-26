@@ -24,6 +24,7 @@ base=${PWD}
 database=/data/users/${USER}/SUSY
 datadir=${tag}
 ktdurham=-1
+seed=0
 pythia_card="cards/pythia/pythia8_card_dipoleRecoil.dat"
 
 
@@ -52,6 +53,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAgdaB:b:j:S:y:k:" opt; do
 	S) dM=$OPTARG;;
 	y) pythia_card=$OPTARG;;
 	k) ktdurham=$OPTARG;;
+	d) seed=$OPTARG;;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -104,6 +106,7 @@ else
 	-c 20 \
 	-k ${ktdurham} \
 	-N ${nevents} \
+	-d ${seed} \
 	${clobberopt} \
 	${tag}
 fi

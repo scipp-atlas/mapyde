@@ -4,9 +4,12 @@
 deltaeta=3.0
 nevents=50000
 
-for params in Higgsino WinoBino; do
+# Higgsino WinoBino
+for params in Higgsino; do
+    # 13 100
     for ecms in 100; do
-	for mass in 150 250 2000; do
+	# 150 250 2000
+	for mass in 250; do
 	    min_mjj=0.5
             mmjj_step=2
             max_mmjj_TeV=4.5
@@ -25,6 +28,7 @@ for params in Higgsino WinoBino; do
                     mmjj_max="-1"
 		fi
 
+		seed=0
 		./run_VBFSUSY_standalone.sh \
 		    -E ${ecms} \
 		    -M ${mass} \
@@ -34,7 +38,8 @@ for params in Higgsino WinoBino; do
 		    -N ${nevents} \
 		    -m ${mmjj} \
 		    -x ${mmjj_max} \
-		    -e ${deltaeta}
+		    -e ${deltaeta} \
+		    -d ${seed}
 
 	    done
 	done
