@@ -53,6 +53,7 @@ done
 shift $(($OPTIND - 1))
 tag=${1:-"test_Higgsino_001"}
 datadir=${tag}
+mkdir -p ${database}
 
 mN1=$(bc <<< "scale=2; ${mass}-${dM}")
 
@@ -61,6 +62,8 @@ if [[ ${slepton} == true ]]; then
 else
     massopts="-m MN2 ${mass} -m MC1 ${mass}"
 fi
+
+
 
 ./scripts/mg5creator.py \
     -o ${database} \
