@@ -26,7 +26,7 @@ seed=0
 pythia_card="cards/pythia/pythia8_card.dat"
 base=${PWD}
 
-while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:s" opt; do
+while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;

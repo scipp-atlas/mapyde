@@ -29,7 +29,7 @@ pythia_card="cards/pythia/pythia8_card_dipoleRecoil.dat"
 
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAgdaB:b:j:S:y:k:" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAgdaB:b:j:S:y:k:d:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
