@@ -33,7 +33,7 @@ for params in Higgsino; do
 		    -E ${ecms} \
 		    -M ${mass} \
 		    -P VBFSUSY_EWKQCD \
-		    -c 20 \
+		    -c 4 \
 		    -p ${params} \
 		    -N ${nevents} \
 		    -m ${mmjj} \

@@ -57,7 +57,7 @@ for EWKQCD in "EWK" "QCD"; do
 		-y cards/pythia/pythia8_card_dipoleRecoil.dat \
 		-R mmjj ${mmjj} -R mmjjmax ${mmjjmax} -R deltaeta ${deltaeta}  -R mmll 40 \
 		-E "${ecms}000" \
-		-c 20 \
+		-c 4 \
 		-s ${seed} \
 		-n ${nevents} \
 		-t ${tag}
