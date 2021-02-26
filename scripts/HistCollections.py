@@ -4,7 +4,7 @@ import math
 from array import array
 
 class DelphesEvent:
-    def __init__(self, event):
+    def __init__(self, event, highlumi=False):
         self.event=event
         for e in event.Event:
             self.weight=e.Weight
@@ -15,30 +15,38 @@ class DelphesEvent:
             self.met= met.P4()
             break # only one MET
 
-        #self.leptons=[]
+        self.leptons=[]
         self.elecs=[]
         for e in event.Electron:
             if e.PT>25 and abs(e.Eta)<2.5:
                 self.elecs.append(e)
+                self.leptons.append(e)
         self.muons=[]
         for m in event.Muon:
             if m.PT>25 and abs(m.Eta)<2.5:
                 self.muons.append(m)
+                self.leptons.append(m)
 
+        self.sortedleptons=sorted(self.leptons,key=lambda lep:lep.PT)
+        
         self.jets=[]
         self.exclJets=[]
         self.tautags=[]
         self.btags=[]
 
+        self.btageta=(2.5 if not highlumi else 4.0)
+        
         for j in event.Jet:
             if j.TauTag:
                 self.tautags.append(j)
-            if j.BTag and abs(j.Eta)<2.5:
+            if j.BTag and abs(j.Eta)<self.btageta:
                 self.btags.append(j)
             if j.PT>25 and abs(j.Eta)<4.5:
                 self.jets.append(j)
                 if not (j.TauTag or j.BTag):
                     self.exclJets.append(j)
+
+        self.sortedjets=sorted(self.jets,key=lambda jet:jet.PT)
 
 class Hists:
     def addbranch(self, bname, btype, blen=1, default=0):
@@ -316,7 +324,176 @@ class Hists:
         self.tree.Fill()
 
 #=====================================================================
+
+
+#=====================================================================
+class tthhTree:
+    def addbranch(self, bname, btype, blen=1, default=0):
+        self.branches[bname] = array(btype,blen*[default])
+        bnamemod=bname
+        if blen>1:
+            bnamemod="%s[%d]" % (bname,blen)
+        self.tree.Branch(bname, self.branches[bname], '%s/%s' % (bnamemod,btype.upper()))
+            
+
+    def __init__(self, tag, topdir, detaillevel=99): 
+        self.topdir=topdir
+        self.hists={}
+        self.tag=tag
+
+        self.newdir=topdir.mkdir(tag)
+        self.newdir.cd()
+
+        self.detaillevel=detaillevel
+        self.collections={}
+    
+        self.branches={}
+        self.tree = ROOT.TTree("hftree","hftree")
+        for i in ("numlep", "numjet", "btag", "srap", "cent", "m_bb", "h_b", "chi", "met", "metphi", "weight"):
+            self.addbranch(i, 'f')
+
+        self.maxleptons=4
+        for j in range(1,self.maxleptons):
+            for i in ("pT", "eta", "phi"):
+                self.addbranch("lepton%d%s" % (j,i), 'f')
+            for i in ("mt", "dr"):
+                self.addbranch("%s%d" % (i,j), 'f')
+
+        self.maxjets=12
+        for j in range(1,self.maxjets):
+            for i in ("pT", "eta", "phi", "b"):
+                self.addbranch("jet%d%s" % (j,i), 'f')
+
+
+    def write(self,):
+        self.newdir.cd()
+        for i,k in self.hists.iteritems():
+            k.Write()
+        for i,k in self.collections.iteritems():
+            k.write()
+        self.tree.Write()
+        self.topdir.cd()
+
+    def add(self,coll):
+        for i,k in self.hists.iteritems():
+            if i in coll.hists: k.Add(coll.hists[i])
+        for i,k in self.collections.iteritems():
+            if i in coll.collections: k.add(coll.collections[i])
+    
+    def fill(self,event,weight=0):
         
+        defaultfill=-999
+
+        for i,k in self.collections.iteritems():
+            k.fill(event,weight)
+
+        self.branches["weight"][0] = weight
+
+        nbjets=len(event.btags)
+    
+        ### Fill generic hists
+        self.branches["met"][0]    = event.met.Pt()
+        self.branches["metphi"][0] = event.met.Phi()
+        self.branches["numlep"][0] = len(event.sortedleptons)
+        self.branches["btag"][0]   = nbjets
+        self.branches["numjet"][0] = len(event.jets)
+
+        ### Jets
+        jetCount=1
+        cen_sum_E=0
+        cen_sum_Pt=0
+        for aJet in event.sortedjets:
+            self.branches["jet%dpT" % jetCount][0]  = aJet.PT
+            self.branches["jet%deta" % jetCount][0] = aJet.Eta
+            self.branches["jet%dphi" % jetCount][0] = aJet.Phi
+            self.branches["jet%db" % jetCount][0]  = aJet.BTag and aJet.PT>25 and abs(aJet.Eta)<event.btageta
+            
+            # Centrality
+            cen_sum_E += aJet.P4().E()
+            cen_sum_Pt += aJet.PT
+
+            jetCount=jetCount+1
+            if jetCount>=self.maxjets: break
+            
+        # fill in dummy values for "missing" jets
+        for jetCount in range(jetCount,self.maxjets):
+            self.branches["jet%dpT" % jetCount][0]  = -999
+            self.branches["jet%deta" % jetCount][0] = -9
+            self.branches["jet%dphi" % jetCount][0] = -9
+            self.branches["jet%db" % jetCount][0]  = -9
+
+        # centrality
+        if cen_sum_E>0:
+            self.branches["cent"][0] = cen_sum_Pt/cen_sum_E
+        else:
+            self.branches["cent"][0] = -9999
+
+        # btagged jets separately
+        HB_sum_Pt=0
+        etasum=0
+        btjmaxPt=0
+        btjmaxM=0
+        for aJet in event.btags:
+            HB_sum_Pt += aJet.PT
+            for bJet in event.btags:
+                if aJet is bJet: continue
+                etasum += abs(aJet.Eta-bJet.Eta)
+                vec_sum_Pt = (aJet.P4()+bJet.P4()).Pt()
+                if vec_sum_Pt>btjmaxPt:
+                    btjmaxPt=vec_sum_Pt
+                    btjmaxM = (aJet.P4()+bJet.P4()).M()
+        # srap
+        etasum_N=-999
+        if nbjets>1:
+            etasum_N = etasum/(nbjets**2-nbjets)
+        self.branches["srap"][0] = etasum_N
+            
+        # mbb
+        self.branches["m_bb"][0] = btjmaxM
+
+        # H_b
+        self.branches["h_b"][0] = HB_sum_Pt
+
+        #chi^2
+        chisq=[-999]
+        for i1 in range(0,nbjets):
+            for i2 in range(i1+1,nbjets):
+                for i3 in range(i2+1,nbjets):
+                    for i4 in range(i3+1,nbjets):
+                        chisq.append( ((event.btags[i1].P4()+event.btags[i2].P4()).M()-120.)**2 +
+                                      ((event.btags[i3].P4()+event.btags[i4].P4()).M()-120.)**2 )
+                        chisq.append( ((event.btags[i1].P4()+event.btags[i3].P4()).M()-120.)**2 +
+                                      ((event.btags[i2].P4()+event.btags[i4].P4()).M()-120.)**2 )
+                        chisq.append( ((event.btags[i1].P4()+event.btags[i4].P4()).M()-120.)**2 +
+                                      ((event.btags[i2].P4()+event.btags[i3].P4()).M()-120.)**2 )
+        self.branches["chi"][0]=min(chisq)
+
+        ### Leptons
+        lepCount=1
+        for aLep in event.sortedleptons:
+            self.branches["lepton%dpT" % lepCount][0] = aLep.PT
+            self.branches["lepton%dpT" % lepCount][0] = aLep.Eta
+            self.branches["lepton%dpT" % lepCount][0] = aLep.Phi
+            self.branches["mt%d" % lepCount][0] = ROOT.TMath.Sqrt(2*event.met.Pt()*aLep.PT*(1-ROOT.TMath.Cos(aLep.P4().DeltaPhi(event.met))))
+            mindr=999
+            for aJet in event.sortedjets:
+                mindr=min(mindr,aLep.P4().DrEtaPhi(aJet.P4()))
+            self.branches["dr%d" % lepCount][0] = mindr
+            lepCount=lepCount+1
+            if lepCount>=self.maxleptons: break
+            
+        for lepCount in range(lepCount,self.maxleptons):
+            self.branches["lepton%dpT" % lepCount][0] = -999
+            self.branches["lepton%dpT" % lepCount][0] = -9
+            self.branches["lepton%dpT" % lepCount][0] = -9
+            self.branches["mt%d" % lepCount][0] = -999
+            self.branches["dr%d" % lepCount][0] = -999
+            
+
+        self.tree.Fill()
+
+#=====================================================================
+
 
 #======================================================================
 #

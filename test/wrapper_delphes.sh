@@ -6,7 +6,7 @@ delphescard=${2:-"delphes_card_ATLAS.tcl"}
 cores=${3:-"1"}
 clobber_delphes=${4:-"false"}
 base=${PWD}
-database=/data/users/mhance/SUSY
+database=${5:-/data/users/${USER}/SUSY}
 datadir=${tag}
 
 # first check if delphes output is already there.  If so, then don't clobber it unless told to.

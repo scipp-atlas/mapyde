@@ -20,12 +20,12 @@ skip_ana=false
 clobber_mgpy=false
 clobber_delphes=false
 clobber_ana=false
-database=/data/users/mhance/SUSY
+database=/data/users/${USER}/SUSY
 ktdurham="-1"
 pythia_card="cards/pythia/pythia8_card.dat"
 base=${PWD}
 
-while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:" opt; do
+while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:s" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -43,6 +43,7 @@ while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:" opt; do
 	S) dM=$OPTARG;;
 	y) pythia_card=$OPTARG;;
 	k) ktdurham=$OPTARG;;
+	s) slepton=true;;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -53,13 +54,19 @@ datadir=${tag}
 
 mN1=$(bc <<< "scale=2; ${mass}-${dM}")
 
+if [[ ${slepton} == true ]]; then
+    massopts="-m MSLEP ${mass}"
+else
+    massopts="-m MN2 ${mass} -m MC1 ${mass}"
+fi
+
 ./scripts/mg5creator.py \
     -o ${database} \
     -P cards/process/${proc} \
     -r cards/run/default_LO.dat \
     -p cards/param/${params}.slha \
     -y ${pythia_card} \
-    -m MN1 ${mN1} -m MN2 ${mass} -m MC1 ${mass} \
+    -m MN1 ${mN1} ${massopts} \
     -R ptj ${ptj} -R deltaeta ${deltaeta} -R mmjj ${mmjj} -R mmjjmax ${mmjjmax} -R ktdurham ${ktdurham} \
     -c ${cores} \
     -E ${ecms}000 \

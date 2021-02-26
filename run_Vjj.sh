@@ -1,7 +1,7 @@
 #!/bin/bash
 #set -e # exit when any command fails
 
-database=/data/users/mhance/SUSY
+database=/data/users/${USER}/SUSY
 
 # be careful of this, it will remove existing files if set to "clobber"
 clobber_ana=""
