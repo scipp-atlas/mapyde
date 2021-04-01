@@ -10,9 +10,10 @@ clobber_delphes=""
 seed=1
 
 for EWKQCD in "EWK" "QCD"; do
-    for ecms in 100; do # omit 14 for re-running analysis
-	max_mmjj_TeV=10
+    for ecms in 13; do # omit 14 for re-running analysis
+	max_mmjj_TeV=1
 	mmjj_step=1
+	mmjj_low=1
 	if [[ $ecms == 100 ]]; then
 	    max_mmjj_TeV=10
 	    mmjj_step=20
@@ -72,7 +73,7 @@ for EWKQCD in "EWK" "QCD"; do
 		       -v ${database}/${datadir}:/data \
 		       -w /output \
 		       gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph-2.9:master \
-		       "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph"
+		       "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph  && chown -R $UID /data/madgraph" #  && chown -R $(id -u) /data/madgraph 
 		
 		# dump docker logs to text file
 		journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > $database/$datadir/docker_mgpy.log

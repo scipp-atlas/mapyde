@@ -26,10 +26,10 @@ datadir=${tag}
 ktdurham=-1
 seed=0
 pythia_card="cards/pythia/pythia8_card_dipoleRecoil.dat"
-
+anascript="SimpleAna.py"
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAgdaB:b:j:S:y:k:d:" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAgdaB:b:j:S:y:k:d:C:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -54,6 +54,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAgdaB:b:j:S:y:k:d:" opt; do
 	y) pythia_card=$OPTARG;;
 	k) ktdurham=$OPTARG;;
 	d) seed=$OPTARG;;
+	C) anascript=$OPTARG;;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -62,6 +63,7 @@ done
 tag="VBFSUSY_${ecms}_${params}_${mass}_mmjj_${mmjj}_${mmjjmax}${suffix}"
 
 # some modifications based on run parameters
+lumi=1
 if [[ $ecms == 13 ]]; then
     if [ "$mass" -ge "1000" ]; then
 	exit
@@ -123,5 +125,7 @@ fi
 if $skip_ana; then
     echo "Skipping ana for this job."
 else
-    ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana}
+    set -x
+    ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${anascript}
+    set +x
 fi

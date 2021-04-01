@@ -88,7 +88,7 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   -v ${database}/${datadir}:/data \
 	   -w /output \
 	   gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
-	   "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph"
+	   "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph && chown -R $UID /data/madgraph"
     
     # dump docker logs to text file
     journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > ${database}/${datadir}/docker_mgpy.log

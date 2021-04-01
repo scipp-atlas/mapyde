@@ -2,17 +2,20 @@
 #set -e # exit when any command fails
 
 deltaeta=3.0
-nevents=50000
+nevents=5000
+cores=12
+#anascript="SimpleAna.py"
+anascript="Delphes2SA.py"
 
 # Higgsino WinoBino
 for params in Higgsino; do
     # 13 100
-    for ecms in 100; do
+    for ecms in 13; do
 	# 150 250 2000
 	for mass in 250; do
 	    min_mjj=0.5
-            mmjj_step=2
-            max_mmjj_TeV=4.5
+            mmjj_step=0.5
+            max_mmjj_TeV=0.5
             if [[ $ecms == 100 ]]; then
 		# don't slice for now
 		nevents=200000
@@ -29,18 +32,19 @@ for params in Higgsino; do
 		fi
 
 		seed=0
+		# -P VBFSUSY_EWKQCD \
 		./run_VBFSUSY_standalone.sh \
 		    -E ${ecms} \
 		    -M ${mass} \
-		    -P VBFSUSY_EWKQCD \
-		    -c 4 \
+		    -P charginos \
+		    -c ${cores} \
 		    -p ${params} \
 		    -N ${nevents} \
 		    -m ${mmjj} \
 		    -x ${mmjj_max} \
 		    -e ${deltaeta} \
-		    -d ${seed}
-
+		    -d ${seed} \
+		    -C ${anascript} 
 	    done
 	done
     done
