@@ -22,10 +22,11 @@ docker run \
        --log-driver=journald \
        --name "${tag}__hists" \
        --rm \
+       --user $(id -u):$(id -g) \
        -v ${base}/cards:/cards \
        -v ${base}/scripts:/scripts \
        -v ${database}/${datadir}:/data \
-       -w /output \
+       -w /tmp \
        --env lumi=${lumi} \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
        "set -x && \

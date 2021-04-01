@@ -21,10 +21,11 @@ set -x
 docker run \
        --log-driver=journald \
        --name "${tag}__delphes" \
+       --user $(id -u):$(id -g) \
        --rm \
        -v ${base}/cards:/cards \
        -v ${database}/${datadir}:/data \
-       -w /output \
+       -w /tmp \
        --env delphescard=${delphescard} \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
        'set -x && \

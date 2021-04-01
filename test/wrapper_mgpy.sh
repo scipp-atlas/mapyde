@@ -84,11 +84,12 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   --log-driver=journald \
 	   --name "${tag}__mgpy" \
 	   --rm \
+	   --user $(id -u):$(id -g) \
 	   -v ${base}/cards:/cards \
 	   -v ${database}/${datadir}:/data \
-	   -w /output \
+	   -w /tmp \
 	   gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
-	   "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph && chown -R $UID /data/madgraph"
+	   "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph"
     
     # dump docker logs to text file
     journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > ${database}/${datadir}/docker_mgpy.log
