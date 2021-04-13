@@ -20,7 +20,7 @@ RUN apt-get -qq -y update && \
       bash-completion \
       python3-dev \
       less \
-      stat \
+      coreutils \
       wget && \  
     apt-get -y autoclean && \
     apt-get -y autoremove && \
