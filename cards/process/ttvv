@@ -1,0 +1,6 @@
+import model sm
+generate     p p > t t~ h z @1
+add process  p p > t t~ h w @2
+add process  p p > t t~ w z @3
+add process  p p > t t~ z z @4
+output -f

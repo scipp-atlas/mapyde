@@ -1,0 +1,4 @@
+import model sm
+define j = u u~ d d~ s s~ g
+generate     p p > t t~ b b~ j j QED=0 @1
+output -f
