@@ -26,6 +26,7 @@ set -x
 
 # to analyze delphes output
 if $docker; then
+
     docker run \
 	--log-driver=journald \
 	--name "${tag}__hists" \
@@ -42,17 +43,21 @@ if $docker; then
     
     # dump docker logs to text file
     journalctl -u docker CONTAINER_NAME="${tag}__hists" > ${database}/${datadir}/docker_ana.log
+
 else
+    
+    mkdir singularity_sandbox
     singularity exec \
 	--contain \
 	--no-home \
 	--cleanenv \
-	-B ${PWD}:/work \
+	-B ${PWD}/singularity_sandbox:/work \
 	-B ${base}/scripts:/scripts \
 	-B ${database}/${datadir}:/data \
 	--env lumi=${lumi} \
-	docker://gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
+	${base}/singularity/delphes.sif \
 	bash -c "set -x && cd /work && \
         /scripts/${script} --input /data/delphes/delphes.root --output histograms.root --lumi ${lumi} && \
-        rsync -rav . /data/analysis && rm -rf *" | tee ${database}/${datadir}/docker_ana.log
+        rsync -rav histograms.root /data/analysis/" | tee ${database}/${datadir}/docker_ana.log
+    rm -rf singularity_sandbox
 fi

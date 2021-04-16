@@ -36,11 +36,11 @@ seed=$(($seed+$seedoffset))
 
 datadir=${tag}/${seed}
 
-echo "Executing run_tthh.sh with seed $seed on machine $HOSTNAME"
+echo "Executing run_tthh.sh with tag ${tag} seed $seed on machine $HOSTNAME"
 
 if [[ $madgraphsherpa == "madgraph" ]]; then
 
-    
+    echo "-- running madgraph for ${proc}"
     params="sm"
     
     # ---------------------------------------------------------------------------------------
@@ -82,23 +82,26 @@ if [[ $madgraphsherpa == "madgraph" ]]; then
 		-B $PWD:/work \
 		-B ${base}/cards:/cards \
 		-B ${database}/${datadir}:/data \
-		docker://gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
-		bash -c "df -h && cd /work && mg5_aMC /data/run.mg5 && rsync -rav --exclude Source --exclude lib --exclude bin PROC_madgraph /data/madgraph && rm -rf *" \
+		${base}/singularity/madgraph-2_7_3.sif \
+		bash -c "df -h && cd /work && mg5_aMC /data/run.mg5 && rsync -rav --exclude Source --exclude lib --exclude bin PROC_madgraph /data/madgraph" \
 		| tee $database/$datadir/docker_mgpy.log
 	fi
     fi
     
 else
 
+    echo "-- running sherpa for ${proc}"
     ${base}/test/wrapper_sherpa.sh ${proc} ${ecms} ${nevents} ${tag} ${seed}
 	
 fi
 
 
 # should not clobber existing output
+echo "-- running delphes"
 ${base}/test/wrapper_delphes.sh ${tag} ${delphescard} 1 ${clobber_delphes} ${database} ${seed}
  
 # should not clobber existing output
+echo "-- running ana"
 ${base}/test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${seed} "tthhAna.py"
 
 

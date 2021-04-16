@@ -22,6 +22,7 @@ if [[ $HOSTNAME == slugpu* ]]; then
 fi
 
 if $docker; then
+
     docker run \
 	--log-driver=journald \
 	--name "${tag}__delphes" \
@@ -43,21 +44,23 @@ if $docker; then
     journalctl -u docker CONTAINER_NAME="${tag}__delphes" > ${database}/${datadir}/docker_delphes.log
 
 else
+
+    mkdir singularity_sandbox
     singularity exec \
 	--contain \
 	--no-home \
 	--cleanenv \
-	-B ${PWD}:/work \
+	-B ${PWD}/singularity_sandbox:/work \
 	-B ${base}/cards:/cards \
 	-B ${database}/${datadir}:/data \
 	--env delphescard=${delphescard} \
-	docker://gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
+	${base}/singularity/delphes.sif \
 	bash -c 'cd /work && set -x && \
         cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
         gunzip hepmc.gz && \
 	/bin/ls -ltrh --color && \
         /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/${delphescard} delphes.root hepmc && \
-        rsync -rav --exclude hepmc . /data/delphes && rm -rf *'  | tee ${database}/${datadir}/docker_delphes.log
+        rsync -rav delphes.root /data/delphes/'  | tee ${database}/${datadir}/docker_delphes.log
+    rm -rf singularity_sandbox
+
 fi
-
-
