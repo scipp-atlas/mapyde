@@ -6,6 +6,7 @@ from array import array
 class DelphesEvent:
     def __init__(self, event, highlumi=False):
         self.event=event
+        self.truth=-1
         for e in event.Event:
             self.weight=e.Weight
             break # only one event
@@ -26,7 +27,6 @@ class DelphesEvent:
             if m.PT>25 and abs(m.Eta)<2.5:
                 self.muons.append(m)
                 self.leptons.append(m)
-
         self.sortedleptons=sorted(self.leptons,key=lambda lep:lep.PT)
         
         self.jets=[]
@@ -349,20 +349,27 @@ class tthhTree:
     
         self.branches={}
         self.tree = ROOT.TTree("hftree","hftree")
-        for i in ("numlep", "numjet", "btag", "srap", "cent", "m_bb", "h_b", "chi", "met", "metphi", "weight"):
+        for i in ("srap", "cent", "m_bb", "h_b", "chi", "met", "metphi", "weights"):
             self.addbranch(i, 'f')
+        for i in ("numlep", "numjet", "btag", "truth"):
+            self.addbranch(i, 'i')
 
         self.maxleptons=4
         for j in range(1,self.maxleptons):
             for i in ("pT", "eta", "phi"):
                 self.addbranch("lepton%d%s" % (j,i), 'f')
+
+            self.addbranch("lepton%dflav" % j, 'i')
+
             for i in ("mt", "dr"):
                 self.addbranch("%s%d" % (i,j), 'f')
 
         self.maxjets=12
         for j in range(1,self.maxjets):
-            for i in ("pT", "eta", "phi", "b"):
+            for i in ("pT", "eta", "phi"):
                 self.addbranch("jet%d%s" % (j,i), 'f')
+            for i in ("b", "c", "btag", "flavor"):
+                self.addbranch("jet%d%s" % (j,i), 'i')
 
 
     def write(self,):
@@ -387,12 +394,13 @@ class tthhTree:
         for i,k in self.collections.iteritems():
             k.fill(event,weight)
 
-        self.branches["weight"][0] = weight
+        self.branches["weights"][0] = weight
+        self.branches["truth"][0] = event.truth
 
         nbjets=len(event.btags)
     
         ### Fill generic hists
-        self.branches["met"][0]    = event.met.Pt()
+        self.branches["met"][0]    = event.met.Pt()*1000.
         self.branches["metphi"][0] = event.met.Phi()
         self.branches["numlep"][0] = len(event.sortedleptons)
         self.branches["btag"][0]   = nbjets
@@ -403,10 +411,13 @@ class tthhTree:
         cen_sum_E=0
         cen_sum_Pt=0
         for aJet in event.sortedjets:
-            self.branches["jet%dpT" % jetCount][0]  = aJet.PT
+            self.branches["jet%dpT" % jetCount][0]  = aJet.PT*1000.
             self.branches["jet%deta" % jetCount][0] = aJet.Eta
             self.branches["jet%dphi" % jetCount][0] = aJet.Phi
-            self.branches["jet%db" % jetCount][0]  = aJet.BTag and aJet.PT>25 and abs(aJet.Eta)<event.btageta
+            self.branches["jet%dbtag" % jetCount][0]  = aJet.BTag and aJet.PT>25 and abs(aJet.Eta)<event.btageta
+            self.branches["jet%db" % jetCount][0] = 1 if aJet.Flavor==5 else 0
+            self.branches["jet%dc" % jetCount][0] = 1 if aJet.Flavor==4 else 0
+            self.branches["jet%dflavor" % jetCount][0] = aJet.Flavor
             
             # Centrality
             cen_sum_E += aJet.P4().E()
@@ -449,10 +460,10 @@ class tthhTree:
         self.branches["srap"][0] = etasum_N
             
         # mbb
-        self.branches["m_bb"][0] = btjmaxM
+        self.branches["m_bb"][0] = btjmaxM*1000.
 
         # H_b
-        self.branches["h_b"][0] = HB_sum_Pt
+        self.branches["h_b"][0] = HB_sum_Pt*1000.
 
         #chi^2
         chisq=[-999]
@@ -468,13 +479,21 @@ class tthhTree:
                                       ((event.btags[i2].P4()+event.btags[i3].P4()).M()-120.)**2 )
         self.branches["chi"][0]=min(chisq)
 
+        def findLeptonFlavor(aLep):
+            for e in event.event.Electron:
+                if aLep.PT==e.PT: return 11
+            for m in event.event.Muon:
+                if aLep.PT==m.PT: return 13
+            return -9
+
         ### Leptons
         lepCount=1
         for aLep in event.sortedleptons:
-            self.branches["lepton%dpT" % lepCount][0] = aLep.PT
-            self.branches["lepton%dpT" % lepCount][0] = aLep.Eta
-            self.branches["lepton%dpT" % lepCount][0] = aLep.Phi
-            self.branches["mt%d" % lepCount][0] = ROOT.TMath.Sqrt(2*event.met.Pt()*aLep.PT*(1-ROOT.TMath.Cos(aLep.P4().DeltaPhi(event.met))))
+            self.branches["lepton%dpT"  % lepCount][0] = aLep.PT*1000.
+            self.branches["lepton%deta" % lepCount][0] = aLep.Eta
+            self.branches["lepton%dphi" % lepCount][0] = aLep.Phi
+            self.branches["lepton%dflav"% lepCount][0] = findLeptonFlavor(aLep)
+            self.branches["mt%d" % lepCount][0] = ROOT.TMath.Sqrt(2*event.met.Pt()*aLep.PT*(1-ROOT.TMath.Cos(aLep.P4().DeltaPhi(event.met))))*1000.
             mindr=999
             for aJet in event.sortedjets:
                 mindr=min(mindr,aLep.P4().DrEtaPhi(aJet.P4()))
@@ -483,9 +502,10 @@ class tthhTree:
             if lepCount>=self.maxleptons: break
             
         for lepCount in range(lepCount,self.maxleptons):
-            self.branches["lepton%dpT" % lepCount][0] = -999
-            self.branches["lepton%dpT" % lepCount][0] = -9
-            self.branches["lepton%dpT" % lepCount][0] = -9
+            self.branches["lepton%dpT"  % lepCount][0] = -999
+            self.branches["lepton%deta" % lepCount][0] = -9
+            self.branches["lepton%dphi" % lepCount][0] = -9
+            self.branches["lepton%dflav"% lepCount][0] = -9
             self.branches["mt%d" % lepCount][0] = -999
             self.branches["dr%d" % lepCount][0] = -999
             

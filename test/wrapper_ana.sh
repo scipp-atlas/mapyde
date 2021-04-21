@@ -9,7 +9,20 @@ database=${4:-/data/users/${USER}/SUSY}
 seed=${5:-0}
 datadir=${tag}/${seed}
 script=${6:-"SimpleAna.py"}
+XS=${7:-0}
 
+evtype=-1 # parse tag to get this.
+if [[ $tag == tthh ]]; then
+    evtype=0
+elif [[ $tag == ttbb* ]]; then
+    evtype=1
+elif [[ $tag == tth* ]]; then
+    evtype=2
+elif [[ $tag == ttz* ]]; then
+    evtype=3
+else
+    evtype=-9
+fi
 
 # first check if analysis output is already there.  If so, then don't clobber it unless told to.
 if [[ -e ${database}/${datadir}/analysis && $clobber_ana != true ]]; then
@@ -57,7 +70,7 @@ else
 	--env lumi=${lumi} \
 	${base}/singularity/delphes.sif \
 	bash -c "set -x && cd /work && \
-        /scripts/${script} --input /data/delphes/delphes.root --output histograms.root --lumi ${lumi} && \
+        /scripts/${script} --input /data/delphes/delphes.root --output histograms.root --lumi ${lumi} --evtype ${evtype} --XS ${XS} && \
         rsync -rav histograms.root /data/analysis/" | tee ${database}/${datadir}/docker_ana.log
     rm -rf singularity_sandbox
 fi

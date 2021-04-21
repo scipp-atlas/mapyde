@@ -8,14 +8,26 @@ import math
 import array
 import argparse
 import os
+import re
 from HistCollections import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', action='store', default="input.txt")
 parser.add_argument('--output', action='store', default="hist.root")
 parser.add_argument('--lumi',action='store', default=1000.) # 1 fb-1
+parser.add_argument('--evtype',action='store',default=-1) # 0: tthh; 1: ttbb; 2: tth; 3: ttz
+parser.add_argument('--XS',action='store',default=0)
 parser.add_argument('--debug',action='store_true')
 args=parser.parse_args()
+
+def strip_ansi_codes(s):
+    """
+    Remove ANSI color codes from the string.
+    """
+    return re.sub('\033\\[([0-9]+)(;[0-9]+)*m', '', s) 
+
+XS=float(strip_ansi_codes(args.XS))
+print(XS)
 
 chain = ROOT.TChain("Delphes")
 
@@ -53,6 +65,7 @@ allev=tthhTree("allev",outfile)
 
 ### Loop through all events in chain
 entry = 0
+Nevents=chain.GetEntries()
 for event in chain :
   entry += 1
 
@@ -62,7 +75,16 @@ for event in chain :
 
   # wrapper around Delphes events to make some things easier
   de=DelphesEvent(event,highlumi=True)
-  weight=de.weight*float(args.lumi)/numFiles
+
+  weight=de.weight
+
+  # something stupid for sherpa.  this is not strictly correct, since
+  # sherpa weights are not necessarily uniform.
+  if XS!=0:
+    weight=XS/Nevents
+
+  weight=weight*float(args.lumi)/numFiles
+  de.truth=int(args.evtype)
 
   # fill histograms for all events
   allev.fill(de,weight)

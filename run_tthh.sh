@@ -11,7 +11,7 @@ database=/export/share/data/mhance/tthh
 base=/export/home/mhance/mario-mapyde
 
 # be careful of this, it will remove existing files if set to "clobber"
-clobber_ana="false"
+clobber_ana="true"
 clobber_delphes="false"
 
 lumi=3000000
@@ -90,8 +90,12 @@ if [[ $madgraphsherpa == "madgraph" ]]; then
     
 else
 
-    echo "-- running sherpa for ${proc}"
-    ${base}/test/wrapper_sherpa.sh ${proc} ${ecms} ${nevents} ${tag} ${seed}
+    if [ ! -e ${database}/${datadir}/sherpa ]; then
+	echo "-- running sherpa for ${proc}"
+	${base}/test/wrapper_sherpa.sh ${proc} ${ecms} ${nevents} ${tag} ${seed}
+    else
+	"Skipping Sherpa generation because output directory already exists"
+    fi
 	
 fi
 
@@ -100,9 +104,11 @@ fi
 echo "-- running delphes"
 ${base}/test/wrapper_delphes.sh ${tag} ${delphescard} 1 ${clobber_delphes} ${database} ${seed}
  
+XS=$(grep "Total XS" ${database}/${datadir}/docker_sherpa.log | awk '{print $5}')
+
 # should not clobber existing output
 echo "-- running ana"
-${base}/test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${seed} "tthhAna.py"
+${base}/test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${seed} "tthhAna.py" ${XS}
 
 
 pwd
