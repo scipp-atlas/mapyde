@@ -3,9 +3,9 @@
 
 deltaeta=3.0
 nevents=5000
-cores=12
-#anascript="SimpleAna.py"
-anascript="Delphes2SA.py"
+cores=4
+anascript="SimpleAna.py"
+#anascript="Delphes2SA.py"
 
 # Higgsino WinoBino
 for params in Higgsino; do

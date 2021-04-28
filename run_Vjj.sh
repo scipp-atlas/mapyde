@@ -6,6 +6,7 @@ database=/data/users/${USER}/SUSY
 # be careful of this, it will remove existing files if set to "clobber"
 clobber_ana=""
 clobber_delphes=""
+cores=4
 
 seed=1
 
@@ -58,7 +59,7 @@ for EWKQCD in "EWK" "QCD"; do
 		-y cards/pythia/pythia8_card_dipoleRecoil.dat \
 		-R mmjj ${mmjj} -R mmjjmax ${mmjjmax} -R deltaeta ${deltaeta}  -R mmll 40 \
 		-E "${ecms}000" \
-		-c 4 \
+		-c ${cores} \
 		-s ${seed} \
 		-n ${nevents} \
 		-t ${tag}
@@ -69,11 +70,12 @@ for EWKQCD in "EWK" "QCD"; do
 		       --log-driver=journald \
 		       --name "${tag}__mgpy" \
 		       --rm \
+		       --user $(id -u):$(id -g) \
 		       -v ${base}/cards:/cards \
 		       -v ${database}/${datadir}:/data \
-		       -w /output \
-		       gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph-2.9:master \
-		       "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph  && chown -R $UID /data/madgraph" #  && chown -R $(id -u) /data/madgraph 
+		       -w /tmp \
+		       gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
+		       "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph  && chown -R $UID /data/madgraph"
 		
 		# dump docker logs to text file
 		journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > $database/$datadir/docker_mgpy.log
