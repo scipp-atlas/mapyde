@@ -47,10 +47,10 @@
 #*********************************************************************
 # PDF CHOICE: this automatically fixes also alpha_s and its evol.    *
 #*********************************************************************
-#'lhapdf'    = pdlabel       ! PDF set
+'lhapdf'    = pdlabel       ! PDF set
 #247000    = lhaid       ! if pdlabel=lhapdf, this is the lhapdf number
-     nn23nlo   = pdlabel     ! PDF set, now NLO to match NLO runs
-     230000    = lhaid     ! if pdlabel=lhapdf, this is the lhapdf number
+#     nn23nlo   = pdlabel     ! PDF set, now NLO to match NLO runs
+     266000    = lhaid     ! if pdlabel=lhapdf, this is the lhapdf number, https://lhapdf.hepforge.org/pdfsets
 #*********************************************************************
 # Renormalization and factorization scales                           *
 #*********************************************************************
