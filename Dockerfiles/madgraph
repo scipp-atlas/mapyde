@@ -40,6 +40,7 @@ RUN mkdir /code && \
       --prefix=/usr/local && \
     make -j$(($(nproc) - 1)) && \
     make install && \
+    chmod a+w /usr/local/share/LHAPDF/ && \
     rm -rf /code
 
 # Install MadGraph5_aMC@NLO for Python 3
