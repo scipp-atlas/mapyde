@@ -25,8 +25,13 @@ def strip_ansi_codes(s):
     """
     return re.sub('\033\\[([0-9]+)(;[0-9]+)*m', '', s) 
 
-XS=float(strip_ansi_codes(args.XS))
-print(XS)
+reweightEvents=False
+XS=0
+if float(args.XS)>0:
+    XS=float(strip_ansi_codes(args.XS))
+    print(XS)
+    reweightEvents=True
+    
 
 chain = ROOT.TChain("Delphes")
 
@@ -65,24 +70,26 @@ presel=Hists("presel",outfile)
 SR=Hists("SR",outfile)
 #SR_jetbins=JetBins("SR_jetbins",outfile)
 
+weightscale=float(args.lumi)/numFiles
 ### Loop through all events in chain to get the sum of weights before filling trees and hists
 ### There should be a better way to do this....
-print("Computing sum of weights")
-entry = 0
-sumofweights=0
-for event in chain :
-  entry += 1
+if reweightEvents:
+    print("Computing sum of weights")
+    entry = 0
+    sumofweights=0
+    for event in chain :
+        entry += 1
+        
+        if ( entry != 0 and entry%10000 == 0 ):
+            print ("%d events processed for sum of weights" % entry)
+            sys.stdout.flush()
 
-  if ( entry != 0 and entry%10000 == 0 ):
-    print ("%d events processed for sum of weights" % entry)
-    sys.stdout.flush()
+        # wrapper around Delphes events to make some things easier
+        de=DelphesEvent(event)
+        sumofweights+=de.weight
 
-  # wrapper around Delphes events to make some things easier
-  de=DelphesEvent(event)
-  sumofweights+=de.weight
-
-# compute appropriate weights for each event
-weightscale=(XS*float(args.lumi)/numFiles)/sumofweights
+    # compute appropriate weights for each event
+    weightscale*=(XS/sumofweights)
 
 ### Loop through all events in chain
 print("Processing events")
