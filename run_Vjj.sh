@@ -6,12 +6,12 @@ database=/data/users/${USER}/SUSY
 # be careful of this, it will remove existing files if set to "clobber"
 clobber_ana=""
 clobber_delphes=""
-cores=4
+cores=12
 
-seed=1
+seed=2
 
-for EWKQCD in "EWK" "QCD"; do
-    for ecms in 13; do # omit 14 for re-running analysis
+for EWKQCD in "EWK"; do
+    for ecms in 100; do # omit 14 for re-running analysis
 	max_mmjj_TeV=1
 	mmjj_step=1
 	mmjj_low=1
@@ -39,7 +39,7 @@ for EWKQCD in "EWK" "QCD"; do
 		delphescard="FCChh.tcl"
 	    fi
 
-	    tag="Vjj${EWKQCD}_${ecms}_mmjj_${mmjj}_${mmjjmax}"
+	    tag="Vjj${EWKQCD}_${ecms}_mmjj_${mmjj}_${mmjjmax}_${seed}"
 	    
 	    base=${PWD}
 	    datadir=${tag}
@@ -47,7 +47,7 @@ for EWKQCD in "EWK" "QCD"; do
 	    params="sm"
 	    
 	    deltaeta=3.0
-	    nevents=1000000
+	    nevents=1000 # 1000000
 	    
 	    # ---------------------------------------------------------------------------------------
 	    # run madgraph+pythia
@@ -86,7 +86,8 @@ for EWKQCD in "EWK" "QCD"; do
 	    ./test/wrapper_delphes.sh ${tag} ${delphescard} ${clobber_delphes}
 	    
 	    # should not clobber existing output
-	    ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana}
+	    XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
+	    ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${anascript} ${XS}
 
 	done
     done

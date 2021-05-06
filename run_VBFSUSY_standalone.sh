@@ -125,7 +125,6 @@ fi
 if $skip_ana; then
     echo "Skipping ana for this job."
 else
-    set -x
-    ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${anascript}
-    set +x
+    XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
+    ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${anascript} ${XS}
 fi

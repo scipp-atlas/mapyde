@@ -8,6 +8,7 @@ base=${PWD}
 database=${4:-/data/users/${USER}/SUSY}
 datadir=${tag}
 script=${5:-"SimpleAna.py"}
+XS=${6:-0}
 
 # first check if analysis output is already there.  If so, then don't clobber it unless told to.
 if [[ -e ${database}/${datadir}/analysis && $clobber_ana != true ]]; then
@@ -30,7 +31,7 @@ docker run \
        --env lumi=${lumi} \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
        "set -x && \
-        /scripts/${script} --input /data/delphes/delphes.root --output histograms.root --lumi ${lumi} && \
+        /scripts/${script} --input /data/delphes/delphes.root --output histograms.root --lumi ${lumi} --XS ${XS} && \
         rsync -rav . /data/analysis"
 
 # dump docker logs to text file

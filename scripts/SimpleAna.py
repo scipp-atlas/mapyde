@@ -8,6 +8,7 @@ import math
 import array
 import argparse
 import os
+import re
 from HistCollections import *
 
 parser = argparse.ArgumentParser()
@@ -15,7 +16,17 @@ parser.add_argument('--input', action='store', default="input.txt")
 parser.add_argument('--output', action='store', default="hist.root")
 parser.add_argument('--lumi',action='store', default=1000.) # 1 fb-1
 parser.add_argument('--debug',action='store_true')
+parser.add_argument('--XS',action='store',default=0)
 args=parser.parse_args()
+
+def strip_ansi_codes(s):
+    """
+    Remove ANSI color codes from the string.
+    """
+    return re.sub('\033\\[([0-9]+)(;[0-9]+)*m', '', s) 
+
+XS=float(strip_ansi_codes(args.XS))
+print(XS)
 
 chain = ROOT.TChain("Delphes")
 
@@ -54,7 +65,27 @@ presel=Hists("presel",outfile)
 SR=Hists("SR",outfile)
 #SR_jetbins=JetBins("SR_jetbins",outfile)
 
+### Loop through all events in chain to get the sum of weights before filling trees and hists
+### There should be a better way to do this....
+print("Computing sum of weights")
+entry = 0
+sumofweights=0
+for event in chain :
+  entry += 1
+
+  if ( entry != 0 and entry%10000 == 0 ):
+    print ("%d events processed for sum of weights" % entry)
+    sys.stdout.flush()
+
+  # wrapper around Delphes events to make some things easier
+  de=DelphesEvent(event)
+  sumofweights+=de.weight
+
+# compute appropriate weights for each event
+weightscale=(XS*float(args.lumi)/numFiles)/sumofweights
+
 ### Loop through all events in chain
+print("Processing events")
 entry = 0
 for event in chain :
   entry += 1
@@ -65,7 +96,7 @@ for event in chain :
 
   # wrapper around Delphes events to make some things easier
   de=DelphesEvent(event)
-  weight=de.weight*float(args.lumi)/numFiles
+  weight=de.weight*weightscale
 
   # fill histograms for all events
   allev.fill(de,weight)
