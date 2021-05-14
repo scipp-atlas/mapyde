@@ -13,7 +13,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt-get/lists/*
 RUN python3 -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
     python3 -m pip install --no-cache-dir tensorflow torch && \
-    python3 -m pip install --no-cache-dir pandas matplotlib numpy uproot hist pyhf jsonpatch awkward cabinetry
+    python3 -m pip install --no-cache-dir pandas matplotlib numpy uproot hist pyhf jsonpatch awkward cabinetry && \
     python3 -m pip list
 
 FROM base
