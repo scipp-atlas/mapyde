@@ -73,7 +73,7 @@ for channel in ws.channels:
     
     print(c_index, channel, SAname, yld)
 
-    newspec['channels'][c_index]['samples'].append({'name': args.name, 'data': yld, 'modifiers': []})
+    newspec['channels'][c_index]['samples'].append({'name': args.name, 'data': [yld], 'modifiers': [{'name': 'mu_SIG', 'type': 'normfactor', 'data': None}]})
 
 patch = jsonpatch.make_patch(spec, newspec)
 
