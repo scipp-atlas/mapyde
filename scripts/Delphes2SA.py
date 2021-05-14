@@ -92,6 +92,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--input', action='store')
 parser.add_argument('--output', action='store')
 parser.add_argument('--lumi',action='store', default=1000.) # 1 fb-1.  not actually used.
+parser.add_argument('--XS',action='store',default=1.) # 1 fb.  not actually used.
 parser.add_argument('--debug',action='store_true') # not actually used.
 args=parser.parse_args()
 

@@ -24,7 +24,7 @@ docker run \
        -v ${database}/${datadir}/sherpa:/output \
        -w /output \
        sherpamc/sherpa:2.2.7 \
-       /bin/bash -c "Sherpa -f ${proc} -e ${events}"
+       /bin/bash -c "mpirun -n 12 Sherpa -f ${proc} -e ${events}"
 
 #       /bin/bash -c "ls -ltrh && ls -ltrh /cards/sherpa/sherpa.tar && tar -xvf /cards/sherpa/sherpa.tar && Sherpa -f /cards/sherpa/${proc} -e ${events}"
 

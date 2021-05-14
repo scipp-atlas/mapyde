@@ -26,7 +26,7 @@ seed=0
 pythia_card="cards/pythia/pythia8_card.dat"
 base=${PWD}
 
-while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:" opt; do
+while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -89,7 +89,7 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   -v ${database}/${datadir}:/data \
 	   -w /tmp \
 	   gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
-	   "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph"
+	   "mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph"
     
     # dump docker logs to text file
     journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > ${database}/${datadir}/docker_mgpy.log
