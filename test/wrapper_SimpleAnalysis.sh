@@ -19,7 +19,7 @@ docker run \
        -a ${analysis} \
        analysis/histograms.root -n
 
-# dump docker logs to text file
+# # dump docker logs to text file
 journalctl -u docker CONTAINER_NAME="${tag}__SimpleAnalysis" > ${database}/${datadir}/docker_SimpleAnalysis.log
 
 # the above command will create a ROOT file with an ntuple inside, creatively called "ntuple".
@@ -28,13 +28,13 @@ journalctl -u docker CONTAINER_NAME="${tag}__SimpleAnalysis" > ${database}/${dat
 #
 # will need to find a way to identify which bgkonly file to use, and to copy it into the /data
 # area at the appropriate time (or access it elsewhere)
+echo $base
 docker run \
        --log-driver=journald \
        --name "${tag}__SAtoJSON" \
        --rm \
-       --entrypoint bash \
        -v ${database}/${datadir}:/data \
        -v ${base}/scripts:/scripts \
        -w /data \
-       pyhf/pyhf \
-       "/scripts/SAtoJSON.py -i ${analysis}.root -o ${analysis}_patch.json -n ${tag} -b Higgsino_2L_bkgonly.json"
+       gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting:master \
+       "python /scripts/SAtoJSON.py -i ${analysis}.root -o ${analysis}_patch.json -n ${tag} -b Higgsino_2L_bkgonly.json"
