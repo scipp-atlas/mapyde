@@ -52,7 +52,9 @@ RUN cd /usr/local && \
 
 
 # Change the MadGraph5_aMC@NLO configuration settings for lhapdf
-RUN sed -i '/lhapdf_py3 =/s/^# //g' /usr/local/MG5_aMC_v2_9_3_py3/input/mg5_configuration.txt
+RUN ls /usr/local && \
+    cat /usr/local/MG5_aMC_v2_9_3/input/mg5_configuration.txt && \
+    sed -i '/lhapdf_py3 =/s/^# //g' /usr/local/MG5_aMC_v2_9_3/input/mg5_configuration.txt
 
 
 # Enable tab completion by uncommenting it from /etc/bash.bashrc
