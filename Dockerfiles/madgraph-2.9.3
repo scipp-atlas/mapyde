@@ -20,6 +20,7 @@ RUN apt-get -qq -y update && \
       bash-completion \
       python3-dev \
       less \
+      coreutils \
       wget && \
     apt-get -y autoclean && \
     apt-get -y autoremove && \
@@ -39,6 +40,7 @@ RUN mkdir /code && \
       --prefix=/usr/local && \
     make -j$(($(nproc) - 1)) && \
     make install && \
+    chmod a+w /usr/local/share/LHAPDF/ && \
     rm -rf /code
 
 # Install MadGraph5_aMC@NLO for Python 3
@@ -47,6 +49,10 @@ RUN cd /usr/local && \
     wget -q https://launchpad.net/mg5amcnlo/2.0/2.9.x/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
     tar xzf MG5_aMC_v${MG_VERSION}.tar.gz && \
     rm MG5_aMC_v${MG_VERSION}.tar.gz
+
+
+# Change the MadGraph5_aMC@NLO configuration settings for lhapdf
+RUN sed -i '/lhapdf_py3 =/s/^# //g' /usr/local/MG5_aMC_v2_7_3_py3/input/mg5_configuration.txt
 
 
 # Enable tab completion by uncommenting it from /etc/bash.bashrc
