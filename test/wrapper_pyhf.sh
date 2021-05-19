@@ -36,5 +36,5 @@ docker run \
        -v ${base}/scripts:/scripts \
        -v ${base}/likelihoods:/likelihoods \
        -w /data \
-       gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting:master \
+       gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting-cuda:master \
        "python3 /scripts/likelihoodfitting.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag}"

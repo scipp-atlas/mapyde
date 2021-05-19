@@ -26,6 +26,7 @@ base=${PWD}
 database=/data/users/${USER}/SUSY
 datadir=${tag}
 ktdurham=-1
+xqcut=-1
 seed=0
 pythia_card="cards/pythia/pythia8_card_dipoleRecoil.dat"
 anascript="SimpleAna.py"
@@ -56,7 +57,7 @@ fi
 
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -87,6 +88,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:" opt; do
 	L) delphescard=$OPTARG;;
 	f) simpleanalysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
+	X) xqcut=$OPTARG;;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -96,7 +98,10 @@ echo $clobber_ana
 
 # construct the tag.
 tag="VBFSUSY_${ecms}_${params}_${mass}_mmjj_${mmjj}_${mmjjmax}${suffix}"
-
+if [[ $mmjj == 0.0 ]]; then
+   tag="SUSY_${ecms}_${params}_${mass}_${suffix}"
+fi
+   
 # run MadGraph+Pythia, using test script
 if $skip_mgpy; then
     echo "Skipping Madgraph for this job."
@@ -119,6 +124,7 @@ else
 	-E ${ecms} \
 	-c ${cores} \
 	-k ${ktdurham} \
+	-X ${xqcut} \
 	-N ${nevents} \
 	-d ${seed} \
 	-j ${ptj} \
@@ -148,7 +154,7 @@ fi
 if $skip_SA; then
     echo "Skipping SimpleAnalysis+likelihoods for this job."
 else
-    ./test/wrapper_ana.sh            ${tag} ${lumi} ${clobber_ana} ${database} "Delphes2SA.py" ${XS}
+    ./test/wrapper_ana.sh            ${tag} ${lumi} true ${database} "Delphes2SA.py" ${XS}
     ./test/wrapper_SimpleAnalysis.sh ${tag} ${lumi} ${database} ${simpleanalysis}
     ./test/wrapper_pyhf.sh           ${tag} ${lumi} ${database} ${simpleanalysis} ${likelihood}
 fi
