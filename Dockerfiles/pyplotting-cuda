@@ -1,5 +1,5 @@
-FROM nvidia/cuda:10.2-cudnn8-runtime-ubunty18.04 as base
-#FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04 as base
+FROM nvidia/cuda:10.1-cudnn8-runtime-ubuntu18.04 as base
+#FROM nvidia/cuda:10.2-cudnn8-runtime-ubuntu18.04 as base
 #FROM nvidia/cuda:11.3.0-cudnn8-runtime-ubuntu18.04 as base
 
 
@@ -15,9 +15,10 @@ RUN apt-get update -y && \
 RUN python3 -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
     python3 -m pip install --no-cache-dir tensorflow torch jax jaxlib && \
     python3 -m pip install --no-cache-dir pandas matplotlib numpy uproot hist pyhf jsonpatch awkward cabinetry && \
-    python3 -m pip install --upgrade jax jaxlib==0.1.66+cuda101 -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
+    python3 -m pip install --upgrade jax jaxlib==0.1.67+cuda101 -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
     python3 -m pip list
 
+#    python3 -m pip install --upgrade jax jaxlib==0.1.66+cuda102 -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
 #    python3 -m pip install --upgrade jax jaxlib==0.1.66+cuda111 -f https://storage.googleapis.com/jax-releases/jax_releases.html && \
 
 FROM base
