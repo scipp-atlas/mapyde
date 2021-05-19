@@ -26,7 +26,7 @@ seed=0
 pythia_card="cards/pythia/pythia8_card.dat"
 base=${PWD}
 
-while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:" opt; do
+while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -41,6 +41,7 @@ while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:" opt; do
 	B) base=$OPTARG;;
 	b) database=$OPTARG;;
 	j) ptj=$OPTARG;;
+	J) ptj1min=$OPTARG;;
 	S) dM=$OPTARG;;
 	y) pythia_card=$OPTARG;;
 	k) ktdurham=$OPTARG;;
@@ -59,8 +60,11 @@ mN1=$(bc <<< "scale=2; ${mass}-${dM}")
 
 if [[ ${slepton} == true ]]; then
     massopts="-m MSLEP ${mass}"
-else
+elif [[ ${params} == WinoBino ]]; then
     massopts="-m MN2 ${mass} -m MC1 ${mass}"
+elif [[ ${params} == Higgsino ]]; then
+    mC1=$(bc <<< "scale=2; ${mass}-${dM}/2")
+    massopts="-m MN2 ${mass} -m MC1 ${mC1}"
 fi
 
 
@@ -72,7 +76,7 @@ fi
     -p cards/param/${params}.slha \
     -y ${pythia_card} \
     -m MN1 ${mN1} ${massopts} \
-    -R ptj ${ptj} -R deltaeta ${deltaeta} -R mmjj ${mmjj} -R mmjjmax ${mmjjmax} -R ktdurham ${ktdurham} \
+    -R ptj ${ptj} -R ptj1min ${ptj1min} -R deltaeta ${deltaeta} -R mmjj ${mmjj} -R mmjjmax ${mmjjmax} -R ktdurham ${ktdurham} \
     -c ${cores} \
     -E ${ecms}000 \
     -n ${nevents} \
@@ -88,7 +92,7 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   -v ${base}/cards:/cards \
 	   -v ${database}/${datadir}:/data \
 	   -w /tmp \
-	   gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
+	   gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph-2.9:master \
 	   "mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph"
     
     # dump docker logs to text file

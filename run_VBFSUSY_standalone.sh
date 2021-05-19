@@ -13,6 +13,7 @@ mmjj=500
 mmjjmax=-1
 deltaeta=3.0
 ptj=20
+ptj1min=0
 suffix=""
 skip_mgpy=false
 skip_delphes=false
@@ -28,6 +29,8 @@ ktdurham=-1
 seed=0
 pythia_card="cards/pythia/pythia8_card_dipoleRecoil.dat"
 anascript="SimpleAna.py"
+simpleanalysis="EwkCompressed2018"
+likelihood="Higgsino_2L_bkgonly"
 
 # some modifications based on run parameters
 lumi=1
@@ -53,7 +56,7 @@ fi
 
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:S:y:k:d:C:iL:" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -74,6 +77,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:S:y:k:d:C:iL:" opt; do
 	B) base=$OPTARG;;
 	b) database=$OPTARG;;
 	j) ptj=$OPTARG;;
+	J) ptj1min=$OPTARG;;
 	S) dM=$OPTARG;;
 	y) pythia_card=$OPTARG;;
 	k) ktdurham=$OPTARG;;
@@ -81,6 +85,8 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:S:y:k:d:C:iL:" opt; do
 	C) anascript=$OPTARG;;
 	i) skip_SA=false;;
 	L) delphescard=$OPTARG;;
+	f) simpleanalysis=$OPTARG;;
+	F) likelihood=$OPTARG;;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -104,7 +110,7 @@ else
 	-b ${database} \
 	-P ${proc} \
 	-p ${params} \
-	-y "cards/pythia/pythia8_card_dipoleRecoil.dat" \
+	-y ${pythia_card} \
 	-S ${dM} \
 	-M ${mass} \
 	-m ${mmjj} \
@@ -116,6 +122,7 @@ else
 	-N ${nevents} \
 	-d ${seed} \
 	-j ${ptj} \
+	-J ${ptj1min} \
 	${clobberopt} \
 	${tag}
 fi
@@ -128,21 +135,21 @@ else
 fi
 
 
+XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
 # run ntuplizing, using test script
 if $skip_ana; then
     echo "Skipping ana for this job."
 else
-    XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
-    set -x
     ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${anascript} ${XS}
-    set +x
 fi
 
 
-# run SimpleAnalysis.  not usual.
+# run SimpleAnalysis + likelihoods.  not usual.
 if $skip_SA; then
-    echo "Skipping SimpleAnalysis for this job."
+    echo "Skipping SimpleAnalysis+likelihoods for this job."
 else
-    # probably going to need some way to rescale these outputs.
-    ./test/wrapper_SimpleAnalysis.sh ${tag} ${lumi} ${database}
+    ./test/wrapper_ana.sh            ${tag} ${lumi} ${clobber_ana} ${database} "Delphes2SA.py" ${XS}
+    ./test/wrapper_SimpleAnalysis.sh ${tag} ${lumi} ${database} ${simpleanalysis}
+    ./test/wrapper_pyhf.sh           ${tag} ${lumi} ${database} ${simpleanalysis} ${likelihood}
 fi
+

@@ -8,16 +8,17 @@ database=${3:-/data/users/${USER}/SUSY}
 datadir=${tag}
 analysis=${4:-EwkCompressed2018}
 
-
 docker run \
        --log-driver=journald \
        --name "${tag}__SimpleAnalysis" \
        --rm \
        -v ${database}/${datadir}:/data \
        -w /data \
-       gitlab-registry.cern.ch/atlas-sa/simple-analysis \
+       gitlab-registry.cern.ch/atlas-phys-susy-wg/simpleanalysis:master \
        -a ${analysis} \
-       analysis/histograms.root -n
+       analysis/Delphes2SA.root -n
 
 # # dump docker logs to text file
 journalctl -u docker CONTAINER_NAME="${tag}__SimpleAnalysis" > ${database}/${datadir}/docker_SimpleAnalysis.log
+
+#       gitlab-registry.cern.ch/atlas-sa/simple-analysis \

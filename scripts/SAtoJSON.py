@@ -13,6 +13,7 @@ parser.add_argument("-i", "--input", help="path to SA output")
 parser.add_argument("-b", "--background", help="path to JSON background-only file")
 parser.add_argument("-o", "--output", help="path to JSON output")
 parser.add_argument("-n", "--name", help="name of signal sample")
+parser.add_argument("-l", "--lumi", help="luminosity in pb-1")
 args = parser.parse_args()
 
 with open(args.background,'r') as f:
@@ -26,9 +27,14 @@ branches = tree.arrays()
 
 # this function converts the name of the SR in the serialized likelihood into
 # the name of the SR in the SimpleAnalysis output
-def JSONtoSA(SRname):
+def JSONtoSA(SRname,background):
     SRname_split=SRname.split("_")
     if "CR" in SRname_split[0]: return None
+
+    if "MonoJet" in background:
+        return SRname.replace("_cuts","")
+
+    # otherwise we're in Compressed?
     
     SAname="SR"
     if "MT2" in SRname_split[1]:
@@ -56,23 +62,28 @@ def JSONtoSA(SRname):
 for channel in ws.channels:
 
     c_index = ws.channels.index(channel)
-    SAname=JSONtoSA(channel)
+    SAname=JSONtoSA(channel,args.background)
     if SAname is None: continue
     
     yld=0
-
+    
     # only do something if the SA output has a field for this
     # particular signal region.
     if SAname in tree.keys():
-        # in the Compressed SA output, the SR's are not broken down
-        # by flavor, while in the serialized likelihood they are.
-        # use the fields in the ntuple to do the flavor breakdown here.
-        flavname="isee" if "ee" in channel else "ismm"
-        mask=(branches[SAname]>0)&(branches[flavname]>0)
-        yld=branches[SAname][mask][0]
-    
-    print(c_index, channel, SAname, yld)
 
+        mask=(branches[SAname]>0)
+        if "Compressed" in args.background:
+            # in the Compressed SA output, the SR's are not broken down
+            # by flavor, while in the serialized likelihood they are.
+            # use the fields in the ntuple to do the flavor breakdown here.
+            flavname="isee" if "ee" in channel else "ismm"
+            mask=(branches[SAname]>0)&(branches[flavname]>0)
+        
+        yld=sum(branches[SAname][mask])
+        
+    yld*=float(args.lumi)
+    print(c_index, channel, SAname, yld)
+    
     newspec['channels'][c_index]['samples'].append({'name': args.name, 'data': [yld], 'modifiers': [{'name': 'mu_SIG', 'type': 'normfactor', 'data': None}]})
 
 patch = jsonpatch.make_patch(spec, newspec)

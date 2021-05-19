@@ -16,6 +16,8 @@ if [[ -e ${database}/${datadir}/analysis && $clobber_ana != true ]]; then
     exit 0
 fi
 
+outname=$(echo $script | sed s_"\.py"__g)
+
 set -x
 
 # to analyze delphes output
@@ -31,7 +33,7 @@ docker run \
        --env lumi=${lumi} \
        gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
        "set -x && \
-        /scripts/${script} --input /data/delphes/delphes.root --output histograms.root --lumi ${lumi} --XS ${XS} && \
+        /scripts/${script} --input /data/delphes/delphes.root --output ${outname}.root --lumi ${lumi} --XS ${XS} && \
         rsync -rav . /data/analysis"
 
 # dump docker logs to text file
