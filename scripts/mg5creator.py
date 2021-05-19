@@ -27,7 +27,7 @@ parser.add_argument(
 parser.add_argument(
     "-y",
     "--pythia",
-    default="cards/pythia/pythia8_card.dat",
+    default="/cards/pythia/pythia8_card.dat",
     help="path to pythia card",
 )
 
@@ -107,7 +107,7 @@ new_run_card_path.write_text(
 if args.runoption:
     runsubstitution = dict(args.runoption)
     pattern = re.compile(
-        r"^\s*(?P<value>[^\s]+)\s*=\s*(?P<key>[a-z_]+)\s*\!.*$", re.DOTALL
+        r"^\s*(?P<value>[^\s]+)\s*=\s*(?P<key>[a-z_0-9]+)\s*\!.*$", re.DOTALL
     )
     with in_place.InPlace(new_run_card_path) as fp:
         for line in fp:
@@ -167,6 +167,7 @@ reweight=OFF
 /data/{new_madspin_card_path.name}
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}
+{args.pythia}
 set iseed {args.seed}
 done
 """
@@ -180,6 +181,7 @@ shower=Pythia8
 reweight=OFF
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}
+{args.pythia}
 set iseed {args.seed}
 done
 """

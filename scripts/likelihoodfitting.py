@@ -6,6 +6,9 @@ import argparse
 import cabinetry
 import shutil
 import os
+import pyhf
+
+#pyhf.set_backend("jax")
 
 # patch the background-only fit
 parser = argparse.ArgumentParser(description="Process some arguments.")
@@ -24,22 +27,28 @@ with open(args.signal) as f:
 res=jsonpatch.apply_patch(bgonly, signal)
 
 #print(json.dumps(res, indent=4, sort_keys=True))
-jsonws=args.name + "__" + args.background.replace("_bkgonly","")
+jsonws=args.name + "__" + args.background.split("/")[-1].replace("_bkgonly","")
 with open(jsonws, 'w') as f:
     json.dump(res, f, sort_keys=True, indent=4)
 
 
 
-shutil.rmtree("cabinetry_figs")
+shutil.rmtree("cabinetry_figs",ignore_errors=True)
 os.mkdir("cabinetry_figs")
 
 # build a workspace
 ws = cabinetry.workspace.load(jsonws)
-# run a fit
 model, data = cabinetry.model_utils.model_and_data(ws)
-fit_results = cabinetry.fit.fit(model, data); # remove semicolon to see more output
+
+# run a fit
+print("running one fit")
+fit_results = cabinetry.fit.fit(model, data)
+
 # This part may take some time, depending on how complicated the workspace is.
+print("running limits")
 limit_results = cabinetry.fit.limit(model, data)
+
+print("visualizing results")
 cabinetry.visualize.limit(limit_results)
 print(limit_results.observed_limit)
 print(limit_results.expected_limit)
