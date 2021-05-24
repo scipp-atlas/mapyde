@@ -13,6 +13,7 @@ mmjj=500
 mmjjmax=-1
 deltaeta=3.0
 ptj=20
+ptj1min=0
 suffix=""
 skip_mgpy=false
 skip_delphes=false
@@ -69,7 +70,7 @@ elif [[ ${params} == Higgsino ]]; then
     massopts="-m MN2 ${mass} -m MC1 ${mC1}"
 fi
 
-if [[ $xqcut != 0 ]]; then
+if [[ $xqcut != 0 && $xqcut != -1 ]]; then
     xqcuttmp="${xqcut} -R ickkw 1"
     xqcut=${xqcuttmp}
 fi
