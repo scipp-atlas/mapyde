@@ -18,8 +18,6 @@ fi
 
 outname=$(echo $script | sed s_"\.py"__g)
 
-set -x
-
 # to analyze delphes output
 docker run \
        --log-driver=journald \

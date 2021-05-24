@@ -71,7 +71,7 @@ for center_of_mass in ["13", "14", "100"]:
         # Define Samples
         config["Samples"].append(
             {
-                "Name": sig_path.name.replace(".root", ""),
+                "Name": sig_path.name.replace(".root", "").split("/")[-1],
                 "Tree": "presel/hftree",
                 "SamplePaths": str(sig_path.resolve()),
                 "Weight": "weight",
@@ -81,7 +81,7 @@ for center_of_mass in ["13", "14", "100"]:
         for path in pathlib.Path("/data/users/mhance/SUSY").glob(f"Vjj*_{center_of_mass}*.root"):
             config["Samples"].append(
                 {
-                    "Name": path.name.replace(".root", ""),
+                    "Name": path.name.replace(".root", "").split("/")[-1],
                     "Tree": "presel/hftree",
                     "SamplePaths": str(path.resolve()),
                     "Weight": "weight",
@@ -113,7 +113,7 @@ for center_of_mass in ["13", "14", "100"]:
         config["NormFactors"].append(
             {
                 "Name": "mu",
-                "Samples": sig_path.name,
+                "Samples": sig_path.name.replace(".root","").split("/")[-1],
                 "Nominal": 1,
                 "Bounds": [0, 5],
             }

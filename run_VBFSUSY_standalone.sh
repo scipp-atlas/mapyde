@@ -99,7 +99,7 @@ echo $clobber_ana
 # construct the tag.
 tag="VBFSUSY_${ecms}_${params}_${mass}_mmjj_${mmjj}_${mmjjmax}${suffix}"
 if [[ $mmjj == 0.0 ]]; then
-   tag="SUSY_${ecms}_${params}_${mass}_${suffix}"
+   tag="SUSY_${ecms}_${params}_${mass}_${proc}_${suffix}"
 fi
    
 # run MadGraph+Pythia, using test script
@@ -142,6 +142,10 @@ fi
 
 
 XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
+# if we're doing matching, then take a different value
+if [[ $xqcut != -1 ]]; then
+    XS=$(grep "cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $9}')
+fi
 # run ntuplizing, using test script
 if $skip_ana; then
     echo "Skipping ana for this job."

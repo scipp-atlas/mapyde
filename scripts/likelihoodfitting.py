@@ -40,9 +40,12 @@ os.mkdir("cabinetry_figs")
 ws = cabinetry.workspace.load(jsonws)
 model, data = cabinetry.model_utils.model_and_data(ws)
 
+print(model)
+print(data)
+
 # run a fit
 print("running one fit")
-fit_results = cabinetry.fit.fit(model, data)
+fit_results = cabinetry.fit.fit(ws)
 
 # This part may take some time, depending on how complicated the workspace is.
 print("running limits")
