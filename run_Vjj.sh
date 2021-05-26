@@ -7,6 +7,7 @@ database=/data/users/${USER}/SUSY
 clobber_ana=""
 clobber_delphes=""
 cores=12
+anascript="SimpleAna.py"
 
 seed=2
 
