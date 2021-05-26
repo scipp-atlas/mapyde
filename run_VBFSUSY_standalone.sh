@@ -146,13 +146,13 @@ XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '
 if [[ $xqcut != -1 ]]; then
     XS=$(grep "cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $9}')
 fi
+
 # run ntuplizing, using test script
 if $skip_ana; then
     echo "Skipping ana for this job."
 else
     ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${anascript} ${XS}
 fi
-
 
 # run SimpleAnalysis + likelihoods.  not usual.
 if $skip_SA; then
