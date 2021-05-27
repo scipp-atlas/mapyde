@@ -25,7 +25,7 @@ ENV LANG=C.UTF-8
 COPY --from=builder /lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
 COPY --from=builder /usr/local /usr/local
 COPY --from=builder /usr/bin/python3.8 /usr/bin/python3.8
-COPY --from=builder /usr/bin/pip3.8 /usr/bin/pip3.8
+COPY --from=builder /usr/local/bin/pip3.8 /usr/local/bin/pip3.8
 COPY --from=builder /usr/lib/python3.8 /usr/lib/python3.8
 COPY --from=builder /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
 
