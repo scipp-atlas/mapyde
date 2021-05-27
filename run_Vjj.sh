@@ -4,8 +4,8 @@
 database=/data/users/${USER}/SUSY
 
 # be careful of this, it will remove existing files if set to "clobber"
-clobber_ana=""
-clobber_delphes=""
+clobber_ana=false
+clobber_delphes=false
 cores=12
 anascript="SimpleAna.py"
 
@@ -88,7 +88,15 @@ for EWKQCD in "EWK"; do
 	    
 	    # should not clobber existing output
 	    XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
+	    echo "tag=$tag"
+	    echo "lumi=$lumi"
+	    echo "clobber=$clobber_ana"
+	    echo "database=$database"
+	    echo "script=$anascript"
+	    echo "XS=$XS"
+	    set -x
 	    ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${anascript} ${XS}
+	    set +x
 
 	done
     done
