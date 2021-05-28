@@ -152,6 +152,15 @@ jets =  ObjectVector("jet", outTree, True)
 fatjets =  ObjectVector("fatjet", outTree, True)
 # not supporting hard-scatter truth record for now
 
+# bit of a hack, but should work:
+sumweights=0.0
+for entry in range(0, numberOfEntries):
+  treeReader.ReadEntry(entry)
+  sumweights+=float(branchEvent.At(0).Weight)
+
+# will normalize everything to 1 pb-1
+weightscale=float(args.XS)/sumweights
+
 # Loop over all events
 for entry in range(0, numberOfEntries):
   for vec in outVectors:
@@ -163,7 +172,7 @@ for entry in range(0, numberOfEntries):
   # Fill in event info (some is left at default 0)
   EventNumber.Set(branchEvent.At(0).Number)
   mcChannel.Set(branchEvent.At(0).ProcessID)
-  mcWeights.Add(branchEvent.At(0).Weight)
+  mcWeights.Add(branchEvent.At(0).Weight*weightscale)
   # FIXME: add PDF info etc. if available
 
   # MET/HT

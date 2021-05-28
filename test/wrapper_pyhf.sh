@@ -44,7 +44,7 @@ docker run \
        -v ${base}/likelihoods:/likelihoods \
        -w /data \
        gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting-cuda:master \
-       "/scripts/muscan.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag}"
+       "python3.8 /scripts/muscan.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag}"
 
 # dump docker logs to text file
 journalctl -u docker CONTAINER_NAME="${tag}__muscan" > ${database}/${datadir}/docker_cabinetry.log
@@ -53,18 +53,18 @@ journalctl -u docker CONTAINER_NAME="${tag}__muscan" > ${database}/${datadir}/do
 # --------------------------------------------------------------------------------------------------
 # do everything in cabinetry instead.
 #
-docker run \
-       --log-driver=journald \
-       --name "${tag}__cabinetry" \
-       --gpus all \
-       --rm \
-       -v ${database}/${datadir}:/data \
-       -v ${base}/scripts:/scripts \
-       -v ${base}/likelihoods:/likelihoods \
-       -w /data \
-       gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting-cuda:master \
-       "python3 /scripts/likelihoodfitting.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag}"
+# docker run \
+#        --log-driver=journald \
+#        --name "${tag}__cabinetry" \
+#        --gpus all \
+#        --rm \
+#        -v ${database}/${datadir}:/data \
+#        -v ${base}/scripts:/scripts \
+#        -v ${base}/likelihoods:/likelihoods \
+#        -w /data \
+#        gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting-cuda:master \
+#        "python3.8 /scripts/likelihoodfitting.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag}"
 
-# dump docker logs to text file
-journalctl -u docker CONTAINER_NAME="${tag}__cabinetry" > ${database}/${datadir}/docker_cabinetry.log
+# # dump docker logs to text file
+# journalctl -u docker CONTAINER_NAME="${tag}__cabinetry" > ${database}/${datadir}/docker_cabinetry.log
 # --------------------------------------------------------------------------------------------------

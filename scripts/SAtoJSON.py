@@ -82,7 +82,7 @@ for channel in ws.channels:
         yld=sum(branches[SAname][mask])
         
     yld*=float(args.lumi)
-    print(c_index, channel, SAname, yld)
+    print("%3d  %40s  %40s  %.2e" % (c_index, channel, SAname, yld))
     
     newspec['channels'][c_index]['samples'].append({'name': args.name, 'data': [yld], 'modifiers': [{'name': 'mu_SIG', 'type': 'normfactor', 'data': None}]})
 
