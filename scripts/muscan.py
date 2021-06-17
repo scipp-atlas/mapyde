@@ -8,18 +8,22 @@ import matplotlib.pyplot as plt
 import argparse
 from pyhf.contrib.viz import brazil
 
-# useful when running on a machine with a GPU
-pyhf.set_backend("jax", pyhf.optimize.minuit_optimizer(tolerance=0.01)) # monojet uses 0.001
-#pyhf.set_backend("jax") # this will work better in older versions of pyhf
-
 parser = argparse.ArgumentParser(description="Process some arguments.")
 parser.add_argument("-s", "--signal", help="name of analysis")
 parser.add_argument("-b", "--background", help="path to JSON background-only file")
 parser.add_argument("-n", "--tag", default="SUSY_13_Higgsino_101_isrinc_J125", help="tag for data files")
+parser.add_argument("-c", "--cpu", action='store_true', help="do not use a GPU even if available.  Sets backend to NumPy instead.")
+parser.add_argument("-B", "--backend", default="numpy", help="choose backend for pyhf.  Jax will be used if running with a GPU.")
 args = parser.parse_args()
 
 ana=args.signal.replace("_patch.json","")
 tag=args.tag
+
+if args.cpu:
+    pyhf.set_backend(args.backend, pyhf.optimize.minuit_optimizer(tolerance=0.01)) # monojet uses 0.001
+else:
+    # useful when running on a machine with a GPU
+    pyhf.set_backend("jax", pyhf.optimize.minuit_optimizer(tolerance=0.01)) # monojet uses 0.001
 
 with open(args.background) as f:
     bgonly=json.load(f)

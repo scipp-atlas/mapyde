@@ -44,7 +44,7 @@ docker run \
        -v ${base}/likelihoods:/likelihoods \
        -w /data \
        gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting-cuda:master \
-       "python3.8 /scripts/muscan.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag}"
+       "time python3.8 /scripts/muscan.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag} -c"
 
 # dump docker logs to text file
 journalctl -u docker CONTAINER_NAME="${tag}__muscan" > ${database}/${datadir}/docker_cabinetry.log

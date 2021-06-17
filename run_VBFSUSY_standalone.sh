@@ -32,7 +32,7 @@ pythia_card="cards/pythia/pythia8_card_dipoleRecoil.dat"
 anascript="SimpleAna.py"
 simpleanalysis="EwkCompressed2018"
 likelihood="Higgsino_2L_bkgonly"
-scalefact=1.0
+XSoverride=""
 
 # some modifications based on run parameters
 lumi=1
@@ -90,7 +90,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:" opt; do
 	f) simpleanalysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
 	X) xqcut=$OPTARG;;
-	h) scalefact=$OPTARG;;
+	h) XSoverride=$OPTARG;;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -149,8 +149,10 @@ if [[ $xqcut != -1 ]]; then
     XS=$(grep "cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $9}')
 fi
 
-echo "Using Cross Section = $scalefact * $XS"
-XS=$(python3 -c "print($scalefact * $XS)")
+if [[ $XSoverride != "" ]]; then
+    echo "Using Cross Section = $XSoverride instead of $XS"
+    XS=$XSoverride
+fi
 
 # run ntuplizing, using test script
 if $skip_ana; then
