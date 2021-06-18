@@ -36,7 +36,7 @@ for params in Higgsino; do
 		./run_VBFSUSY_standalone.sh \
 		    -E ${ecms} \
 		    -M ${mass} \
-		    -P charginos \
+		    -P VBFSUSY_EWKQCD \
 		    -c ${cores} \
 		    -p ${params} \
 		    -N ${nevents} \
