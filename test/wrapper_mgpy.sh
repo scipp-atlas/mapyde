@@ -98,7 +98,7 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   -v ${base}/cards:/cards \
 	   -v ${database}/${datadir}:/data \
 	   -w /tmp \
-	   gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph-2.9:master \
+	   gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
 	   "mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph"
     
     # dump docker logs to text file
