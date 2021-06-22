@@ -27,8 +27,9 @@ xqcut="-1"
 seed=0
 pythia_card="cards/pythia/pythia8_card.dat"
 base=${PWD}
+MGversion=""
 
-while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:" opt; do
+while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -50,6 +51,7 @@ while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:" opt; do
 	X) xqcut=$OPTARG;;
 	s) slepton=true;;
 	d) seed=$OPTARG;;
+	I) MGversion=$OPTARG;;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -98,7 +100,7 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   -v ${base}/cards:/cards \
 	   -v ${database}/${datadir}:/data \
 	   -w /tmp \
-	   gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
+	   gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph${MGversion}:master \
 	   "mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph"
     
     # dump docker logs to text file

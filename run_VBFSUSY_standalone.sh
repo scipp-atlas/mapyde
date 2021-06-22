@@ -33,6 +33,7 @@ anascript="SimpleAna.py"
 simpleanalysis="EwkCompressed2018"
 likelihood="Higgsino_2L_bkgonly"
 XSoverride=""
+MGversion=""
 
 # some modifications based on run parameters
 lumi=1
@@ -58,7 +59,7 @@ fi
 
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -91,6 +92,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:" opt; do
 	F) likelihood=$OPTARG;;
 	X) xqcut=$OPTARG;;
 	h) XSoverride=$OPTARG;;
+	I) MGversion=$OPTARG;;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -131,6 +133,7 @@ else
 	-d ${seed} \
 	-j ${ptj} \
 	-J ${ptj1min} \
+	-I "${MGversion}" \
 	${clobberopt} \
 	${tag}
 fi
