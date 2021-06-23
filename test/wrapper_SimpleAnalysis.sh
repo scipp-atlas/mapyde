@@ -12,6 +12,7 @@ docker run \
        --log-driver=journald \
        --name "${tag}__SimpleAnalysis" \
        --rm \
+       --user $(id -u):$(id -g) \
        -v ${database}/${datadir}:/data \
        -w /data \
        gitlab-registry.cern.ch/atlas-phys-susy-wg/simpleanalysis:master \
