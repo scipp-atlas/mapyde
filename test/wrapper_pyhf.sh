@@ -34,6 +34,11 @@ journalctl -u docker CONTAINER_NAME="${tag}__SAtoJSON" > ${database}/${datadir}/
 # --------------------------------------------------------------------------------------------------
 # run a simple mu scan.  this can be faster, just using pyhf.
 #
+GPUopts="-c"
+if [[ $HOSTNAME == "slugpu" ]]; then
+    GPUopts=""
+fi
+
 docker run \
        --log-driver=journald \
        --name "${tag}__muscan" \
@@ -44,7 +49,7 @@ docker run \
        -v ${base}/likelihoods:/likelihoods \
        -w /data \
        gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting-cuda:master \
-       "time python3.8 /scripts/muscan.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag} -c"
+       "time python3.8 /scripts/muscan.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag} ${GPUopts}"
 
 # dump docker logs to text file
 journalctl -u docker CONTAINER_NAME="${tag}__muscan" > ${database}/${datadir}/docker_cabinetry.log
