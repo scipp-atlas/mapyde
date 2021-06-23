@@ -42,7 +42,7 @@ fi
 
 docker run \
        --log-driver=journald \
-       --name "${user}_${tag}__muscan" \
+       --name "${USER}_${tag}__muscan" \
        --gpus all \
        --rm \
        --user $(id -u):$(id -g) \
