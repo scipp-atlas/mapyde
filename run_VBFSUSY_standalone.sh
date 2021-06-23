@@ -34,6 +34,7 @@ simpleanalysis="EwkCompressed2018"
 likelihood="Higgsino_2L_bkgonly"
 XSoverride=""
 MGversion=""
+sleptonopts=""
 
 # some modifications based on run parameters
 lumi=1
@@ -59,7 +60,7 @@ fi
 
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:n" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -93,6 +94,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:" opt; d
 	X) xqcut=$OPTARG;;
 	h) XSoverride=$OPTARG;;
 	I) MGversion=$OPTARG;;
+	n) sleptonopts="-s";;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
@@ -105,7 +107,7 @@ tag="VBFSUSY_${ecms}_${params}_${mass}_mmjj_${mmjj}_${mmjjmax}${suffix}"
 if [[ $mmjj == 0.0 ]]; then
    tag="SUSY_${ecms}_${params}_${mass}_${proc}_${suffix}"
 fi
-   
+
 # run MadGraph+Pythia, using test script
 if $skip_mgpy; then
     echo "Skipping Madgraph for this job."
@@ -135,6 +137,7 @@ else
 	-J ${ptj1min} \
 	-I "${MGversion}" \
 	${clobberopt} \
+	${sleptonopts} \
 	${tag}
 fi
 
