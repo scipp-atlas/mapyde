@@ -20,6 +20,7 @@ docker run \
        --log-driver=journald \
        --name "${tag}__SAtoJSON" \
        --rm \
+       --user $(id -u):$(id -g) \
        -v ${database}/${datadir}:/data \
        -v ${base}/scripts:/scripts \
        -v ${base}/likelihoods:/likelihoods \
@@ -44,6 +45,7 @@ docker run \
        --name "${tag}__muscan" \
        --gpus all \
        --rm \
+       --user $(id -u):$(id -g) \
        -v ${database}/${datadir}:/data \
        -v ${base}/scripts:/scripts \
        -v ${base}/likelihoods:/likelihoods \
