@@ -105,7 +105,7 @@ echo $clobber_ana
 # construct the tag.
 tag="VBFSUSY_${ecms}_${params}_${mass}_mmjj_${mmjj}_${mmjjmax}${suffix}"
 if [[ $mmjj == 0.0 ]]; then
-   tag="SUSY_${ecms}_${params}_${mass}_${proc}_${suffix}"
+   tag="SUSY_${ecms}_${params}_${mass}_${dM}_${proc}_${suffix}"
 fi
 
 # run MadGraph+Pythia, using test script
