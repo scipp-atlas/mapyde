@@ -54,7 +54,7 @@ docker run \
        "time python3.8 /scripts/muscan.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag} ${GPUopts}"
 
 # dump docker logs to text file
-journalctl -u docker CONTAINER_NAME="${tag}__muscan" > ${database}/${datadir}/docker_cabinetry.log
+journalctl -u docker CONTAINER_NAME="${USER}_${tag}__muscan" > ${database}/${datadir}/docker_muscan.log
 # --------------------------------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------------------------------

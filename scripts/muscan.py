@@ -46,7 +46,14 @@ results = [
     pyhf.infer.hypotest(poi_value, observations, pdf, init_pars=init_pars, test_stat="qtilde", return_expected_set=True)
     for poi_value in poi_values
 ]
-# obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(observations, pdf, poi_values, level=0.05, return_results=True)
 fig, ax = plt.subplots()
 brazil.plot_results(ax, poi_values, results)
 fig.savefig(f'muscan_{tag}__{ana}.pdf')
+
+obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(observations, pdf, poi_values, level=0.05, return_results=True)
+print(f"Observed limit: {obs_limit}")
+print( "Expected limit: %5.3f" % exp_limits[2])
+print( "      -1 sigma: %5.3f" % exp_limits[1])
+print( "      +1 sigma: %5.3f" % exp_limits[3])
+print( "      -2 sigma: %5.3f" % exp_limits[0])
+print( "      +2 sigma: %5.3f" % exp_limits[4])
