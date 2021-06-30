@@ -36,7 +36,7 @@ journalctl -u docker CONTAINER_NAME="${tag}__SAtoJSON" > ${database}/${datadir}/
 # run a simple mu scan.  this can be faster, just using pyhf.
 #
 GPUopts="-c"
-if [[ $HOSTNAME == "slugpu" ]]; then
+if [[ $(hostname) == "slugpu" ]]; then
     GPUopts=""
 fi
 
