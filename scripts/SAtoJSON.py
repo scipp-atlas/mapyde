@@ -72,15 +72,16 @@ for channel in ws.channels:
     if SAname in tree.keys():
 
         mask=(branches[SAname]>0)
-        if "Compressed" in args.background:
+        if ("Compressed" in args.background) or ("Slepton_bkgonly" in args.background): 
             # in the Compressed SA output, the SR's are not broken down
             # by flavor, while in the serialized likelihood they are.
             # use the fields in the ntuple to do the flavor breakdown here.
+
             flavname="isee" if "ee" in channel else "ismm"
             mask=(branches[SAname]>0)&(branches[flavname]>0)
         
         yld=sum(branches[SAname][mask])
-        
+
     yld*=float(args.lumi)
     print("%3d  %40s  %40s  %.2e" % (c_index, channel, SAname, yld))
     
