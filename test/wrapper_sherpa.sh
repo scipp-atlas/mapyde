@@ -7,7 +7,7 @@ events=${3:-"1000"}
 tag=${4:-"test"}
 seed=${5:-0}
 base=/export/home/mhance/mario-mapyde
-database=/export/share/data/mhance/tthh
+database=${6:-/export/share/diskvault3/mhance/tthh}
 
 datadir=${tag}/${seed}
 

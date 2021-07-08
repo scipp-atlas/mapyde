@@ -1,5 +1,5 @@
 
-database=/export/share/data/mhance/tthh
+database=/export/share/diskvault3/mhance/tthh
 
 proc=$1
 ecms=${2:-14}
@@ -12,7 +12,7 @@ case $proc in
 	madgraphsherpa="madgraph"
         tag="${proc}_${ecms}_001k_${seedoffset}";;
     
-    ttbbz | ttbbh | ttbbjj)
+    ttbbz | ttbbh | ttbbjj | ttbb)
 	nevents=1000;
 	madgraphsherpa="sherpa"
 	tag="${proc}_${ecms}_001k_${seedoffset}";;

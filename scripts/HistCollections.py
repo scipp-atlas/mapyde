@@ -27,7 +27,7 @@ class DelphesEvent:
             if m.PT>25 and abs(m.Eta)<2.5:
                 self.muons.append(m)
                 self.leptons.append(m)
-        self.sortedleptons=sorted(self.leptons,key=lambda lep:lep.PT)
+        self.sortedleptons=sorted(self.leptons,key=lambda lep:lep.PT,reverse=True)
         
         self.jets=[]
         self.exclJets=[]
@@ -46,7 +46,7 @@ class DelphesEvent:
                 if not (j.TauTag or j.BTag):
                     self.exclJets.append(j)
 
-        self.sortedjets=sorted(self.jets,key=lambda jet:jet.PT)
+        self.sortedjets=sorted(self.jets,key=lambda jet:jet.PT,reverse=True)
 
 class Hists:
     def addbranch(self, bname, btype, blen=1, default=0):

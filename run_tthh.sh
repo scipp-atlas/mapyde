@@ -7,12 +7,12 @@ source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh
 lsetup "python 3.8.8-x86_64-centos7"
 
 #database=/data/users/mhance/tthh
-database=/export/share/data/mhance/tthh
+database=/export/share/diskvault3/mhance/tthh
 base=/export/home/mhance/mario-mapyde
 
 # be careful of this, it will remove existing files if set to "clobber"
-clobber_ana="true"
-clobber_delphes="false"
+clobber_ana=true
+clobber_delphes=false
 
 lumi=3000000
 delphescard="delphes_card_ATLAS_fixedbtageffic.tcl"
@@ -92,7 +92,7 @@ else
 
     if [ ! -e ${database}/${datadir}/sherpa ]; then
 	echo "-- running sherpa for ${proc}"
-	${base}/test/wrapper_sherpa.sh ${proc} ${ecms} ${nevents} ${tag} ${seed}
+	${base}/test/wrapper_sherpa.sh ${proc} ${ecms} ${nevents} ${tag} ${seed} ${database}
     else
 	"Skipping Sherpa generation because output directory already exists"
     fi
