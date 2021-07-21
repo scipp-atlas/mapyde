@@ -6,7 +6,7 @@ cores=8
 seed=0
 analysis="EwkCompressed2018"
 likelihood="Slepton_bkgonly"
-pythia_card="/cards/pythia/pythia8_card.dat"
+pythia_card="pythia8_card.dat"
 delphes_card="delphes_card_ATLAS_lowptleptons.tcl"
 ptj1min=100
 deltaeta=0
@@ -47,7 +47,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:gla" opt; do
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
-	
+
 
 ./run_VBFSUSY_standalone.sh \
     -E ${ecms} \

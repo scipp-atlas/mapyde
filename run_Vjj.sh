@@ -28,7 +28,7 @@ for EWKQCD in "EWK"; do
 	    if [[ $i_mmjj == $max_mmjj_TeV ]]; then
 		mmjjmax="-1"
 	    fi
-	    
+
 	    if [[ $ecms == 13 ]]; then
 		lumi=140000
 		delphescard="delphes_card_ATLAS.tcl"
@@ -41,15 +41,15 @@ for EWKQCD in "EWK"; do
 	    fi
 
 	    tag="Vjj${EWKQCD}_${ecms}_mmjj_${mmjj}_${mmjjmax}_${seed}"
-	    
+
 	    base=${PWD}
 	    datadir=${tag}
-	    
+
 	    params="sm"
-	    
+
 	    deltaeta=3.0
 	    nevents=1000 # 1000000
-	    
+
 	    # ---------------------------------------------------------------------------------------
 	    # run madgraph+pythia
 	    ./scripts/mg5creator.py \
@@ -57,7 +57,7 @@ for EWKQCD in "EWK"; do
 		-P cards/process/Vjj${EWKQCD} \
 		-r cards/run/default_LO.dat \
 		-p cards/param/${params}.slha \
-		-y cards/pythia/pythia8_card_dipoleRecoil.dat \
+		-y pythia8_card_dipoleRecoil.dat \
 		-R mmjj ${mmjj} -R mmjjmax ${mmjjmax} -R deltaeta ${deltaeta}  -R mmll 40 \
 		-E "${ecms}000" \
 		-c ${cores} \
@@ -77,15 +77,15 @@ for EWKQCD in "EWK"; do
 		       -w /tmp \
 		       gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
 		       "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph  && chown -R $UID /data/madgraph"
-		
+
 		# dump docker logs to text file
 		journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > $database/$datadir/docker_mgpy.log
 	    fi
 	    # ---------------------------------------------------------------------------------------
-	    
+
 	    # should not clobber existing output
 	    ./test/wrapper_delphes.sh ${tag} ${delphescard} ${clobber_delphes}
-	    
+
 	    # should not clobber existing output
 	    XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
 	    echo "tag=$tag"
