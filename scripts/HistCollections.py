@@ -27,7 +27,7 @@ class DelphesEvent:
             if m.PT>25 and abs(m.Eta)<2.5:
                 self.muons.append(m)
                 self.leptons.append(m)
-        self.sortedleptons=sorted(self.leptons,key=lambda lep:lep.PT,reverse=True)
+        self.sortedleptons=sorted(self.leptons,key=lambda lep:lep.PT, reverse=True)
         
         self.jets=[]
         self.exclJets=[]
@@ -185,16 +185,9 @@ class Hists:
         self.branches["weight"][0] = weight
             
         ### Do some characterizations
-        leadingLep = 0
-        if ( len(event.elecs) > 0 and len(event.muons) == 0 ):
-            leadingLep = event.elecs[0].P4()
-        elif ( len(event.elecs) == 0 and len(event.muons) > 0 ):
-            leadingLep = event.muons[0].P4()
-        elif ( len(event.elecs) > 0 and len(event.muons) > 0 ):
-            if ( event.elecs[0].PT > event.muons[0].PT ):
-                leadingLep = event.elecs[0].P4()
-            else:
-                leadingLep = event.muons[0].P4()
+        leading_lepton = (
+            event.sorted_leptons[0].P4() if len(event.sorted_leptons) > 0 else None
+        )
 
         muonsmomentum=ROOT.TLorentzVector()
         muonsmomentum.SetPtEtaPhiM(0,0,0,0)
