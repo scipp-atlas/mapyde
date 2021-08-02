@@ -186,7 +186,7 @@ class Hists:
             
         ### Do some characterizations
         leading_lepton = (
-            event.sorted_leptons[0].P4() if len(event.sorted_leptons) > 0 else None
+            event.sortedleptons[0].P4() if len(event.sortedleptons) > 0 else None
         )
 
         muonsmomentum=ROOT.TLorentzVector()
