@@ -185,7 +185,7 @@ class Hists:
         self.branches["weight"][0] = weight
             
         ### Do some characterizations
-        leading_lepton = (
+        leadingLep = (
             event.sortedleptons[0].P4() if len(event.sortedleptons) > 0 else None
         )
 
