@@ -28,8 +28,10 @@ seed=0
 pythia_card="cards/pythia/pythia8_card.dat"
 base=${PWD}
 MGversion=""
+slepton=false
+sneutrino=false
 
-while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:" opt; do
+while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:v" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -50,6 +52,7 @@ while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:" opt; do
 	k) ktdurham=$OPTARG;;
 	X) xqcut=$OPTARG;;
 	s) slepton=true;;
+	v) sneutrino=true;;
 	d) seed=$OPTARG;;
 	I) MGversion=$OPTARG;;
 	\?) echo "Invalid option: -$OPTARG";;
@@ -65,6 +68,10 @@ mN1=$(bc <<< "scale=2; ${mass}-${dM}")
 
 if [[ ${slepton} == true ]]; then
     massopts="-m MSLEP ${mass}"
+    if [[ ${sneutrino} == true ]]; then
+	mSNU=$(bc <<< "scale=2; ${mass}-${dM}/2")
+	massopts="${massopts} -m MSNU ${mSNU}"
+    fi
 elif [[ ${params} == WinoBino ]]; then
     massopts="-m MN2 ${mass} -m MC1 ${mass}"
 elif [[ ${params} == Higgsino ]]; then

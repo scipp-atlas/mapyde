@@ -60,7 +60,7 @@ fi
 
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:n" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nv" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -95,12 +95,10 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:n" opt; 
 	h) XSoverride=$OPTARG;;
 	I) MGversion=$OPTARG;;
 	n) sleptonopts="-s";;
+	v) sleptonopts="-s -v";;
 	\?) echo "Invalid option: -$OPTARG";;
     esac
 done
-
-echo $anascript
-echo $clobber_ana
 
 # construct the tag.
 tag="VBFSUSY_${ecms}_${params}_${mass}_mmjj_${mmjj}_${mmjjmax}${suffix}"
