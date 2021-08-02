@@ -5,7 +5,7 @@ set -e # exit when any command fails
 ecms=100
 mass=150
 dM=5
-proc=chargino
+proc=charginos
 cores=20
 nevents=1000
 params=Higgsino
@@ -25,7 +25,7 @@ database=/data/users/${USER}/SUSY
 ktdurham="-1"
 xqcut="-1"
 seed=0
-pythia_card="cards/pythia/pythia8_card.dat"
+pythia_card="pythia8_card.dat"
 base=${PWD}
 MGversion=""
 slepton=false
@@ -109,7 +109,7 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   -w /tmp \
 	   gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph${MGversion}:master \
 	   "mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph"
-    
+
     # dump docker logs to text file
     journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > ${database}/${datadir}/docker_mgpy.log
 fi

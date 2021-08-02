@@ -27,8 +27,8 @@ parser.add_argument(
 parser.add_argument(
     "-y",
     "--pythia",
-    default="/cards/pythia/pythia8_card.dat",
-    help="path to pythia card",
+    default="pythia8_card.dat",
+    help="pythia card to use, must be in cards/pythia",
 )
 
 # Options for customizing the run
@@ -50,10 +50,14 @@ parser.add_argument("-t", "--tag", default="run", help="name for the job")
 parser.add_argument("-s", "--seed", default=0, help="random seed")
 
 # control the number of cores for this job
-parser.add_argument("-c", "--cores", default=0, help="number of cores to use for madgraph and pythia")
+parser.add_argument(
+    "-c", "--cores", default=0, help="number of cores to use for madgraph and pythia"
+)
 
 # set batch/cluster mode, limits number of cores to 1, and overrides -c
-parser.add_argument("-b", "--batch", action="store_true", help="set batch mode, only uses a single core")
+parser.add_argument(
+    "-b", "--batch", action="store_true", help="set batch mode, only uses a single core"
+)
 
 parser.add_argument(
     "-o", "--output", default="output", help="output directory for generated files"
@@ -66,7 +70,15 @@ output_path = Path(args.output).joinpath(args.tag).resolve()
 try:
     output_path.mkdir(parents=True, exist_ok=False)
 except FileExistsError:
-    log.error(f"{args.tag} is already used, pick another tag or delete the directory.")
+    log.error(
+        f"{args.tag} is already used, pick another tag or delete the directory: {output_path}."
+    )
+    exit(1)
+
+# Ensure pythia card exists
+_pythia_card_path = Path("cards/pythia").joinpath(args.pythia)
+if not _pythia_card_path.exists():
+    log.error(f"{_pythia_card_path} does not exist.")
     exit(1)
 
 substitution = dict(
@@ -142,21 +154,21 @@ log.info(f"MadGraph Config: {mgconfig_card_path}")
 
 # Figure out the run_mode.  0=single core, 1=cluster, 2=multicore.
 if args.batch:
-    run_mode="set run_mode 0" # we don't have MadGraph launch cluster jobs for us, we handle that ourselves.
-elif int(args.cores)>0:
-    run_mode="set run_mode 2\nset nb_core %d" % int(args.cores)
+    run_mode = "set run_mode 0"  # we don't have MadGraph launch cluster jobs for us, we handle that ourselves.
+elif int(args.cores) > 0:
+    run_mode = "set run_mode 2\nset nb_core %d" % int(args.cores)
 else:
-    run_mode="set run_mode 2\nset nb_core %d" % int(multiprocessing.cpu_count()/2)
+    run_mode = "set run_mode 2\nset nb_core %d" % int(multiprocessing.cpu_count() / 2)
 
 # figure out if running with madspin or not, and if so, put the card in the right place
-madspin_on="OFF"
+madspin_on = "OFF"
 if args.madspin:
     # Copy the madspin card
     madspin_card_path = Path(args.madspin).resolve()
     new_madspin_card_path = output_path.joinpath("madspin_card.dat")
     log.info(f"MadSpin Card: {new_madspin_card_path}")
     shutil.copyfile(madspin_card_path, new_madspin_card_path)
-    madspin_on="ON"
+    madspin_on = "ON"
 
     config = f"""
 {run_mode}
@@ -167,11 +179,11 @@ reweight=OFF
 /data/{new_madspin_card_path.name}
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}
-{args.pythia}
+/cards/pythia/{args.pythia}
 set iseed {args.seed}
 done
 """
-    
+
 else:
     config = f"""
 {run_mode}
@@ -181,7 +193,7 @@ shower=Pythia8
 reweight=OFF
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}
-{args.pythia}
+/cards/pythia/{args.pythia}
 set iseed {args.seed}
 done
 """

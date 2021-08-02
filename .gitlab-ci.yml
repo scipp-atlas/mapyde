@@ -48,7 +48,7 @@ prepare_inputs:
         scripts/mg5creator.py -P cards/process/charginos \
                               -r cards/run/default_LO.dat \
                               -p cards/param/Higgsino.slha \
-                              -y cards/pythia/pythia8_card.dat \
+                              -y pythia8_card.dat \
                               -m MN1 150.0 \
                               -m MN2 155.0 \
                               -m MC1 155.0 \
