@@ -48,6 +48,14 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:gla" opt; do
     esac
 done
 
+clobberopts=""
+if $clobber_mgpy; then
+    clobberopts="-g -l -a"
+elif $clobber_delphes; then
+    clobberopts="-l -a"
+elif $clobber_ana; then
+    clobberopts="-a"
+fi
 
 ./run_VBFSUSY_standalone.sh \
     -E ${ecms} \
@@ -70,4 +78,5 @@ done
     -s ${suffix} \
     -n \
     -I "-2.9" \
-    ${skipopts}
+    ${clobberopts}
+

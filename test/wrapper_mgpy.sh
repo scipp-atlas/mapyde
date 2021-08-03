@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e # exit when any command fails
+# set -e # exit when any command fails
 
 # defaults
 ecms=100
@@ -98,7 +98,7 @@ fi
     -s ${seed} \
     -t ${tag}
 
-if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
+if [[ $? == 0 || $clobber_mgpy ]]; then
     docker run \
 	   --log-driver=journald \
 	   --name "${tag}__mgpy" \

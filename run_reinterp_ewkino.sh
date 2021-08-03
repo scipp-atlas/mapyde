@@ -49,6 +49,15 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:gla" opt; do
 done
 	
 
+clobberopts=""
+if $clobber_mgpy; then
+    clobberopts="-g -l -a"
+elif $clobber_delphes; then
+    clobberopts="-l -a"
+elif $clobber_ana; then
+    clobberopts="-a"
+fi
+
 ./run_VBFSUSY_standalone.sh \
     -E ${ecms} \
     -M ${mass} \
@@ -69,4 +78,5 @@ done
     -h "${XSoverride}" \
     -s ${suffix} \
     -I "-2.9" \
-    ${skipopts}
+    ${skipopts} \
+    ${clobberopts}
