@@ -98,7 +98,8 @@ fi
     -s ${seed} \
     -t ${tag}
 
-if [[ $? == 0 || $clobber_mgpy ]]; then
+
+if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
     docker run \
 	   --log-driver=journald \
 	   --name "${tag}__mgpy" \
