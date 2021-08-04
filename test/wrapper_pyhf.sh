@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e # exit when any command fails
+#set -e # exit when any command fails
 
 tag=${1:-"test_Higgsino_001"}
 lumi=${2:-"1000"}
