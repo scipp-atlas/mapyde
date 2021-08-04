@@ -44,7 +44,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:gla" opt; do
 	L) delphescard=$OPTARG;;
 	f) simpleanalysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
-	\?) echo "Invalid option: -$OPTARG";;
+	*) exit;;
     esac
 done
 
