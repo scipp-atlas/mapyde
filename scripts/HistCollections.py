@@ -46,7 +46,7 @@ class DelphesEvent:
                 if not (j.TauTag or j.BTag):
                     self.exclJets.append(j)
 
-        self.sortedjets=sorted(self.jets,key=lambda jet:jet.PT)
+        self.sortedjets=sorted(self.jets,key=lambda jet:jet.PT, reverse=True)
 
 class Hists:
     def addbranch(self, bname, btype, blen=1, default=0):
