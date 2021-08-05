@@ -30,8 +30,9 @@ base=${PWD}
 MGversion=""
 slepton=false
 sneutrino=false
+skip_pythia=false
 
-while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:v" opt; do
+while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:vT" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -55,7 +56,8 @@ while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:v" opt; do
 	v) sneutrino=true;;
 	d) seed=$OPTARG;;
 	I) MGversion=$OPTARG;;
-	\?) echo "Invalid option: -$OPTARG";;
+	T) skip_pythia=true;;
+	*) exit;;
     esac
 done
 
@@ -84,6 +86,11 @@ if [[ $xqcut != 0 && $xqcut != -1 ]]; then
     xqcut=${xqcuttmp}
 fi
 
+pythia_onoff=""
+if $skip_pythia; then
+    pythia_onoff="-T"
+fi
+
 ./scripts/mg5creator.py \
     -o ${database} \
     -P cards/process/${proc} \
@@ -96,7 +103,8 @@ fi
     -E ${ecms}000 \
     -n ${nevents} \
     -s ${seed} \
-    -t ${tag}
+    -t ${tag} \
+    ${pythia_onoff}
 
 
 if [[ $? == 0 || ${clobber_mgpy} == true ]]; then

@@ -35,6 +35,7 @@ likelihood="Higgsino_2L_bkgonly"
 XSoverride=""
 MGversion=""
 sleptonopts=""
+skip_pythia=false
 
 # some modifications based on run parameters
 lumi=1
@@ -60,7 +61,7 @@ fi
 
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nv" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvT" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -96,7 +97,14 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nv" opt;
 	I) MGversion=$OPTARG;;
 	n) sleptonopts="-s";;
 	v) sleptonopts="-s -v";;
-	\?) echo "Invalid option: -$OPTARG";;
+	T) skip_pythia=true;;
+	r) 
+	    proc=stops
+	    param=StopBino
+	    mmjj=0
+	    deltaeta=0
+	    pythia_card="pythia8_card.dat";;
+	*) exit;;
     esac
 done
 
@@ -104,6 +112,11 @@ done
 tag="VBFSUSY_${ecms}_${params}_${mass}_mmjj_${mmjj}_${mmjjmax}${suffix}"
 if [[ $mmjj == 0.0 ]]; then
    tag="SUSY_${ecms}_${params}_${mass}_${dM}_${proc}_${suffix}"
+fi
+
+pythia_onoff=""
+if $skip_pythia; then
+    pythia_onoff="-T"
 fi
 
 # run MadGraph+Pythia, using test script
@@ -135,6 +148,7 @@ else
 	-J ${ptj1min} \
 	-I "${MGversion}" \
 	${clobberopt} \
+	${pythia_onoff} \
 	${sleptonopts} \
 	${tag}
 fi

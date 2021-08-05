@@ -20,6 +20,7 @@ parser.add_argument(
     "-r", "--run", default="cards/run/default_LO.dat", help="path to MG5 run card"
 )
 parser.add_argument("-P", "--proc", help="path to MG5 proc card")
+parser.add_argument("-T", "--skippythia", action='store_true', help="skip running pythia, only run parton-level generation")
 parser.add_argument("-S", "--madspin", help="path to MG5 madspin card", default=None)
 parser.add_argument(
     "-p", "--param", default="cards/param/Higgsino.slha", help="path to SLHA/param card"
@@ -80,6 +81,14 @@ _pythia_card_path = Path("cards/pythia").joinpath(args.pythia)
 if not _pythia_card_path.exists():
     log.error(f"{_pythia_card_path} does not exist.")
     exit(1)
+
+pythia_config_path=f"/cards/pythia/{args.pythia}"
+
+# Controls whether to run Pythia8 or not
+pythia_onoff="Pythia8"
+if args.skippythia:
+    pythia_onoff="OFF"
+    pythia_config_path=""
 
 substitution = dict(
     ecms=float(args.sqrts) / 2, nevents=int(args.numev), iseed=int(args.seed)
@@ -161,39 +170,27 @@ else:
     run_mode = "set run_mode 2\nset nb_core %d" % int(multiprocessing.cpu_count() / 2)
 
 # figure out if running with madspin or not, and if so, put the card in the right place
-madspin_on = "OFF"
+madspin_onoff = "OFF"
+madspin_config_path=""
 if args.madspin:
     # Copy the madspin card
     madspin_card_path = Path(args.madspin).resolve()
     new_madspin_card_path = output_path.joinpath("madspin_card.dat")
     log.info(f"MadSpin Card: {new_madspin_card_path}")
     shutil.copyfile(madspin_card_path, new_madspin_card_path)
-    madspin_on = "ON"
+    madspin_onoff = "ON"
+    madspin_config_path=f"/data/{new_madspin_card_path.name}"
 
-    config = f"""
+config = f"""
 {run_mode}
 launch PROC_madgraph
-madspin=ON
-shower=Pythia8
+madspin={madspin_onoff}
+shower={pythia_onoff}
 reweight=OFF
-/data/{new_madspin_card_path.name}
+{madspin_config_path}
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}
-/cards/pythia/{args.pythia}
-set iseed {args.seed}
-done
-"""
-
-else:
-    config = f"""
-{run_mode}
-launch PROC_madgraph
-madspin=OFF
-shower=Pythia8
-reweight=OFF
-/data/{new_param_card_path.name}
-/data/{new_run_card_path.name}
-/cards/pythia/{args.pythia}
+{pythia_config_path}
 set iseed {args.seed}
 done
 """

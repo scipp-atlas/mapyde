@@ -12,7 +12,6 @@ ptj1min=100
 deltaeta=0
 mmjj=0.0
 suffix="J${ptj1min}"
-XSoverride=""
 
 clobber_mgpy=false
 clobber_delphes=false
@@ -20,7 +19,7 @@ clobber_ana=false
 
 ecms=13
 mass=125
-masssplitting=20
+masssplitting=10
 
 # to run sleptons.  make sure we set "-n" in the options below.
 proc="isr2L"
@@ -58,25 +57,42 @@ elif $clobber_ana; then
     clobberopts="-a"
 fi
 
-./run_VBFSUSY_standalone.sh \
-    -E ${ecms} \
-    -M ${mass} \
-    -P ${proc} \
-    -c ${cores} \
-    -m ${mmjj} \
-    -e ${deltaeta} \
-    -p ${params} \
-    -S ${masssplitting} \
-    -N ${nevents} \
-    -d ${seed} \
-    -J ${ptj1min} \
-    -i \
-    -y ${pythia_card} \
-    -L ${delphes_card} \
-    -f ${analysis} \
-    -F ${likelihood} \
-    -h "${XSoverride}" \
-    -s ${suffix} \
-    -I "-2.9" \
-    ${skipopts} \
-    ${clobberopts}
+
+for thisproc in "${proc}nodecays" "${proc}"; do
+    echo $thisproc
+
+    skipopts=""
+    XSoverride=""
+    if [[ $thisproc == *nodecays ]]; then
+	skipopts="-D -A -T" # don't run delphes or analysis or pythia or simpleanalysis for the nodecays case, there aren't enough useful events
+	XSoverride=""
+    else
+	nodecayXS=$(grep "Cross-section" /data/users/mhance/SUSY/SUSY_${ecms}_${params}_${mass}_${masssplitting}_${thisproc}nodecays_${suffix}/docker_mgpy.log | tail -1 | awk '{print $8}')
+	XSoverride=$(python3 -c "print(1.30*0.1*${nodecayXS})") # k-factor * BR * XS before BR
+	skipopts="-i"
+    fi
+
+    set -x
+    ./run_VBFSUSY_standalone.sh \
+	-E ${ecms} \
+	-M ${mass} \
+	-P ${thisproc} \
+	-c ${cores} \
+	-m ${mmjj} \
+	-e ${deltaeta} \
+	-p ${params} \
+	-S ${masssplitting} \
+	-N ${nevents} \
+	-d ${seed} \
+	-J ${ptj1min} \
+	-y ${pythia_card} \
+	-L ${delphes_card} \
+	-f ${analysis} \
+	-F ${likelihood} \
+	-h "${XSoverride}" \
+	-s ${suffix} \
+	-I "-2.9" \
+	${skipopts} \
+	${clobberopts}
+    set +x
+done
