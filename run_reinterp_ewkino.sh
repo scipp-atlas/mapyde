@@ -67,7 +67,7 @@ for thisproc in "${proc}nodecays" "${proc}"; do
 	skipopts="-D -A -T" # don't run delphes or analysis or pythia or simpleanalysis for the nodecays case, there aren't enough useful events
 	XSoverride=""
     else
-	nodecayXS=$(grep "Cross-section" /data/users/mhance/SUSY/SUSY_${ecms}_${params}_${mass}_${masssplitting}_${thisproc}nodecays_${suffix}/docker_mgpy.log | tail -1 | awk '{print $8}')
+	nodecayXS=$(grep "Cross-section" /data/users/${USER}/SUSY/SUSY_${ecms}_${params}_${mass}_${masssplitting}_${thisproc}nodecays_${suffix}/docker_mgpy.log | tail -1 | awk '{print $8}')
 	XSoverride=$(python3 -c "print(1.30*0.1*${nodecayXS})") # k-factor * BR * XS before BR
 	skipopts="-i"
     fi
