@@ -18,7 +18,7 @@ docker pull gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting-cuda
 
 There are a few layers of scripts to factorize the different tasks.  A typical pipeline will look like:
 
-1. Call [test/wrapper_mgpy.sh](./test/wrapper_mgpy.s) to run MadGraph+Pythia and produce an LHE file.  The script takes options to specify things like:
+1. Call [test/wrapper_mgpy.sh](./test/wrapper_mgpy.s) to run MadGraph+Pythia and produce a .hepmc file.  The script takes options to specify things like:
     - proc/param/run cards for MadGraph
         - includes specifying particle masses, and
 	- any kinematic cuts to apply at parton level
