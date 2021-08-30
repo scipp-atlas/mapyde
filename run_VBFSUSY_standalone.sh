@@ -35,6 +35,7 @@ likelihood="Higgsino_2L_bkgonly"
 XSoverride=""
 MGversion=""
 sleptonopts=""
+stopopts=""
 skip_pythia=false
 
 # some modifications based on run parameters
@@ -61,7 +62,7 @@ fi
 
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvT" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTr" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -100,17 +101,18 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvT" opt
 	T) skip_pythia=true;;
 	r) 
 	    proc=stops
-	    param=StopBino
+	    params=StopBino
 	    mmjj=0
 	    deltaeta=0
-	    pythia_card="pythia8_card.dat";;
+	    pythia_card="pythia8_card.dat"
+	    stopopts="-r";;
 	*) exit;;
     esac
 done
 
 # construct the tag.
 tag="VBFSUSY_${ecms}_${params}_${mass}_mmjj_${mmjj}_${mmjjmax}${suffix}"
-if [[ $mmjj == 0.0 ]]; then
+if [[ $mmjj == 0.0 || $mmjj == 0 ]]; then
    tag="SUSY_${ecms}_${params}_${mass}_${dM}_${proc}_${suffix}"
 fi
 
@@ -150,6 +152,7 @@ else
 	${clobberopt} \
 	${pythia_onoff} \
 	${sleptonopts} \
+	${stopopts} \
 	${tag}
 fi
 

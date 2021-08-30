@@ -488,6 +488,123 @@ class tthhTree:
 #=====================================================================
 
 
+#=====================================================================
+class lowlevelTree:
+    def addbranch(self, bname, btype, blen=1, default=0):
+        self.branches[bname] = array(btype,blen*[default])
+        bnamemod=bname
+        if blen>1:
+            bnamemod="%s[%d]" % (bname,blen)
+        self.tree.Branch(bname, self.branches[bname], '%s/%s' % (bnamemod,btype.upper()))
+            
+
+    def __init__(self, tag, topdir, detaillevel=99): 
+        self.topdir=topdir
+        self.hists={}
+        self.tag=tag
+
+        self.newdir=topdir.mkdir(tag)
+        self.newdir.cd()
+
+        self.detaillevel=detaillevel
+        self.collections={}
+    
+        self.branches={}
+        self.tree = ROOT.TTree("lowleveltree","lowleveltree")
+        for i in ("numlepton", "numjet", "numbtagjet", "met", "metphi", "weight"):
+            self.addbranch(i, 'f')
+
+        self.maxleptons=4
+        for j in range(1,self.maxleptons):
+            for i in ("pT", "eta", "phi", "mT", "minjetdr"):
+                self.addbranch("lepton%d%s" % (j,i), 'f')
+
+        self.maxjets=12
+        for j in range(1,self.maxjets):
+            for i in ("pT", "eta", "phi", "b"):
+                self.addbranch("jet%d%s" % (j,i), 'f')
+
+
+        # other objects: photons, taus, large-R jets.
+
+    def write(self,):
+        self.newdir.cd()
+        for i,k in self.hists.iteritems():
+            k.Write()
+        for i,k in self.collections.iteritems():
+            k.write()
+        self.tree.Write()
+        self.topdir.cd()
+
+    def add(self,coll):
+        for i,k in self.hists.iteritems():
+            if i in coll.hists: k.Add(coll.hists[i])
+        for i,k in self.collections.iteritems():
+            if i in coll.collections: k.add(coll.collections[i])
+    
+    def fill(self,event,weight=0):
+        
+        defaultfill=-999
+
+        for i,k in self.collections.iteritems():
+            k.fill(event,weight)
+
+        self.branches["weight"][0] = weight
+
+        nbjets=len(event.btags)
+    
+        ### Fill generic hists
+        self.branches["met"][0]        = event.met.Pt()
+        self.branches["metphi"][0]     = event.met.Phi()
+        self.branches["numlepton"][0]  = len(event.sortedleptons)
+        self.branches["numbtagjet"][0] = nbjets
+        self.branches["numjet"][0]     = len(event.jets)
+
+        ### Jets
+        jetCount=1
+        for aJet in event.sortedjets:
+            self.branches["jet%dpT" % jetCount][0]  = aJet.PT
+            self.branches["jet%deta" % jetCount][0] = aJet.Eta
+            self.branches["jet%dphi" % jetCount][0] = aJet.Phi
+            self.branches["jet%db" % jetCount][0]  = aJet.BTag and aJet.PT>25 and abs(aJet.Eta)<event.btageta
+            
+            jetCount=jetCount+1
+            if jetCount>=self.maxjets: break
+            
+        # fill in dummy values for "missing" jets
+        for jetCount in range(jetCount,self.maxjets):
+            self.branches["jet%dpT" % jetCount][0]  = -999
+            self.branches["jet%deta" % jetCount][0] = -9
+            self.branches["jet%dphi" % jetCount][0] = -9
+            self.branches["jet%db" % jetCount][0]  = -9
+
+        ### Leptons
+        lepCount=1
+        for aLep in event.sortedleptons:
+            self.branches["lepton%dpT" % lepCount][0] = aLep.PT
+            self.branches["lepton%dpT" % lepCount][0] = aLep.Eta
+            self.branches["lepton%dpT" % lepCount][0] = aLep.Phi
+            self.branches["lepton%dmT" % lepCount][0] = ROOT.TMath.Sqrt(2*event.met.Pt()*aLep.PT*(1-ROOT.TMath.Cos(aLep.P4().DeltaPhi(event.met))))
+            mindr=999
+            for aJet in event.sortedjets:
+                mindr=min(mindr,aLep.P4().DrEtaPhi(aJet.P4()))
+            self.branches["lepton%dminjetdr" % lepCount][0] = mindr
+            lepCount=lepCount+1
+            if lepCount>=self.maxleptons: break
+            
+        for lepCount in range(lepCount,self.maxleptons):
+            self.branches["lepton%dpT" % lepCount][0] = -999
+            self.branches["lepton%dpT" % lepCount][0] = -9
+            self.branches["lepton%dpT" % lepCount][0] = -9
+            self.branches["lepton%dmT" % lepCount][0] = -999
+            self.branches["lepton%dminjetdr" % lepCount][0] = -999
+            
+
+        self.tree.Fill()
+
+#=====================================================================
+
+
 #======================================================================
 #
 class HistCollection:
