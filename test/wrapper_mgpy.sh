@@ -95,6 +95,11 @@ if $skip_pythia; then
     pythia_onoff="-T"
 fi
 
+clobber_opts=""
+if [[ ${clobber_mgpy} == true ]]; then
+    clobber_opts="-g"
+fi
+
 ./scripts/mg5creator.py \
     -o ${database} \
     -P cards/process/${proc} \
@@ -108,7 +113,7 @@ fi
     -n ${nevents} \
     -s ${seed} \
     -t ${tag} \
-    ${pythia_onoff}
+    ${pythia_onoff} ${clobber_opts}
 
 
 if [[ $? == 0 || ${clobber_mgpy} == true ]]; then

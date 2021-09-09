@@ -21,6 +21,7 @@ parser.add_argument(
 )
 parser.add_argument("-P", "--proc", help="path to MG5 proc card")
 parser.add_argument("-T", "--skippythia", action='store_true', help="skip running pythia, only run parton-level generation")
+parser.add_argument("-g", "--overwrite", action='store_true', help="overwrite existing config files")
 parser.add_argument("-S", "--madspin", help="path to MG5 madspin card", default=None)
 parser.add_argument(
     "-p", "--param", default="cards/param/Higgsino.slha", help="path to SLHA/param card"
@@ -71,10 +72,15 @@ output_path = Path(args.output).joinpath(args.tag).resolve()
 try:
     output_path.mkdir(parents=True, exist_ok=False)
 except FileExistsError:
-    log.error(
-        f"{args.tag} is already used, pick another tag or delete the directory: {output_path}."
-    )
-    exit(1)
+    if args.overwrite:
+        log.warning(
+            f"{args.tag} is already used, overwriting existing configuration in that directory."
+        )
+    else:
+        log.error(
+            f"{args.tag} is already used, pick another tag or delete the directory: {output_path}."
+        )
+        exit(1)
 
 # Ensure pythia card exists
 _pythia_card_path = Path("cards/pythia").joinpath(args.pythia)
