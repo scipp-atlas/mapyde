@@ -175,20 +175,28 @@ for entry in range(0, numberOfEntries):
   mcWeights.Add(branchEvent.At(0).Weight*weightscale)
   # FIXME: add PDF info etc. if available
 
-  # MET/HT
-  sumet.Set(branchHT.At(0).HT)
-  met_pt.Set(branchMET.At(0).MET)
-  met_phi.Set(branchMET.At(0).Phi)
-
+  # remove muons from MET
+  metvec=ROOT.TLorentzVector()
+  metvec.SetPtEtaPhiM(branchMET.At(0).MET,0,branchMET.At(0).Phi,0)
+  
+  
   # object id not implemented for now 
   for idx in range(branchElectron.GetEntries()):
     electrons.Add(branchElectron.At(idx))
 
   for idx in range(branchMuon.GetEntries()):
     muons.Add(branchMuon.At(idx))
+    muonvec=ROOT.TLorentzVector()
+    muonvec.SetPtEtaPhiM(branchMuon.At(idx).PT,branchMuon.At(idx).Eta,branchMuon.At(idx).Phi,0.1)
+    metvec=metvec-muonvec
 
   for idx in range(branchPhoton.GetEntries()):
     photons.Add(branchPhoton.At(idx),charge=0)
+
+  # MET/HT
+  sumet.Set(branchHT.At(0).HT)
+  met_pt.Set(metvec.Pt())
+  met_phi.Set(metvec.Phi())
 
   # If event contains at least 1 jet
   for idx in range(branchJet.GetEntries()):
