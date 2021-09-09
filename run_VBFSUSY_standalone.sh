@@ -37,6 +37,7 @@ MGversion=""
 sleptonopts=""
 stopopts=""
 skip_pythia=false
+kfactor=-1
 
 # some modifications based on run parameters
 lumi=1
@@ -62,7 +63,7 @@ fi
 
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTr" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -99,6 +100,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTr" op
 	n) sleptonopts="-s";;
 	v) sleptonopts="-s -v";;
 	T) skip_pythia=true;;
+	K) kfactor=$OPTARG;;
 	r) 
 	    proc=stops
 	    params=StopBino
@@ -168,6 +170,12 @@ XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '
 # if we're doing matching, then take a different value
 if [[ $xqcut != -1 ]]; then
     XS=$(grep "cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $9}')
+fi
+
+if [[ $kfactor != -1 ]]; then
+    origXS=$(grep "Cross-section" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
+    XSoverride=$(python3 -c "print(${kfactor}*${origXS})") # k-factor * LO XS
+    echo "Changing cross section from $origXS to $XSoverride to account for k-factors"
 fi
 
 if [[ $XSoverride != "" ]]; then

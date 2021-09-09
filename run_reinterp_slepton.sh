@@ -13,6 +13,7 @@ deltaeta=0
 mmjj=0.0
 suffix="J${ptj1min}"
 XSoverride=""
+kfactor=1.3
 
 clobber_mgpy=false
 clobber_delphes=false
@@ -52,13 +53,14 @@ clobberopts=""
 if $clobber_mgpy; then
     clobberopts="-g -l -a"
 elif $clobber_delphes; then
-    clobberopts="-l -a"
+    clobberopts="-l -a"  # add -A to avoid rerunning madgraph+pythia
 elif $clobber_ana; then
     clobberopts="-a"
 fi
 
 ./run_VBFSUSY_standalone.sh \
     -E ${ecms} \
+    -K ${kfactor} \
     -M ${mass} \
     -P ${proc} \
     -c ${cores} \
@@ -79,4 +81,3 @@ fi
     -n \
     -I "-2.9" \
     ${clobberopts}
-

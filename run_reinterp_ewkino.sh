@@ -12,6 +12,7 @@ ptj1min=100
 deltaeta=0
 mmjj=0.0
 suffix="J${ptj1min}"
+kfactor=1.3
 
 clobber_mgpy=false
 clobber_delphes=false
@@ -68,7 +69,7 @@ for thisproc in "${proc}nodecays" "${proc}"; do
 	XSoverride=""
     else
 	nodecayXS=$(grep "Cross-section" /data/users/${USER}/SUSY/SUSY_${ecms}_${params}_${mass}_${masssplitting}_${thisproc}nodecays_${suffix}/docker_mgpy.log | tail -1 | awk '{print $8}')
-	XSoverride=$(python3 -c "print(1.30*0.1*${nodecayXS})") # k-factor * BR * XS before BR
+	XSoverride=$(python3 -c "print(${kfactor}*0.1*${nodecayXS})") # k-factor * BR * XS before BR
 	skipopts="-i"
     fi
 
