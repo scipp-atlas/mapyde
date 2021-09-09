@@ -27,12 +27,10 @@ set ExecutionPath {
 
   ElectronFilter
   ElectronEfficiency
-  ElectronIsolation
 
   ChargedHadronFilter
 
   MuonEfficiency
-  MuonIsolation
 
   MissingET
 
@@ -483,14 +481,14 @@ module Efficiency ElectronEfficiency {
 
   # efficiency formula for electrons
     set EfficiencyFormula {                    (pt <  4.5)              * (0.00) +
-	                   (abs(eta) <= 2.5) * (pt < 5.0) * (pt >= 4.5) * (0.25) +
-	                   (abs(eta) <= 2.5) * (pt < 6.0) * (pt >= 5.0) * (0.40) +
-	                   (abs(eta) <= 2.5) * (pt < 8.0) * (pt >= 6.0) * (0.50) +
-	                   (abs(eta) <= 2.5) * (pt < 10)  * (pt >= 8.0) * (0.60) +
-	                   (abs(eta) <= 2.5) * (pt < 20)  * (pt >= 10)  * (0.65) +
-	                   (abs(eta) <= 2.5) * (pt < 30)  * (pt >= 20)  * (0.70) +
-	                   (abs(eta) <= 2.5) * (pt < 50)  * (pt >= 30)  * (0.75) +
-	                   (abs(eta) <= 2.5) * (pt >= 50)               * (0.87) +
+    	                   (abs(eta) <= 2.5) * (pt < 5.0) * (pt >= 4.5) * (0.25) +
+    	                   (abs(eta) <= 2.5) * (pt < 6.0) * (pt >= 5.0) * (0.40) +
+    	                   (abs(eta) <= 2.5) * (pt < 8.0) * (pt >= 6.0) * (0.50) +
+    	                   (abs(eta) <= 2.5) * (pt < 10)  * (pt >= 8.0) * (0.60) +
+    	                   (abs(eta) <= 2.5) * (pt < 20)  * (pt >= 10)  * (0.65) +
+    	                   (abs(eta) <= 2.5) * (pt < 30)  * (pt >= 20)  * (0.70) +
+    	                   (abs(eta) <= 2.5) * (pt < 50)  * (pt >= 30)  * (0.75) +
+    	                   (abs(eta) <= 2.5) * (pt >= 50)               * (0.87) +
                            (abs(eta) > 2.5)                             * (0.00)}
 }
 
@@ -523,17 +521,16 @@ module Efficiency MuonEfficiency {
 
   # efficiency formula for muons
     set EfficiencyFormula {                    (pt <  3.0)              * (0.00) +
-	                   (abs(eta) <= 2.7) * (pt < 3.5) * (pt >= 3.0) * (0.50) +
-	                   (abs(eta) <= 2.7) * (pt < 4.5) * (pt >= 3.5) * (0.65) +
-	                   (abs(eta) <= 2.7) * (pt < 7.0) * (pt >= 4.5) * (0.70) +
-	                   (abs(eta) <= 2.7) * (pt < 15)  * (pt >= 7.0) * (0.75) +
-	                   (abs(eta) <= 2.7) * (pt < 20)  * (pt >= 15)  * (0.80) +
-	                   (abs(eta) <= 2.7) * (pt < 30)  * (pt >= 20)  * (0.83) +
-	                   (abs(eta) <= 2.7) * (pt < 50)  * (pt >= 30)  * (0.90) +
-	                   (abs(eta) <= 2.7) * (pt >= 50)               * (0.93) +
+    	                   (abs(eta) <= 2.7) * (pt < 3.5) * (pt >= 3.0) * (0.50) +
+    	                   (abs(eta) <= 2.7) * (pt < 4.5) * (pt >= 3.5) * (0.65) +
+    	                   (abs(eta) <= 2.7) * (pt < 7.0) * (pt >= 4.5) * (0.70) +
+    	                   (abs(eta) <= 2.7) * (pt < 15)  * (pt >= 7.0) * (0.75) +
+    	                   (abs(eta) <= 2.7) * (pt < 20)  * (pt >= 15)  * (0.80) +
+    	                   (abs(eta) <= 2.7) * (pt < 30)  * (pt >= 20)  * (0.83) +
+    	                   (abs(eta) <= 2.7) * (pt < 50)  * (pt >= 30)  * (0.90) +
+    	                   (abs(eta) <= 2.7) * (pt >= 50)               * (0.93) +
                            (abs(eta) > 2.7)                             * (0.00)}
 }
-
 ################
 # Muon isolation
 ################
@@ -738,8 +735,10 @@ module UniqueObjectFinder UniqueObjectFinder {
 # earlier arrays take precedence over later ones
 # add InputArray InputArray OutputArray
   add InputArray PhotonIsolation/photons photons
-  add InputArray ElectronIsolation/electrons electrons
-  add InputArray MuonIsolation/muons muons
+#  add InputArray ElectronIsolation/electrons electrons
+#  add InputArray MuonIsolation/muons muons
+  add InputArray ElectronEfficiency/electrons electrons
+  add InputArray MuonEfficiency/muons muons
   add InputArray JetEnergyScale/jets jets
 }
 
