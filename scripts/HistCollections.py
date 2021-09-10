@@ -10,11 +10,6 @@ class DelphesEvent:
             self.weight=e.Weight
             break # only one event
 
-        #self.met=TLorentzVector()
-        for met in event.MissingET:
-            self.met= met.P4()
-            break # only one MET
-
         self.leptons=[]
         self.elecs=[]
         for e in event.Electron:
@@ -29,6 +24,14 @@ class DelphesEvent:
 
         self.sortedleptons=sorted(self.leptons,key=lambda lep:lep.PT, reverse=True)
         
+        #self.met=TLorentzVector()
+        for met in event.MissingET:
+            self.met= met.P4()
+            # correct MET for muons
+            for m in event.Muon:
+                self.met-=m.P4()
+            break # only one MET
+
         self.jets=[]
         self.exclJets=[]
         self.tautags=[]
