@@ -13,7 +13,7 @@ datadir=${tag}
 if [[ -e ${database}/${datadir}/delphes && $clobber_delphes != true ]]; then
     echo "Delphes area in ${datadir} already exists, not running job.  Remove or rename it, or force clobbering."
     exit 0
-elif [[ $clobber_delphes != true ]]; then
+elif [[ -e ${database}/${datadir}/delphes && $clobber_delphes == true ]]; then
     dtst=$(date +%Y%m%d%H%M%S)
     echo "archiving previous delphes output as ${database}/${datadir}/delphes_${dtst} for later, just in case you want it again."
     cp -a ${database}/${datadir}/delphes ${database}/${datadir}/delphes_${dtst}
