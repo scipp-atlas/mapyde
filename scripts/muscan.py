@@ -19,11 +19,13 @@ args = parser.parse_args()
 ana=args.signal.replace("_patch.json","")
 tag=args.tag
 
+tolerance=1e-2 # 0.01 works most of the time, monojet uses 0.001
+
 if args.cpu:
-    pyhf.set_backend(args.backend, pyhf.optimize.minuit_optimizer(tolerance=0.01)) # monojet uses 0.001
+    pyhf.set_backend(args.backend, pyhf.optimize.minuit_optimizer(tolerance=tolerance))
 else:
     # useful when running on a machine with a GPU
-    pyhf.set_backend("jax", pyhf.optimize.minuit_optimizer(tolerance=0.01)) # monojet uses 0.001
+    pyhf.set_backend("jax", pyhf.optimize.minuit_optimizer(tolerance=tolerance))
 
 with open(args.background) as f:
     bgonly=json.load(f)
@@ -42,6 +44,8 @@ poi_values = np.linspace(0.1, 2, 10)
 init_pars = pdf.config.suggested_init()
 init_pars[pdf.config.poi_index] = 1.0
 
+print("making plot")
+
 results = [
     pyhf.infer.hypotest(poi_value, observations, pdf, init_pars=init_pars, test_stat="qtilde", return_expected_set=True)
     for poi_value in poi_values
@@ -49,6 +53,8 @@ results = [
 fig, ax = plt.subplots()
 brazil.plot_results(ax, poi_values, results)
 fig.savefig(f'muscan_{tag}__{ana}.pdf')
+
+print("printing results")
 
 obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(observations, pdf, poi_values, level=0.05, return_results=True)
 print(f"Observed limit: {obs_limit}")

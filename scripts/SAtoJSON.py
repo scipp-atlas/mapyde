@@ -16,6 +16,8 @@ parser.add_argument("-n", "--name", help="name of signal sample")
 parser.add_argument("-l", "--lumi", help="luminosity in pb-1")
 args = parser.parse_args()
 
+print("Using luminosity=%f" % float(args.lumi)) 
+
 with open(args.background,'r') as f:
     spec = json.load(f)
     newspec = copy.deepcopy(spec)

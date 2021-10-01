@@ -14,6 +14,7 @@ mmjj=0.0
 suffix="J${ptj1min}"
 XSoverride=""
 kfactor=1.3
+database=/data/users/${USER}/SUSY
 
 clobber_mgpy=false
 clobber_delphes=false
@@ -27,7 +28,7 @@ masssplitting=20
 proc="isrslep"
 params="SleptonBino"
 
-while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:gla" opt; do
+while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -45,6 +46,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:gla" opt; do
 	L) delphescard=$OPTARG;;
 	f) simpleanalysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
+	b) database=$OPTARG;;
 	*) exit;;
     esac
 done
@@ -79,5 +81,6 @@ fi
     -h "${XSoverride}" \
     -s ${suffix} \
     -n \
+    -b ${database} \
     -I "-2.9" \
     ${clobberopts}

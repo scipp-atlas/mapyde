@@ -13,6 +13,7 @@ deltaeta=0
 mmjj=0.0
 suffix="J${ptj1min}"
 kfactor=1.3
+database=/data/users/${USER}/SUSY
 
 clobber_mgpy=false
 clobber_delphes=false
@@ -26,7 +27,7 @@ masssplitting=10
 proc="isr2L"
 params="Higgsino"
 
-while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:gla" opt; do
+while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -44,6 +45,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:gla" opt; do
 	L) delphescard=$OPTARG;;
 	f) simpleanalysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
+	b) database=$OPTARG;;
 	*) exit;;
     esac
 done
@@ -77,6 +79,7 @@ for thisproc in "${proc}nodecays" "${proc}"; do
     ./run_VBFSUSY_standalone.sh \
 	-E ${ecms} \
 	-M ${mass} \
+	-b ${database} \
 	-P ${thisproc} \
 	-c ${cores} \
 	-m ${mmjj} \

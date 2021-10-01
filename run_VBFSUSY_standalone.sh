@@ -162,7 +162,7 @@ fi
 if $skip_delphes; then
     echo "Skipping delphes for this job."
 else
-    ./test/wrapper_delphes.sh ${tag} ${delphescard}  ${cores} ${clobber_delphes}
+    ./test/wrapper_delphes.sh ${tag} ${delphescard}  ${cores} ${clobber_delphes} ${database}
 fi
 
 
