@@ -1,4 +1,4 @@
-ARG BUILDER_IMAGE=delphes/ubuntu:18.04
+ARG BUILDER_IMAGE=delphes/ubuntu:20.04
 FROM ${BUILDER_IMAGE} as builder
 
 USER root
@@ -6,7 +6,6 @@ WORKDIR /home
 
 SHELL [ "/bin/bash", "-c" ]
 
-ARG DELPHES_VERSION=3.4.2
 RUN mkdir -p /usr/local/share/delphes && \
     cd /usr/local/share/delphes && \
     git clone https://github.com/delphes/delphes.git && \
