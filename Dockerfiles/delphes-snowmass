@@ -1,0 +1,25 @@
+ARG BUILDER_IMAGE=delphes/ubuntu:18.04
+FROM ${BUILDER_IMAGE} as builder
+
+USER root
+WORKDIR /home
+
+SHELL [ "/bin/bash", "-c" ]
+
+ARG DELPHES_VERSION=3.4.2
+RUN mkdir -p /usr/local/share/delphes && \
+    cd /usr/local/share/delphes && \
+    git clone https://github.com/delphes/delphes.git && \
+    git checkout 83e77eef883f4a01adddb329e0b81a52147bba77 && \
+    cd delphes && \
+    make -j$(($(nproc) - 1)) && \
+    cd ../
+
+ENV DELPHES_PATH="/usr/local/share/delphes/delphes"
+ENV ROOT_INCLUDE_PATH=${ROOT_INCLUDE_PATH}:${DELPHES_PATH}:${DELPHES_PATH}/external
+
+RUN python -m pip install --no-cache-dir pip setuptools wheel && \
+    python -m pip install --no-cache-dir pyhepmc-ng pybind11 numpy graphviz particle pytest
+
+ENTRYPOINT ["/bin/bash", "-l", "-c"]
+CMD ["/bin/bash"]
