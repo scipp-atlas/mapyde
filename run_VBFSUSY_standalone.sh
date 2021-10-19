@@ -38,6 +38,7 @@ sleptonopts=""
 stopopts=""
 skip_pythia=false
 kfactor=-1
+chargino=-1
 
 # some modifications based on run parameters
 lumi=1
@@ -63,7 +64,7 @@ fi
 
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:O:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -108,6 +109,8 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:" 
 	    deltaeta=0
 	    pythia_card="pythia8_card.dat"
 	    stopopts="-r";;
+	O) chargino=$OPTARG;;
+	    
 	*) exit;;
     esac
 done
@@ -115,7 +118,12 @@ done
 # construct the tag.
 tag="VBFSUSY_${ecms}_${params}_${mass}_mmjj_${mmjj}_${mmjjmax}${suffix}"
 if [[ $mmjj == 0.0 || $mmjj == 0 ]]; then
-   tag="SUSY_${ecms}_${params}_${mass}_${dM}_${proc}_${suffix}"
+    if [[ $proc == "isrslep" && $chargino != -1 ]]; then
+	tag="SUSY_${ecms}_${params}_${mass}_${dM}_${chargino}_${proc}_${suffix}"
+	sleptonopts="${sleptonopts} -O ${chargino}"
+    else
+	tag="SUSY_${ecms}_${params}_${mass}_${dM}_${proc}_${suffix}"
+    fi
 fi
 
 pythia_onoff=""

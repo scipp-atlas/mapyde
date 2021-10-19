@@ -32,8 +32,9 @@ slepton=false
 stop=false
 sneutrino=false
 skip_pythia=false
+chargino=-1
 
-while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:vTr" opt; do
+while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:vTrO:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -59,6 +60,7 @@ while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:vTr" opt; do
 	d) seed=$OPTARG;;
 	I) MGversion=$OPTARG;;
 	T) skip_pythia=true;;
+	O) chargino=$OPTARG;;
 	*) exit;;
     esac
 done
@@ -75,6 +77,9 @@ if [[ ${slepton} == true ]]; then
     if [[ ${sneutrino} == true ]]; then
 	mSNU=$(bc <<< "scale=2; ${mass}-${dM}/2")
 	massopts="${massopts} -m MSNU ${mSNU}"
+    fi
+    if [[ $chargino != -1 ]]; then
+	massopts="${massopts} -m MC1 ${chargino} -m MN2 ${chargino}"
     fi
 elif [[ ${stop} == true ]]; then
     massopts="-m MSTOP ${mass}"
@@ -114,7 +119,6 @@ fi
     -s ${seed} \
     -t ${tag} \
     ${pythia_onoff} ${clobber_opts}
-
 
 if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
     docker run \

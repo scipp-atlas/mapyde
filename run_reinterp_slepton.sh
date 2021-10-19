@@ -28,7 +28,7 @@ masssplitting=20
 proc="isrslep"
 params="SleptonBino"
 
-while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:" opt; do
+while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:Z" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -47,6 +47,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:" opt; do
 	f) simpleanalysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
 	b) database=$OPTARG;;
+	Z) withchargino=true;;
 	*) exit;;
     esac
 done
@@ -58,6 +59,12 @@ elif $clobber_delphes; then
     clobberopts="-l -a"  # add -A to avoid rerunning madgraph+pythia
 elif $clobber_ana; then
     clobberopts="-a"
+fi
+
+newmodelopts=""
+if $withchargino; then
+    charginomass=$(bc <<< "scale=0; ${mass}-${masssplitting}/2")
+    newmodelopts="-v -O $charginomass"
 fi
 
 ./run_VBFSUSY_standalone.sh \
@@ -83,4 +90,5 @@ fi
     -n \
     -b ${database} \
     -I "-2.9" \
+    ${newmodelopts} \
     ${clobberopts}
