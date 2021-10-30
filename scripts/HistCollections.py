@@ -141,6 +141,14 @@ class Hists:
         self.addbranch("lep1Eta", 'f')
         self.addbranch("lep1Phi", 'f')
 
+        self.addbranch("lep2PT", 'f')
+        self.addbranch("lep2Eta", 'f')
+        self.addbranch("lep2Phi", 'f')
+
+        self.addbranch("lep3PT", 'f')
+        self.addbranch("lep3Eta", 'f')
+        self.addbranch("lep3Phi", 'f')
+
         self.addbranch("tau1PT", 'f')
         self.addbranch("tau1Eta", 'f')
         self.addbranch("tau1Phi", 'f')
@@ -190,6 +198,14 @@ class Hists:
         ### Do some characterizations
         leadingLep = (
             event.sortedleptons[0].P4() if len(event.sortedleptons) > 0 else None
+        )
+
+        subleadingLep = (
+            event.sortedleptons[1].P4() if len(event.sortedleptons) > 1 else None
+        )
+
+        subsubleadingLep = (
+            event.sortedleptons[2].P4() if len(event.sortedleptons) > 2 else None
         )
 
         muonsmomentum=ROOT.TLorentzVector()
@@ -315,6 +331,24 @@ class Hists:
             self.branches["lep1PT"][0] = defaultfill
             self.branches["lep1Eta"][0] = defaultfill
             self.branches["lep1Phi"][0] = defaultfill
+
+        if subleadingLep:
+            self.branches["lep2PT"][0] = leadingLep.Pt()
+            self.branches["lep2Eta"][0] = leadingLep.Eta()
+            self.branches["lep2Phi"][0] = leadingLep.Phi()
+        else:
+            self.branches["lep2PT"][0] = defaultfill
+            self.branches["lep2Eta"][0] = defaultfill
+            self.branches["lep2Phi"][0] = defaultfill
+
+        if subsubleadingLep:
+            self.branches["lep3PT"][0] = leadingLep.Pt()
+            self.branches["lep3Eta"][0] = leadingLep.Eta()
+            self.branches["lep3Phi"][0] = leadingLep.Phi()
+        else:
+            self.branches["lep3PT"][0] = defaultfill
+            self.branches["lep3Eta"][0] = defaultfill
+            self.branches["lep3Phi"][0] = defaultfill
 
 
         self.tree.Fill()
