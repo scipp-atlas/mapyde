@@ -6,7 +6,7 @@ WORKDIR /home
 
 SHELL [ "/bin/bash", "-c" ]
 
-ARG DELPHES_VERSION=3.4.2
+ARG DELPHES_VERSION=3.5.0
 RUN mkdir -p /usr/local/share/delphes && \
     cd /usr/local/share/delphes && \
     wget http://cp3.irmp.ucl.ac.be/downloads/Delphes-${DELPHES_VERSION}.tar.gz && \
