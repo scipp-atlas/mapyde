@@ -39,7 +39,7 @@ jobs:
         if: steps.filter.outputs.image == 'true'
         id: prep
         run: |
-          TAGS="${{ matrix.image }:latest,${{ matrix.image }}:sha-${GITHUB_SHA::8}"
+          TAGS="${{ matrix.image }}:latest,${{ matrix.image }}:sha-${GITHUB_SHA::8}"
           VERSION=latest
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}
