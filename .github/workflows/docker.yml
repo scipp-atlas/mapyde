@@ -28,8 +28,6 @@ jobs:
           - pyplotting
           - pyplotting-cuda
     steps:
-      - name: Update packages
-        run: sudo apt-get update -qq -y
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
