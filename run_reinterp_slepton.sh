@@ -27,8 +27,9 @@ masssplitting=20
 # to run sleptons.  make sure we set "-n" in the options below.
 proc="isrslep"
 params="SleptonBino"
+charginofraction=""
 
-while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:Z" opt; do
+while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:Z:" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -47,7 +48,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:Z" opt; do
 	f) simpleanalysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
 	b) database=$OPTARG;;
-	Z) withchargino=true;;
+	Z) charginofraction=$OPTARG;;
 	*) exit;;
     esac
 done
@@ -62,8 +63,8 @@ elif $clobber_ana; then
 fi
 
 newmodelopts=""
-if $withchargino; then
-    charginomass=$(bc <<< "scale=0; ${mass}-${masssplitting}/2")
+if [[ $charginofraction != "" ]]; then
+    charginomass=$(bc <<< "scale=0; ${mass}-${masssplitting}+${masssplitting}*${charginofraction}")
     newmodelopts="-v -O $charginomass"
 fi
 
