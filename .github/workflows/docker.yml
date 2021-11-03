@@ -59,15 +59,15 @@ jobs:
           echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
       - name: Set up QEMU
-        if: steps.filter.outputs.image == 'true'
+        if: true || steps.filter.outputs.image == 'true'
         uses: docker/setup-qemu-action@v1
 
       - name: Set up Docker Buildx
-        if: steps.filter.outputs.image == 'true'
+        if: true || steps.filter.outputs.image == 'true'
         uses: docker/setup-buildx-action@v1
 
       - name: Login to GitHub Container Registry
-        if: steps.filter.outputs.image == 'true' && github.event_name != 'pull_request'
+        if: true || steps.filter.outputs.image == 'true' && github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
@@ -75,7 +75,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test build
-        if: steps.filter.outputs.image == 'true'
+        if: true || steps.filter.outputs.image == 'true'
         id: docker_build_test
         uses: docker/build-push-action@v2
         with:
@@ -90,11 +90,11 @@ jobs:
           push: false
 
       - name: Image digest
-        if: steps.filter.outputs.image == 'true'
+        if: true || steps.filter.outputs.image == 'true'
         run: echo ${{ steps.docker_build_test.outputs.digest }}
 
       - name: List built images
-        if: steps.filter.outputs.image == 'true'
+        if: true || steps.filter.outputs.image == 'true'
         run: docker images
 
       - name: Prepare Inputs for Generation
