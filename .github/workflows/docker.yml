@@ -29,6 +29,10 @@ jobs:
           - pyplotting-cuda
     steps:
       - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
       - uses: dorny/paths-filter@v2
         id: filter
         with:
@@ -36,7 +40,6 @@ jobs:
             image:
               - 'Dockerfile/${{ matrix.image }}'
       - name: Prepare
-        if: steps.filter.outputs.image == 'true'
         id: prep
         run: |
           TAGS="${{ matrix.image }}:latest,${{ matrix.image }}:sha-${GITHUB_SHA::8}"
@@ -93,6 +96,53 @@ jobs:
       - name: List built images
         if: steps.filter.outputs.image == 'true'
         run: docker images
+
+      - name: Prepare Inputs for Generation
+        run: |
+          python3 -m pip install -r requirements.txt
+          scripts/mg5creator.py -P cards/process/charginos \
+                                -r cards/run/default_LO.dat \
+                                -p cards/param/Higgsino.slha \
+                                -y pythia8_card.dat \
+                                -m MN1 150.0 \
+                                -m MN2 155.0 \
+                                -m MC1 155.0 \
+                                -E 100000 \
+                                -n 1000 \
+                                -c 1 \
+                                -t githubci
+
+      - name: Run Madgraph
+        run: >-
+          docker run --rm
+          -v output/githubci:/data
+          -v cards:/cards
+          -w /output
+          ghcr.io/${{ github.repository }}/madgraph:latest
+          "mg5_aMC /data/run.mg5; rsync -rav PROC_madgraph /data/madgraph"
+
+      - name: Run Delphes
+        run: >-
+          docker run --rm
+          -v output/githubci:/data
+          -v cards:/cards
+          -w /output
+          ghcr.io/${{ github.repository }}/delphes:latest
+          "cp $(find /data/ -name '*hepmc.gz') hepmc.gz; gunzip hepmc.gz;
+           /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/delphes_card_ATLAS.tcl delphes.root hepmc;
+           rsync -rav --exclude hepmc . /data/delphes"
+
+
+      - name: Run Analysis
+        run: >-
+          docker run --rm
+          -v output/githubci:/data
+          -v cards:/cards
+          -v scripts:/scripts
+          -w /output
+          ghcr.io/${{ github.repository }}/delphes:latest
+          "/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root;
+           rsync -rav . /data/analysis"
 
       - name: Build and publish to registry
         # every PR will trigger a push event on master, so check the push event is actually coming from master
