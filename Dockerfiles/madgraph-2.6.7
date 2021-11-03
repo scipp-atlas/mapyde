@@ -43,7 +43,7 @@ RUN mkdir /code && \
 # Install MadGraph5_aMC@NLO
 ARG MG_VERSION=2.6.7
 RUN cd /usr/local && \
-    wget -q https://launchpad.net/mg5amcnlo/2.0/2.6.x/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
+    wget --no-check-certificate https://launchpad.net/mg5amcnlo/2.0/2.6.x/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
     tar xzf MG5_aMC_v${MG_VERSION}.tar.gz && \
     rm MG5_aMC_v${MG_VERSION}.tar.gz
 
