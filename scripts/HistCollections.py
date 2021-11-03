@@ -333,18 +333,18 @@ class Hists:
             self.branches["lep1Phi"][0] = defaultfill
 
         if subleadingLep:
-            self.branches["lep2PT"][0] = leadingLep.Pt()
-            self.branches["lep2Eta"][0] = leadingLep.Eta()
-            self.branches["lep2Phi"][0] = leadingLep.Phi()
+            self.branches["lep2PT"][0] = subleadingLep.Pt()
+            self.branches["lep2Eta"][0] = subleadingLep.Eta()
+            self.branches["lep2Phi"][0] = subleadingLep.Phi()
         else:
             self.branches["lep2PT"][0] = defaultfill
             self.branches["lep2Eta"][0] = defaultfill
             self.branches["lep2Phi"][0] = defaultfill
 
         if subsubleadingLep:
-            self.branches["lep3PT"][0] = leadingLep.Pt()
-            self.branches["lep3Eta"][0] = leadingLep.Eta()
-            self.branches["lep3Phi"][0] = leadingLep.Phi()
+            self.branches["lep3PT"][0] = subsubleadingLep.Pt()
+            self.branches["lep3Eta"][0] = subsubleadingLep.Eta()
+            self.branches["lep3Phi"][0] = subsubleadingLep.Phi()
         else:
             self.branches["lep3PT"][0] = defaultfill
             self.branches["lep3Eta"][0] = defaultfill
