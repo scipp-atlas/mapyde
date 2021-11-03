@@ -14,7 +14,7 @@ on:
 
 jobs:
   docker:
-    name: Build, test, and publish Docker images to Docker Hub
+    name: ${{ matrix.image }}/Build, test, and publish Docker images to Docker Hub
     runs-on: ubuntu-latest
     strategy:
       matrix:
