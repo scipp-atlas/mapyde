@@ -1,0 +1,124 @@
+name: Docker Images
+
+on:
+  push:
+    branches:
+    - master
+    tags:
+    - v*
+  pull_request:
+    branches:
+    - master
+  release:
+    types: [published]
+
+jobs:
+  docker:
+    name: Build, test, and publish Docker images to Docker Hub
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - delphes
+          - delphes-snowmass
+          - madgraph
+          - madgraph-2.6.7
+          - madgraph-2.9.1
+          - madgraph-2.9.3
+          - pyplotting
+          - pyplotting-cuda
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            image:
+              - 'Dockerfile/${{ matrix.image }}'
+      - name: Prepare
+        if: steps.filter.outputs.image == 'true'
+        id: prep
+        run: |
+          TAGS="${{ matrix.image }:latest,${{ matrix.image }}:sha-${GITHUB_SHA::8}"
+          VERSION=latest
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          elif [[ $GITHUB_REF == refs/pull/* ]]; then
+            VERSION=pr-${{ github.event.number }}
+          fi
+          TAGS="$TAGS,${{ matrix.image }}:${VERSION}"
+          # Releases also have GITHUB_REFs that are tags, so reuse VERSION
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAGS="$TAGS,${{ matrix.image }}:latest-stable,ghcr.io/${{github.repository}}:latest-stable,ghcr.io/${{github.repository}}:${VERSION}"
+          fi
+          echo ::set-output name=version::${VERSION}
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+
+      - name: Set up QEMU
+        if: steps.filter.outputs.image == 'true'
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        if: steps.filter.outputs.image == 'true'
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to GitHub Container Registry
+        if: steps.filter.outputs.image == 'true' && github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test build
+        if: steps.filter.outputs.image == 'true'
+        id: docker_build_test
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile/${{ matrix.image }}
+          tags: ${{ steps.prep.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          load: true
+          push: false
+
+      - name: Image digest
+        if: steps.filter.outputs.image == 'true'
+        run: echo ${{ steps.docker_build_test.outputs.digest }}
+
+      - name: List built images
+        if: steps.filter.outputs.image == 'true'
+        run: docker images
+
+      - name: Build and publish to registry
+        # every PR will trigger a push event on master, so check the push event is actually coming from master
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'scipp_atlas/mario-mapyde'
+        id: docker_build_latest
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile/${{ matrix.image }}
+          tags: ghcr.io/${{ github.repository }}/${{ matrix.image }}:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          push: true
+
+      - name: Build and publish to registry with release tag
+        if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp_atlas/mario-mapyde'
+        id: docker_build_release
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile/${{ matrix.image }}
+          tags: ${{ steps.prep.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          push: true
