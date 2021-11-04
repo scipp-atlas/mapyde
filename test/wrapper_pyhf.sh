@@ -25,7 +25,7 @@ docker run \
        -v ${base}/scripts:/scripts \
        -v ${base}/likelihoods:/likelihoods \
        -w /data \
-       gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting:master \
+       ghcr.io/scipp-atlas/mario-mapyde/pyplotting:latest \
        "python /scripts/SAtoJSON.py -i ${analysis}.root -o ${analysis}_patch.json -n ${tag} -b /likelihoods/${likelihood}.json -l ${lumi}"
 
 # dump docker logs to text file
@@ -50,7 +50,7 @@ docker run \
        -v ${base}/scripts:/scripts \
        -v ${base}/likelihoods:/likelihoods \
        -w /data \
-       gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting-cuda:master \
+       ghcr.io/scipp-atlas/mario-mapyde/pyplotting-cuda:latest \
        "time python3.8 /scripts/muscan.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag} ${GPUopts}"
 
 # dump docker logs to text file
@@ -69,7 +69,7 @@ journalctl -u docker CONTAINER_NAME="${USER}_${tag}__muscan" > ${database}/${dat
 #        -v ${base}/scripts:/scripts \
 #        -v ${base}/likelihoods:/likelihoods \
 #        -w /data \
-#        gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting-cuda:master \
+#        ghcr.io/scipp-atlas/mario-mapyde/pyplotting-cuda:latest \
 #        "python3.8 /scripts/likelihoodfitting.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag}"
 
 # # dump docker logs to text file

@@ -16,7 +16,7 @@ docker run \
        -v ${base}/scripts:/scripts \
        -v ${base}/likelihoods:/likelihoods \
        -w /data \
-       gitlab-registry.cern.ch/scipp/mario-mapyde/pyplotting:master \
+       ghcr.io/scipp-atlas/mario-mapyde/pyplotting:latest \
        "python3 /scripts/root2hdf5.py analysis/lowlevelAna.root:allev/lowleveltree"
 
 # dump docker logs to text file

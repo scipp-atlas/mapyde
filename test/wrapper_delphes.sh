@@ -31,7 +31,7 @@ docker run \
        -v ${database}/${datadir}:/data \
        -w /tmp \
        --env delphescard=${delphescard} \
-       gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
+       ghcr.io/scipp-atlas/mario-mapyde/delphes:latest \
        'set -x && \
         cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
         gunzip hepmc.gz && \

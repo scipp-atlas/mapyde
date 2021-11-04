@@ -15,7 +15,7 @@ docker run \
        -v $PWD/output:/output \
        -w /output \
        --user $(id -u):$(id -g) \
-       gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
+       ghcr.io/scipp-atlas/mario-mapyde/delphes:latest \
        'for KIND in EWK QCD; do for COM in 13 14 100; do hadd Vjj${KIND}_${COM}.root /data/Vjj${KIND}_${COM}_*/analysis/histograms.root; done; done'
 ```
 
@@ -28,7 +28,7 @@ docker run \
        -v $PWD/output:/output \
        -w /output \
        --user $(id -u):$(id -g) \
-       gitlab-registry.cern.ch/scipp/mario-mapyde/delphes:master \
+       ghcr.io/scipp-atlas/mario-mapyde/delphes:latest \
        'for KIND in Higgsino WinoBino; do for MASS in 150 250; do for COM in 13 14 100; do hadd VBFSUSY_${COM}_${KIND}_${MASS}.root /data/VBFSUSY_${COM}_${KIND}_${MASS}_*/analysis/histograms.root; done; done; done'
 ```
 
