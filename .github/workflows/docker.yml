@@ -111,37 +111,37 @@ jobs:
                                 -c 1 \
                                 -t githubci
 
-      - name: Run Madgraph
-        run: >-
-          docker run --rm
-          -v output/githubci:/data
-          -v cards:/cards
-          -w /output
-          ghcr.io/${{ github.repository }}/madgraph:latest
-          "mg5_aMC /data/run.mg5; rsync -rav PROC_madgraph /data/madgraph"
+      #- name: Run Madgraph
+      #  run: >-
+      #    docker run --rm
+      #    -v output/githubci:/data
+      #    -v cards:/cards
+      #    -w /output
+      #    ghcr.io/${{ github.repository }}/madgraph:latest
+      #    "mg5_aMC /data/run.mg5; rsync -rav PROC_madgraph /data/madgraph"
 
-      - name: Run Delphes
-        run: >-
-          docker run --rm
-          -v output/githubci:/data
-          -v cards:/cards
-          -w /output
-          ghcr.io/${{ github.repository }}/delphes:latest
-          "cp $(find /data/ -name '*hepmc.gz') hepmc.gz; gunzip hepmc.gz;
-           /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/delphes_card_ATLAS.tcl delphes.root hepmc;
-           rsync -rav --exclude hepmc . /data/delphes"
+      #- name: Run Delphes
+      #  run: >-
+      #    docker run --rm
+      #    -v output/githubci:/data
+      #    -v cards:/cards
+      #    -w /output
+      #    ghcr.io/${{ github.repository }}/delphes:latest
+      #    "cp $(find /data/ -name '*hepmc.gz') hepmc.gz; gunzip hepmc.gz;
+      #     /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/delphes_card_ATLAS.tcl delphes.root hepmc;
+      #     rsync -rav --exclude hepmc . /data/delphes"
 
 
-      - name: Run Analysis
-        run: >-
-          docker run --rm
-          -v output/githubci:/data
-          -v cards:/cards
-          -v scripts:/scripts
-          -w /output
-          ghcr.io/${{ github.repository }}/delphes:latest
-          "/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root;
-           rsync -rav . /data/analysis"
+      #- name: Run Analysis
+      #  run: >-
+      #    docker run --rm
+      #    -v output/githubci:/data
+      #    -v cards:/cards
+      #    -v scripts:/scripts
+      #    -w /output
+      #    ghcr.io/${{ github.repository }}/delphes:latest
+      #    "/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root;
+      #     rsync -rav . /data/analysis"
 
       - name: Build and publish to registry
         # every PR will trigger a push event on master, so check the push event is actually coming from master
