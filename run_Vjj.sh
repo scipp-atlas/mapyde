@@ -75,7 +75,7 @@ for EWKQCD in "EWK"; do
 		       -v ${base}/cards:/cards \
 		       -v ${database}/${datadir}:/data \
 		       -w /tmp \
-		       gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
+           ghcr.io/scipp-atlas/mario-mapyde/madgraph:latest \
 		       "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph  && chown -R $UID /data/madgraph"
 
 		# dump docker logs to text file
