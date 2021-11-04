@@ -115,7 +115,7 @@ jobs:
         run: >-
           docker run --rm
           -v $PWD/output/githubci:/data
-          -v cards:/cards
+          -v $PWD/cards:/cards
           -w /output
           ghcr.io/${{ github.repository }}/madgraph:latest
           "mg5_aMC /data/run.mg5; rsync -rav PROC_madgraph /data/madgraph"
@@ -124,7 +124,7 @@ jobs:
         run: >-
           docker run --rm
           -v $PWD/output/githubci:/data
-          -v cards:/cards
+          -v $PWD/cards:/cards
           -w /output
           ghcr.io/${{ github.repository }}/delphes:latest
           'cp $(find /data/ -name "*hepmc.gz") hepmc.gz; gunzip hepmc.gz;
@@ -136,8 +136,8 @@ jobs:
         run: >-
           docker run --rm
           -v $PWD/output/githubci:/data
-          -v cards:/cards
-          -v scripts:/scripts
+          -v $PWD/cards:/cards
+          -v $PWD/scripts:/scripts
           -w /output
           ghcr.io/${{ github.repository }}/delphes:latest
           "/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root;
