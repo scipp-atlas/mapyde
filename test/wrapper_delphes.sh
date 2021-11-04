@@ -36,7 +36,7 @@ docker run \
         cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
         gunzip hepmc.gz && \
 	/bin/ls -ltrh --color && \
-        /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/${delphescard} delphes.root hepmc && \
+        /usr/local/share/delphes/delphes/DelphesHepMC2 /cards/delphes/${delphescard} delphes.root hepmc && \
         rsync -rav --exclude hepmc . /data/delphes'
 
 # dump docker logs to text file
