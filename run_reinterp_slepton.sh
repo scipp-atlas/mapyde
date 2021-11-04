@@ -90,6 +90,6 @@ fi
     -s ${suffix} \
     -n \
     -b ${database} \
-    -I "-2.9" \
+    -I "-2.9.3" \
     ${newmodelopts} \
     ${clobberopts}

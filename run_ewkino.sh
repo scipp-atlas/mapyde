@@ -94,7 +94,7 @@ for thisproc in "${proc}nodecays" "${proc}"; do
 	-i \
 	-h "${XSoverride}" \
 	-s ${suffix} \
-	-I "-2.9" \
+	-I "-2.9.3" \
 	${skipopts} \
 	${clobberopts}
     set +x
