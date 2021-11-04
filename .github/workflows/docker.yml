@@ -127,9 +127,9 @@ jobs:
           -v cards:/cards
           -w /output
           ghcr.io/${{ github.repository }}/delphes:latest
-          "cp $(find /data/ -name '*hepmc.gz') hepmc.gz; gunzip hepmc.gz;
+          'cp $(find /data/ -name "*hepmc.gz") hepmc.gz; gunzip hepmc.gz;
            /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/delphes_card_ATLAS.tcl delphes.root hepmc;
-           rsync -rav --exclude hepmc . /data/delphes"
+           rsync -rav --exclude hepmc . /data/delphes'
 
 
       - name: Run Analysis
