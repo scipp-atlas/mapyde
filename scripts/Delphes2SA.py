@@ -220,7 +220,8 @@ for entry in range(0, numberOfEntries):
       if jet.BTag:
         jetID|=0x00F000FF # flags as bjet
       fatjets.Add(jet,jetID)
-
-  outTree.Fill()
+    
+  if metvec.Pt() > 100:
+      outTree.Fill()
 outFH.Write()
 outFH.Close()
