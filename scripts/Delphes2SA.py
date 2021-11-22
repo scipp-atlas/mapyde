@@ -8,8 +8,13 @@
 
 from array import array
 import sys
+import argparse
 
 import ROOT
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--cutMET', action='store', default=False)
+args=parser.parse_args()
 
 if len(sys.argv) < 3:
   print(" Usage: Delphes2SA.py <input Delphes file> <Output SA file>")
@@ -221,7 +226,7 @@ for entry in range(0, numberOfEntries):
         jetID|=0x00F000FF # flags as bjet
       fatjets.Add(jet,jetID)
     
-  if metvec.Pt() > 100:
+  if (not args.cutMET) or metvec.Pt() > 100:
       outTree.Fill()
 outFH.Write()
 outFH.Close()
