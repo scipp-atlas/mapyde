@@ -40,28 +40,8 @@ skip_pythia=false
 kfactor=-1
 chargino=-1
 
-# some modifications based on run parameters
-lumi=1
-if [[ $ecms == 13 ]]; then
-    if [ "$mass" -ge "1000" ]; then
-	exit
-    fi
-    lumi=140000
-    delphescard="delphes_card_ATLAS.tcl"
-elif [[ $ecms == 14 ]]; then
-    if [ "$mass" -ge "1000" ]; then
-	exit
-    fi
-    lumi=3000000
-    delphescard="delphes_card_ATLAS.tcl"
-elif [[ $ecms == 100 ]]; then
-    if [ "$mass" -le "200" ]; then
-	exit
-    fi
-    lumi=3000000
-    delphescard="FCChh.tcl"
-fi
-
+delphescard="delphes_card_ATLAS.tcl"
+delphescardopt=""
 
 # get command line options
 while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:O:" opt; do
@@ -92,7 +72,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:O:
 	d) seed=$OPTARG;;
 	C) anascript=$OPTARG;;
 	i) skip_SA=false;;
-	L) delphescard=$OPTARG;;
+	L) delphescardopt=$OPTARG;;
 	f) simpleanalysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
 	X) xqcut=$OPTARG;;
@@ -114,6 +94,37 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:O:
 	*) exit;;
     esac
 done
+
+# some modifications based on center of mass energy
+lumi=1
+if [[ $ecms == 13 ]]; then
+    if [ "$mass" -ge "1000" ]; then
+	exit
+    fi
+    lumi=140000
+
+    delphescard="delphes_card_ATLAS.tcl"
+elif [[ $ecms == 14 ]]; then
+    if [ "$mass" -ge "1000" ]; then
+	exit
+    fi
+    lumi=3000000
+
+    delphescard="delphes_card_ATLAS.tcl"
+elif [[ $ecms == 100 ]]; then
+    if [ "$mass" -le "200" ]; then
+	exit
+    fi
+    lumi=3000000
+
+    delphescard="FCChh.tcl"
+fi
+
+# but if we overrode the delphes card in the command line, then respect that.
+if [[ $delphescardopt != "" ]]; then
+    delphescard=$delphescardopt
+fi
+
 
 # construct the tag.
 tag="VBFSUSY_${ecms}_${params}_${mass}_mmjj_${mmjj}_${mmjjmax}${suffix}"
