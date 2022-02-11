@@ -98,25 +98,13 @@ done
 # some modifications based on center of mass energy
 lumi=1
 if [[ $ecms == 13 ]]; then
-    if [ "$mass" -ge "1000" ]; then
-	exit
-    fi
     lumi=140000
-
     delphescard="delphes_card_ATLAS.tcl"
 elif [[ $ecms == 14 ]]; then
-    if [ "$mass" -ge "1000" ]; then
-	exit
-    fi
     lumi=3000000
-
     delphescard="delphes_card_ATLAS.tcl"
 elif [[ $ecms == 100 ]]; then
-    if [ "$mass" -le "200" ]; then
-	exit
-    fi
     lumi=3000000
-
     delphescard="FCChh.tcl"
 fi
 
