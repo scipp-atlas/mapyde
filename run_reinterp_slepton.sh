@@ -80,7 +80,7 @@ fi
     -N ${nevents} \
     -d ${seed} \
     -J ${ptj1min} \
-    -i \
+    -i -o \
     -y ${pythia_card} \
     -L ${delphes_card} \
     -f ${analysis} \

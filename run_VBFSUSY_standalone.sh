@@ -19,6 +19,7 @@ skip_mgpy=false
 skip_delphes=false
 skip_ana=false
 skip_SA=true
+skip_PYHF=true
 clobber_mgpy=false
 clobber_delphes=false
 clobber_ana=false
@@ -44,7 +45,7 @@ delphescard="delphes_card_ATLAS.tcl"
 delphescardopt=""
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:O:" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:O:o" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -72,6 +73,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:O:
 	d) seed=$OPTARG;;
 	C) anascript=$OPTARG;;
 	i) skip_SA=false;;
+	o) skip_PYHF=false;;
 	L) delphescardopt=$OPTARG;;
 	f) simpleanalysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
@@ -209,10 +211,15 @@ fi
 
 # run SimpleAnalysis + likelihoods.  not usual.
 if $skip_SA; then
-    echo "Skipping SimpleAnalysis+likelihoods for this job."
+    echo "Skipping SimpleAnalysis for this job."
 else
     ./test/wrapper_ana.sh            ${tag} ${lumi} true ${database} "Delphes2SA.py" ${XS}
     ./test/wrapper_SimpleAnalysis.sh ${tag} ${lumi} ${database} ${simpleanalysis}
+fi
+
+if $skip_PYHF; then
+    echo "Skipping likelihoods for this job."
+else
     ./test/wrapper_pyhf.sh           ${tag} ${lumi} ${database} ${simpleanalysis} ${likelihood}
 fi
 

@@ -70,9 +70,10 @@ for thisproc in "${proc}nodecays" "${proc}"; do
 	skipopts="-D -A -T" # don't run delphes or analysis or pythia or simpleanalysis for the nodecays case, there aren't enough useful events
     else
 	nodecayXS=$(grep "Cross-section" /data/users/${USER}/SUSY/SUSY_${ecms}_${params}_${mass}_${masssplitting}_${thisproc}nodecays_${suffix}/docker_mgpy.log | tail -1 | awk '{print $8}')
+	echo "$nodecayXS"
 	XSoverride=$(python3 -c "print(${kfactor}*0.1*${nodecayXS})") # k-factor * BR * XS before BR
 	XSopts="-h ${XSoverride}"
-	skipopts=""
+	skipopts="-i"
     fi
 
     set -x
@@ -96,6 +97,6 @@ for thisproc in "${proc}nodecays" "${proc}"; do
 	-I "madgraph-2.9.3" \
 	${skipopts} \
 	${clobberopts} \
-	${xsopts} 
+	${XSopts} 
     set +x
 done
