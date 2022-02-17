@@ -4,13 +4,14 @@
 nevents=50000
 cores=8
 seed=0
+analysis="EwkCompressed2018"
 pythia_card="pythia8_card.dat"
 #delphes_card="delphes_card_ATLAS_lowptleptons.tcl"
 delphes_card="FCChh.tcl"
 ptj1min=100
 deltaeta=0
 mmjj=0.0
-suffix="J${ptj1min}"
+suffix="J${ptj1min}_10"
 kfactor=1.3
 database=/data/users/${USER}/SUSY
 
@@ -42,7 +43,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:" opt; do
 	S) masssplitting=$OPTARG;;
 	d) seed=$OPTARG;;
 	L) delphescard=$OPTARG;;
-	f) simpleanalysis=$OPTARG;;
+	f) analysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
 	b) database=$OPTARG;;
 	*) exit;;
@@ -64,14 +65,14 @@ for thisproc in "${proc}nodecays" "${proc}"; do
     echo $thisproc
 
     skipopts=""
-    XSoverride=""
+    XSopts=""
     if [[ $thisproc == *nodecays ]]; then
 	skipopts="-D -A -T" # don't run delphes or analysis or pythia or simpleanalysis for the nodecays case, there aren't enough useful events
-	XSoverride=""
     else
 	nodecayXS=$(grep "Cross-section" /data/users/${USER}/SUSY/SUSY_${ecms}_${params}_${mass}_${masssplitting}_${thisproc}nodecays_${suffix}/docker_mgpy.log | tail -1 | awk '{print $8}')
 	XSoverride=$(python3 -c "print(${kfactor}*0.1*${nodecayXS})") # k-factor * BR * XS before BR
-	skipopts="-i"
+	XSopts="-h ${XSoverride}"
+	skipopts=""
     fi
 
     set -x
@@ -91,11 +92,10 @@ for thisproc in "${proc}nodecays" "${proc}"; do
 	-y ${pythia_card} \
 	-L ${delphes_card} \
 	-f ${analysis} \
-	-i \
-	-h "${XSoverride}" \
 	-s ${suffix} \
-	-I "-2.9.3" \
+	-I "madgraph-2.9.3" \
 	${skipopts} \
-	${clobberopts}
+	${clobberopts} \
+	${xsopts} 
     set +x
 done

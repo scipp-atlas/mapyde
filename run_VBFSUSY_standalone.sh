@@ -128,6 +128,9 @@ fi
 pythia_onoff=""
 if $skip_pythia; then
     pythia_onoff="-T"
+    echo "Skipping Pythia"
+else
+    echo "Not skipping Pythia"
 fi
 
 # run MadGraph+Pythia, using test script
@@ -139,6 +142,12 @@ else
 	clobberopt="-g"
     fi
 
+    mgversionopt=""
+    if [[ $MGversion != "" ]]; then
+	mgversionopt="-I ${MGversion}"
+    fi
+
+    set -x
     ./test/wrapper_mgpy.sh \
 	-b ${database} \
 	-P ${proc} \
@@ -157,13 +166,16 @@ else
 	-d ${seed} \
 	-j ${ptj} \
 	-J ${ptj1min} \
-	-I "${MGversion}" \
 	${clobberopt} \
 	${pythia_onoff} \
 	${sleptonopts} \
 	${stopopts} \
+	${mgversionopt} \
 	${tag}
+    set +x
 fi
+
+exit
 
 # run Delphes, using test script
 if $skip_delphes; then

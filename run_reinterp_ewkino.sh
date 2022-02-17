@@ -43,7 +43,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:" opt; do
 	S) masssplitting=$OPTARG;;
 	d) seed=$OPTARG;;
 	L) delphescard=$OPTARG;;
-	f) simpleanalysis=$OPTARG;;
+	f) analysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
 	b) database=$OPTARG;;
 	*) exit;;
@@ -65,13 +65,13 @@ for thisproc in "${proc}nodecays" "${proc}"; do
     echo $thisproc
 
     skipopts=""
-    XSoverride=""
+    xsopts=""
     if [[ $thisproc == *nodecays ]]; then
 	skipopts="-D -A -T" # don't run delphes or analysis or pythia or simpleanalysis for the nodecays case, there aren't enough useful events
-	XSoverride=""
     else
 	nodecayXS=$(grep "Cross-section" /data/users/${USER}/SUSY/SUSY_${ecms}_${params}_${mass}_${masssplitting}_${thisproc}nodecays_${suffix}/docker_mgpy.log | tail -1 | awk '{print $8}')
 	XSoverride=$(python3 -c "print(${kfactor}*0.1*${nodecayXS})") # k-factor * BR * XS before BR
+	xsopts="-h ${XSoverride}"
 	skipopts="-i"
     fi
 
@@ -93,10 +93,10 @@ for thisproc in "${proc}nodecays" "${proc}"; do
 	-L ${delphes_card} \
 	-f ${analysis} \
 	-F ${likelihood} \
-	-h "${XSoverride}" \
 	-s ${suffix} \
-	-I "-2.9.3" \
+	-I "madgraph-2.9.3" \
 	${skipopts} \
-	${clobberopts}
+	${clobberopts} \
+	${xsopts}
     set +x
 done

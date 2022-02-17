@@ -27,7 +27,7 @@ xqcut="-1"
 seed=0
 pythia_card="pythia8_card.dat"
 base=${PWD}
-MGversion=""
+MGversion="madgraph"
 slepton=false
 stop=false
 sneutrino=false
@@ -129,7 +129,7 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   -v ${base}/cards:/cards \
 	   -v ${database}/${datadir}:/data \
 	   -w /tmp \
-     ghcr.io/scipp-atlas/mario-mapyde/madgraph${MGversion} \
+     ghcr.io/scipp-atlas/mario-mapyde/${MGversion} \
 	   "mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph"
 
     # dump docker logs to text file

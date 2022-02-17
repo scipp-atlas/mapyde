@@ -12,7 +12,6 @@ ptj1min=100
 deltaeta=0
 mmjj=0.0
 suffix="J${ptj1min}"
-XSoverride=""
 kfactor=1.3
 database=/data/users/${USER}/SUSY
 
@@ -86,7 +85,6 @@ fi
     -L ${delphes_card} \
     -f ${analysis} \
     -F ${likelihood} \
-    -h "${XSoverride}" \
     -s ${suffix} \
     -n \
     -b ${database} \
