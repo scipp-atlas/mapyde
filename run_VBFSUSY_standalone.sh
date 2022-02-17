@@ -175,8 +175,6 @@ else
     set +x
 fi
 
-exit
-
 # run Delphes, using test script
 if $skip_delphes; then
     echo "Skipping delphes for this job."
