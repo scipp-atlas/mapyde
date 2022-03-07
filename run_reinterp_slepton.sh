@@ -88,6 +88,6 @@ fi
     -s ${suffix} \
     -n \
     -b ${database} \
-    -I "-2.9.3" \
+    -I "madgraph-2.9.3" \
     ${newmodelopts} \
     ${clobberopts}
