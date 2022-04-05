@@ -14,6 +14,7 @@ parser.add_argument("-b", "--background", help="path to JSON background-only fil
 parser.add_argument("-n", "--tag", default="SUSY_13_Higgsino_101_isrinc_J125", help="tag for data files")
 parser.add_argument("-c", "--cpu", action='store_true', help="do not use a GPU even if available.  Sets backend to NumPy instead.")
 parser.add_argument("-B", "--backend", default="numpy", help="choose backend for pyhf.  Jax will be used if running with a GPU.")
+parser.add_argument("-o", "--optimizer", default="scipy", help="choose optimizer.  'scipy', 'minuit' ....")
 args = parser.parse_args()
 
 ana=args.signal.replace("_patch.json","")
@@ -21,11 +22,15 @@ tag=args.tag
 
 tolerance=1e-2 # 0.01 works most of the time, monojet uses 0.001
 
+optimizer=args.optimizer
+if optimizer == 'minuit':
+    optimizer=pyhf.optimize.minuit_optimizer(tolerance=tolerance)
+
 if args.cpu:
-    pyhf.set_backend(args.backend, pyhf.optimize.minuit_optimizer(tolerance=tolerance))
+    pyhf.set_backend(args.backend, optimizer)
 else:
     # useful when running on a machine with a GPU
-    pyhf.set_backend("jax", pyhf.optimize.minuit_optimizer(tolerance=tolerance))
+    pyhf.set_backend("jax", optimizer)
 
 with open(args.background) as f:
     bgonly=json.load(f)
@@ -44,15 +49,12 @@ poi_values = np.linspace(0.1, 2, 10)
 init_pars = pdf.config.suggested_init()
 init_pars[pdf.config.poi_index] = 1.0
 
-print("making plot")
+print("running scan")
 
 results = [
     pyhf.infer.hypotest(poi_value, observations, pdf, init_pars=init_pars, test_stat="qtilde", return_expected_set=True)
     for poi_value in poi_values
 ]
-fig, ax = plt.subplots()
-brazil.plot_results(ax, poi_values, results)
-fig.savefig(f'muscan_{tag}__{ana}.pdf')
 
 print("printing results")
 
@@ -63,3 +65,9 @@ print( "      -1 sigma: %5.3f" % exp_limits[1])
 print( "      +1 sigma: %5.3f" % exp_limits[3])
 print( "      -2 sigma: %5.3f" % exp_limits[0])
 print( "      +2 sigma: %5.3f" % exp_limits[4])
+
+print("making plot")
+fig, ax = plt.subplots()
+brazil.plot_results(ax, poi_values, results)
+fig.savefig(f'muscan_{tag}__{ana}.pdf')
+
