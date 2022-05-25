@@ -56,6 +56,7 @@ while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:vTrO:" opt; do
 	X) xqcut=$OPTARG;;
 	s) slepton=true;;
 	r) stop=true;;
+	G) gluino=true;;
 	v) sneutrino=true;;
 	d) seed=$OPTARG;;
 	I) MGversion=$OPTARG;;
@@ -83,9 +84,11 @@ if [[ ${slepton} == true ]]; then
     fi
 elif [[ ${stop} == true ]]; then
     massopts="-m MSTOP ${mass}"
+elif [[ ${gluino} == true ]]; then
+    massopts="-m MGO ${mass}"
 elif [[ ${params} == WinoBino ]]; then
     massopts="-m MN2 ${mass} -m MC1 ${mass}"
-elif [[ ${params} == Higgsino ]]; then
+elif [[ ${params} == Higgsino* ]]; then
     mC1=$(bc <<< "scale=2; ${mass}-${dM}/2")
     massopts="-m MN2 ${mass} -m MC1 ${mC1}"
 fi
@@ -105,10 +108,22 @@ if [[ ${clobber_mgpy} == true ]]; then
     clobber_opts="-g"
 fi
 
+# For Mike, testing local Docker images
+#if [[ ${MGversion} != "madgraph-2.3.3" && ${MGversion} != "madgraph-2.5.5" && ${MGversion} != "madgraph-2.4.3" && ${MGversion} != "madgraph-2.9.3" && ${MGversion} != "madgraph-2.6.7" ]]; then
+#    MGversion="ghcr.io/scipp-atlas/mario-mapyde/${MGversion}"
+#fi
+MGversion="ghcr.io/scipp-atlas/mario-mapyde/${MGversion}"
+
+runcard="default_LO.dat"
+if [[ ${MGversion} == "madgraph-2.3.3" || ${MGversion} == "madgraph-2.4.3" ]]; then
+    runcard="default_LO_oldformat.dat"
+fi
+
+
 ./scripts/mg5creator.py \
     -o ${database} \
     -P cards/process/${proc} \
-    -r cards/run/default_LO.dat \
+    -r cards/run/${runcard} \
     -p cards/param/${params}.slha \
     -y ${pythia_card} \
     -m MN1 ${mN1} ${massopts} \
@@ -121,6 +136,7 @@ fi
     ${pythia_onoff} ${clobber_opts}
 
 if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
+    set -x
     docker run \
 	   --log-driver=journald \
 	   --name "${tag}__mgpy" \
@@ -129,8 +145,9 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   -v ${base}/cards:/cards \
 	   -v ${database}/${datadir}:/data \
 	   -w /tmp \
-     ghcr.io/scipp-atlas/mario-mapyde/${MGversion} \
+	   ${MGversion} \
 	   "mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph"
+    set +x
 
     # dump docker logs to text file
     journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > ${database}/${datadir}/docker_mgpy.log

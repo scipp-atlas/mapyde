@@ -37,6 +37,7 @@ XSoverride=""
 MGversion=""
 sleptonopts=""
 stopopts=""
+gluinoopts=""
 skip_pythia=false
 kfactor=-1
 chargino=-1
@@ -45,7 +46,7 @@ delphescard="delphes_card_ATLAS.tcl"
 delphescardopt=""
 
 # get command line options
-while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:O:o" opt; do
+while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTruK:O:o" opt; do
     case "${opt}" in
 	E) ecms=$OPTARG;;
 	M) mass=$OPTARG;;
@@ -84,13 +85,20 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTrK:O:
 	v) sleptonopts="-s -v";;
 	T) skip_pythia=true;;
 	K) kfactor=$OPTARG;;
-	r) 
+	r)
 	    proc=stops
 	    params=StopBino
 	    mmjj=0
 	    deltaeta=0
 	    pythia_card="pythia8_card.dat"
 	    stopopts="-r";;
+	u) 
+	    proc=ttbar_and_gluino
+	    params=GluinoBino
+	    mmjj=0
+	    deltaeta=0
+	    pythia_card="pythia8_card.dat"
+	    stopopts="-G";;
 	O) chargino=$OPTARG;;
 	    
 	*) exit;;

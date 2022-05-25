@@ -188,7 +188,7 @@ class Hists:
     
     def fill(self,event,weight=0):
         
-        defaultfill=-999
+        defaultfill=-9
 
         for i,k in self.collections.iteritems():
             k.fill(event,weight)
@@ -412,7 +412,7 @@ class tthhTree:
     
     def fill(self,event,weight=0):
         
-        defaultfill=-999
+        defaultfill=-9
 
         for i,k in self.collections.iteritems():
             k.fill(event,weight)
@@ -447,7 +447,7 @@ class tthhTree:
             
         # fill in dummy values for "missing" jets
         for jetCount in range(jetCount,self.maxjets):
-            self.branches["jet%dpT" % jetCount][0]  = -999
+            self.branches["jet%dpT" % jetCount][0]  = -9
             self.branches["jet%deta" % jetCount][0] = -9
             self.branches["jet%dphi" % jetCount][0] = -9
             self.branches["jet%db" % jetCount][0]  = -9
@@ -456,7 +456,7 @@ class tthhTree:
         if cen_sum_E>0:
             self.branches["cent"][0] = cen_sum_Pt/cen_sum_E
         else:
-            self.branches["cent"][0] = -9999
+            self.branches["cent"][0] = -9
 
         # btagged jets separately
         HB_sum_Pt=0
@@ -473,7 +473,7 @@ class tthhTree:
                     btjmaxPt=vec_sum_Pt
                     btjmaxM = (aJet.P4()+bJet.P4()).M()
         # srap
-        etasum_N=-999
+        etasum_N=-9
         if nbjets>1:
             etasum_N = etasum/(nbjets**2-nbjets)
         self.branches["srap"][0] = etasum_N
@@ -485,7 +485,7 @@ class tthhTree:
         self.branches["h_b"][0] = HB_sum_Pt
 
         #chi^2
-        chisq=[-999]
+        chisq=[-9]
         for i1 in range(0,nbjets):
             for i2 in range(i1+1,nbjets):
                 for i3 in range(i2+1,nbjets):
@@ -513,11 +513,11 @@ class tthhTree:
             if lepCount>=self.maxleptons: break
             
         for lepCount in range(lepCount,self.maxleptons):
-            self.branches["lepton%dpT" % lepCount][0] = -999
             self.branches["lepton%dpT" % lepCount][0] = -9
             self.branches["lepton%dpT" % lepCount][0] = -9
-            self.branches["mt%d" % lepCount][0] = -999
-            self.branches["dr%d" % lepCount][0] = -999
+            self.branches["lepton%dpT" % lepCount][0] = -9
+            self.branches["mt%d" % lepCount][0] = -9
+            self.branches["dr%d" % lepCount][0] = -9
             
 
         self.tree.Fill()
@@ -581,7 +581,7 @@ class lowlevelTree:
     
     def fill(self,event,weight=0):
         
-        defaultfill=-999
+        defaultfill=-9
 
         for i,k in self.collections.iteritems():
             k.fill(event,weight)
@@ -610,7 +610,7 @@ class lowlevelTree:
             
         # fill in dummy values for "missing" jets
         for jetCount in range(jetCount,self.maxjets):
-            self.branches["jet%dpT" % jetCount][0]  = -999
+            self.branches["jet%dpT" % jetCount][0]  = -9
             self.branches["jet%deta" % jetCount][0] = -9
             self.branches["jet%dphi" % jetCount][0] = -9
             self.branches["jet%db" % jetCount][0]  = -9
@@ -630,11 +630,11 @@ class lowlevelTree:
             if lepCount>=self.maxleptons: break
             
         for lepCount in range(lepCount,self.maxleptons):
-            self.branches["lepton%dpT" % lepCount][0] = -999
             self.branches["lepton%dpT" % lepCount][0] = -9
             self.branches["lepton%dpT" % lepCount][0] = -9
-            self.branches["lepton%dmT" % lepCount][0] = -999
-            self.branches["lepton%dminjetdr" % lepCount][0] = -999
+            self.branches["lepton%dpT" % lepCount][0] = -9
+            self.branches["lepton%dmT" % lepCount][0] = -9
+            self.branches["lepton%dminjetdr" % lepCount][0] = -9
             
 
         self.tree.Fill()

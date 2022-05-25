@@ -1,7 +1,7 @@
-ARG BUILDER_IMAGE=python:3.8-slim-buster
+ARG BUILDER_IMAGE=python:2.7-slim-buster
 FROM ${BUILDER_IMAGE} as builder
 
-USER root
+USER root 
 WORKDIR /usr/local
 
 SHELL [ "/bin/bash", "-c" ]
@@ -18,9 +18,7 @@ RUN apt-get -qq -y update && \
       libbz2-dev \
       rsync \
       bash-completion \
-      python3-dev \
       less \
-      coreutils \
       wget && \
     apt-get -y autoclean && \
     apt-get -y autoremove && \
@@ -40,22 +38,15 @@ RUN mkdir /code && \
       --prefix=/usr/local && \
     make -j$(($(nproc) - 1)) && \
     make install && \
-    chmod a+w /usr/local/share/LHAPDF/ && \
     rm -rf /code
 
-# Install MadGraph5_aMC@NLO for Python 3
-ARG MG_VERSION=2.9.3
-ARG MG_VERSION_=2_9_3
-ARG MG_VERSION_x=2.9.x
-
+# Install MadGraph5_aMC@NLO
+ARG MG_VERSION=2.9.10
 RUN cd /usr/local && \
-    wget --no-check-certificate https://launchpad.net/mg5amcnlo/2.0/${MG_VERSION_x}/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
+    wget --no-check-certificate https://launchpad.net/mg5amcnlo/2.0/2.9.x/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
     tar xzf MG5_aMC_v${MG_VERSION}.tar.gz && \
     rm MG5_aMC_v${MG_VERSION}.tar.gz
 
-
-# Change the MadGraph5_aMC@NLO configuration settings for lhapdf
-RUN sed -i '/lhapdf_py3 =/s/^# //g' /usr/local/MG5_aMC_v${MG_VERSION_}/input/mg5_configuration.txt
 
 # Enable tab completion by uncommenting it from /etc/bash.bashrc
 # The relevant lines are those below the phrase "enable bash completion in interactive shells"
@@ -72,22 +63,16 @@ WORKDIR ${HOME}/data
 RUN cp /root/.profile ${HOME}/.profile && \
     cp /root/.bashrc ${HOME}/.bashrc && \
     echo "" >> ${HOME}/.bashrc && \
-    echo "export MG_VERSION_=${MG_VERSION_}" && \
     echo 'export PATH=${HOME}/.local/bin:$PATH' >> ${HOME}/.bashrc && \
-    echo 'export PATH=/usr/local/MG5_aMC_v${MG_VERSION_}/bin:$PATH' >> ${HOME}/.bashrc && \
+    echo 'export PATH=/usr/local/MG5_aMC_v2_9_10/bin:$PATH' >> ${HOME}/.bashrc && \
     echo 'alias ls="ls -ltrh --color"' >> ${HOME}/.bashrc && \
     python -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
     python -m pip install --no-cache-dir six numpy
-    
+
 ENV PYTHONPATH=/usr/local/lib:$PYTHONPATH
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 ENV PATH ${HOME}/.local/bin:$PATH
-ENV MG_VERSION_ "${MG_VERSION_}"
-ENV PATH /usr/local/MG5_aMC_v${MG_VERSION_}/bin:$PATH
-
-RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
-    wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models//mssm_v4.tgz && \
-    tar -zxvf mssm_v4.tgz
+ENV PATH /usr/local/MG5_aMC_v2_9_10/bin:$PATH
 
 RUN echo "install pythia8" | mg5_aMC && \
     echo "install mg5amc_py8_interface" | mg5_aMC

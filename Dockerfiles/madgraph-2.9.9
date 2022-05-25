@@ -43,7 +43,7 @@ RUN mkdir /code && \
 # Install MadGraph5_aMC@NLO
 ARG MG_VERSION=2.9.9
 RUN cd /usr/local && \
-    wget --no-check-certificate https://launchpad.net/mg5amcnlo/2.0/2.6.x/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
+    wget --no-check-certificate https://launchpad.net/mg5amcnlo/2.0/2.9.x/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
     tar xzf MG5_aMC_v${MG_VERSION}.tar.gz && \
     rm MG5_aMC_v${MG_VERSION}.tar.gz
 
@@ -64,7 +64,7 @@ RUN cp /root/.profile ${HOME}/.profile && \
     cp /root/.bashrc ${HOME}/.bashrc && \
     echo "" >> ${HOME}/.bashrc && \
     echo 'export PATH=${HOME}/.local/bin:$PATH' >> ${HOME}/.bashrc && \
-    echo 'export PATH=/usr/local/MG5_aMC_v2_6_7/bin:$PATH' >> ${HOME}/.bashrc && \
+    echo 'export PATH=/usr/local/MG5_aMC_v2_9_9/bin:$PATH' >> ${HOME}/.bashrc && \
     echo 'alias ls="ls -ltrh --color"' >> ${HOME}/.bashrc && \
     python -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
     python -m pip install --no-cache-dir six numpy
@@ -72,7 +72,7 @@ RUN cp /root/.profile ${HOME}/.profile && \
 ENV PYTHONPATH=/usr/local/lib:$PYTHONPATH
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 ENV PATH ${HOME}/.local/bin:$PATH
-ENV PATH /usr/local/MG5_aMC_v2_6_7/bin:$PATH
+ENV PATH /usr/local/MG5_aMC_v2_9_9/bin:$PATH
 
 RUN echo "install pythia8" | mg5_aMC && \
     echo "install mg5amc_py8_interface" | mg5_aMC

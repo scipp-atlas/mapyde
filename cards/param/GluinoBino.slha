@@ -52,16 +52,16 @@ Block mass
    1000002    4.5E9  # set of param :1*Msu1, 1*Msu2
    1000005    4.5E9  # Msd3
    1000006    4.5E9  # Msu3
-   1000011    ${MSLEP}  # Msl1
-   1000012    ${MSNU}   # Msn1
-   1000013    ${MSLEP}  # Msl2
-   1000014    ${MSNU}   # Msn2
-   1000015    ${MSLEP}  # Msl3
-   1000016    ${MSNU}   # Msn3
-   1000021    4.5E9  # Mgo
-   1000022    ${MN1} # Mneu1
-   1000023    ${MN2} # Mneu2
-   1000024    ${MC1} # Mch1
+   1000011    4.5E9  # Msl1
+   1000012    4.5E9  # Msn1
+   1000013    4.5E9  # Msl2
+   1000014    4.5E9  # Msn2
+   1000015    4.5E9  # Msl3
+   1000016    4.5E9  # Msn3
+   1000021    ${MGO}  # Mgo
+   1000022    ${MN1}  # Mneu1
+   1000023    4.5E9  # Mneu2
+   1000024    4.5E9  # Mch1
    1000025    4.5E9  # Mneu3
    1000035    4.5E9  # Mneu4
    1000037    4.5E9  # Mch2
@@ -69,9 +69,9 @@ Block mass
    2000002    4.5E9  # set of param :1*Msu4, 1*Msu5
    2000005    4.5E9  # Msd6
    2000006    4.5E9  # Msu6
-   2000011    ${MSLEP}  # set of param :1*Msl4, 1*Msl5
-   2000013    ${MSLEP}  # set of param :1*Msl4, 1*Msl5
-   2000015    ${MSLEP}  # Msl6
+   2000011    4.5E9  # set of param :1*Msl4, 1*Msl5
+   2000013    4.5E9  # set of param :1*Msl4, 1*Msl5
+   2000015    4.5E9  # Msl6
 ## Dependent parameters, given by model restrictions.
 ## Those values should be edited following the
 ## analytical expression. MG5 ignores those values
@@ -291,58 +291,18 @@ DECAY 1000003 5.312788e+00 # Wsd2
 DECAY 1000004 5.477195e+00 # Wsu2
 DECAY 1000005 3.736276e+00 # Wsd3
 DECAY 1000006 2.021596e+00 # Wsu3
+#          BR         NDA      ID1       ID2
+     1.00000000E+00    2     1000022        6    # BR(~t -> ~chi_10 t)
+#
 DECAY 1000011 2.136822e-01 # Wsl1
-#          BR         NDA      ID1       ID2
-     0.00000000E+00    2     1000022        11   # BR(~e_L -> ~chi_10 e-)
-     0.00000000E+00    2     1000023        11   # BR(~e_L -> ~chi_20 e-)
-     1.00000000E+00    2    -1000024        12   # BR(~e_L -> ~chi^-_1 nu_e)
-#
 DECAY 1000012 1.498816e-01 # Wsn1
-#    BR                NDA      ID1      ID2
-     2.50000000E-01    2     1000022        12   # BR(~nu_e -> chi^0_1 nu_e)
-     2.50000000E-01    2     1000023        12   # BR(~nu_e -> chi^0_2 nu_e)
-     5.00000000E-01    2     1000024        11   # BR(~nu_e -> chi^+_1 e^-)
-#
 DECAY 1000013 2.136822e-01 # Wsl2
-#          BR         NDA      ID1       ID2
-     0.00000000E+00    2     1000022        13   # BR(~mu_L -> ~chi_10 mu-)
-     0.00000000E+00    2     1000023        13   # BR(~mu_L -> ~chi_20 mu-)
-     1.00000000E+00    2     1000014        14   # BR(~mu_L -> ~chi^-_1 nu_mu)
-#
 DECAY 1000014 1.498816e-01 # Wsn2
-#    BR                NDA      ID1      ID2
-     2.50000000E-01    2     1000022        14   # BR(~nu_mu -> chi^0_1 nu_mu)
-     2.50000000E-01    2     1000023        14   # BR(~nu_mu -> chi^0_2 nu_mu)
-     5.00000000E-01    2     1000024        13   # BR(~nu_mu -> chi^+_1 mu^-)
-#
 DECAY 1000015 1.483273e-01 # Wsl3
-#          BR         NDA      ID1       ID2
-     0.00000000E+00    2     1000022        15   # BR(~tau_L -> ~chi_10 tau-)
-     0.00000000E+00    2     1000023        15   # BR(~tau_L -> ~chi_20 tau-)
-     1.00000000E+00    2     1000016        16   # BR(~tau_L -> ~chi^-_1 nu_tau)
-#
 DECAY 1000016 1.475190e-01 # Wsn3
-#    BR                NDA      ID1      ID2
-     2.50000000E-01    2     1000022        16   # BR(~nu_tau -> chi^0_1 nu_tau)
-     2.50000000E-01    2     1000023        16   # BR(~nu_tau -> chi^0_2 nu_tau)
-     5.00000000E-01    2     1000024        15   # BR(~nu_tau -> chi^+_1 tau^-)
-#
 DECAY 1000021 5.506754e+00 # Wgo
 DECAY   1000023     9.37327589E-04   # neutralino2 decays
-#    BR                NDA      ID1      ID2
-     0.00000000E-01    2     1000022        22   # BR(chi^0_2 -> chi^0_1 photon)
-#    BR                NDA      ID1      ID2       ID3
-     1.00000000E-01    3     1000022        11       -11   # BR(chi^0_2 -> chi^0_1 e^- e^+)
-     1.00000000E-01    3     1000022        13       -13   # BR(chi^0_2 -> chi^0_1 mu^- mu^+)
-     1.00000000E-01    3     1000022        15       -15   # BR(chi^0_2 -> chi^0_1 tau^- tau^+)
-     7.00000000E-01    3     1000022        12       -12   # BR(chi^0_2 -> chi^0_1 nu_e nu_bar_e)
 DECAY   1000024     7.00367294E-03   # chargino1+ decays
-#    BR                NDA      ID1      ID2       ID3
-     0.33333333E+00    3     1000022        -1         2   # BR(chi^+_1 -> chi^0_1 d_bar u)
-     0.33333333E+00    3     1000022        -3         4   # BR(chi^+_1 -> chi^0_1 s_bar c)
-     0.11111111E+00    3     1000022       -11        12   # BR(chi^+_1 -> chi^0_1 e^+ nu_e)
-     0.11111111E+00    3     1000022       -13        14   # BR(chi^+_1 -> chi^0_1 mu^+ nu_mu)
-     0.11111111E+00    3     1000022       -15        16   # BR(chi^+_1 -> chi^0_1 tau^+ nu_tau)
 DECAY 1000025 1.915985e+00 # Wneu3
 DECAY 1000035 2.585851e+00 # Wneu4
 DECAY 1000037 2.486895e+00 # Wch2
@@ -352,39 +312,12 @@ DECAY 2000003 2.858123e-01 # Wsd5
 DECAY 2000004 1.152973e+00 # Wsu5
 DECAY 2000005 8.015663e-01 # Wsd6
 DECAY 2000006 7.373133e+00 # Wsu6
+#          BR         NDA      ID1       ID2
+     1.00000000E+00    2     1000022        6    # BR(~t -> ~chi_10 t)
+#
 DECAY 2000011 2.161216e-01 # Wsl4
-#          BR         NDA      ID1       ID2
-     0.00000000E+00    2     1000022        11   # BR(~e_R -> ~chi_10 e-)
-     0.00000000E+00    2     1000023        11   # BR(~e_R -> ~chi_20 e-)
-     0.00000000E+00    2     1000025        11   # BR(~e_R -> ~chi_30 e-)
-     0.00000000E+00    2     1000035        11   # BR(~e_R -> ~chi_40 e-)
-     1.00000000E+00    2    -1000024        12   # BR(~e_R -> ~chi_1- nu_e)
-     0.00000000E+00    2    -1000037        12   # BR(~e_R -> ~chi_2- nu_e)
-#
 DECAY 2000013 2.161216e-01 # Wsl5
-#          BR         NDA      ID1       ID2
-     0.00000000E+00    2     1000022        13   # BR(~mu_R -> ~chi_10 mu-)
-     0.00000000E+00    2     1000023        13   # BR(~mu_R -> ~chi_20 mu-)
-     0.00000000E+00    2     1000025        13   # BR(~mu_R -> ~chi_30 mu-)
-     0.00000000E+00    2     1000035        13   # BR(~mu_R -> ~chi_40 mu-)
-     1.00000000E+00    2    -1000024        14   # BR(~mu_R -> ~chi_1- nu_mu)
-     0.00000000E+00    2    -1000037        14   # BR(~mu_R -> ~chi_2- nu_mu)
-#
 DECAY 2000015 2.699061e-01 # Wsl6
-#          BR         NDA      ID1       ID2
-     0.00000000E+00    2     1000022        15   # BR(~tau_2 -> ~chi_10  tau-)
-     0.00000000E+00    2     1000023        15   # BR(~tau_2 -> ~chi_20  tau-)
-     0.00000000E+00    2     1000025        15   # BR(~tau_2 -> ~chi_30  tau-)
-     0.00000000E+00    2     1000035        15   # BR(~tau_2 -> ~chi_40  tau-)
-     1.00000000E+00    2    -1000024        16   # BR(~tau_2 -> ~chi_1-  nu_tau)
-     0.00000000E+00    2    -1000037        16   # BR(~tau_2 -> ~chi_2-  nu_tau)
-     0.00000000E+00    2     1000016       -37   # BR(~tau_2 -> ~nu_tauL H-)
-     0.00000000E+00    2     1000016       -24   # BR(~tau_2 -> ~nu_tauL W-)
-     0.00000000E+00    2     1000015        25   # BR(~tau_2 -> ~tau_1 h)
-     0.00000000E+00    2     1000015        35   # BR(~tau_2 -> ~tau_1 H)
-     0.00000000E+00    2     1000015        36   # BR(~tau_2 -> ~tau_1 A)
-     0.00000000E+00    2     1000015        23   # BR(~tau_2 -> ~tau_1 Z)
-#
 ## Dependent parameters, given by model restrictions.
 ## Those values should be edited following the
 ## analytical expression. MG5 ignores those values

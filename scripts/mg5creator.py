@@ -187,6 +187,11 @@ if args.madspin:
     madspin_onoff = "ON"
     madspin_config_path=f"/data/{new_madspin_card_path.name}"
 
+random_seed_option=""
+if "old" not in args.run:
+    random_seed_option=f"""set iseed {args.seed}"""
+
+    
 config = f"""
 {run_mode}
 launch PROC_madgraph
@@ -197,9 +202,10 @@ reweight=OFF
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}
 {pythia_config_path}
-set iseed {args.seed}
+{random_seed_option}
 done
 """
+
 
 with mgconfig_card_path.open(mode="w") as mg5config:
     for proc_line in new_proc_card_path.open():

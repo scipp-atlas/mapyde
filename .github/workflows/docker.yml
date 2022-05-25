@@ -22,8 +22,14 @@ jobs:
           - delphes
           - delphes-snowmass
           - madgraph
+          - madgraph-2.3.3
+          - madgraph-2.4.3
+          - madgraph-2.5.5
+          - madgraph-2.6.3.2
           - madgraph-2.6.7
           - madgraph-2.9.3
+          - madgraph-2.9.9
+          - madgraph-2.9.10
           - pyplotting
           - pyplotting-cuda
     steps:
