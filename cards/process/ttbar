@@ -1,0 +1,3 @@
+import model sm
+generate     p p > t t~ @1
+output -f

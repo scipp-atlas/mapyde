@@ -1,0 +1,3 @@
+import model sm
+generate     p p > z j, z > b b~ @1
+output -f
