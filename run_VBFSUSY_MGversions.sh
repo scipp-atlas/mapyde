@@ -6,23 +6,22 @@ if [[ $1 == "" ]]; then
     version="2.4.3"
 fi
     
-MGversion="madgraph-${version}"
-
-doOldmssm=1
-
+doOldmssm=0
 # force older mssm_v4 for older versions of MG
-if [[ ${MGversion} == "madgraph-2.4.3" ]]; then
+if [[ ${version} == "2.4.3" || ${version} == "2.3.3" ]]; then
     doOldmssm=1
 fi
+MGversion="madgraph-${version}"
 
 params=Higgsino
-mass=152
+mass=154
 ecms=13
-proccard=VBFSUSY_EWKQCD_charginos
+subproc="_n2c1p"
+proccard=VBFSUSY_EWKQCD${subproc}
 
 if [[ $doOldmssm == 1 ]]; then
     params=Higgsino_CMS_v4
-    proccard=VBFSUSY_EWKQCD_charginos_v4
+    proccard=VBFSUSY_EWKQCD${subproc}_v4
 fi
 
 mmjj=500
