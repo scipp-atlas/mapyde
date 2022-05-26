@@ -34,6 +34,8 @@ cores=20
 anascript="SimpleAna.py"
 #anascript="Delphes2SA.py"
 
+outdata=/data/users/${USER}/SUSY # change this to a good local area to store output files
+
 ./run_VBFSUSY_standalone.sh \
     -E ${ecms} \
     -M ${mass} \
@@ -48,5 +50,5 @@ anascript="SimpleAna.py"
     -C ${anascript} \
     -I ${MGversion} \
     -s "__${MGversion}" \
+    -b ${outdata} \
     -D -A -T # skip everything except madgraph
-
