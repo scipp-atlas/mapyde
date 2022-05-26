@@ -47,5 +47,6 @@ anascript="SimpleAna.py"
     -d ${seed} \
     -C ${anascript} \
     -I ${MGversion} \
+    -s "__${MGversion}" \
     -D -A -T # skip everything except madgraph
 
