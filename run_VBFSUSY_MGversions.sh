@@ -6,7 +6,7 @@ if [[ $1 == "" ]]; then
     version="2.4.3"
 fi
     
-doOldmssm=0
+doOldmssm=1
 # force older mssm_v4 for older versions of MG
 if [[ ${version} == "2.4.3" || ${version} == "2.3.3" ]]; then
     doOldmssm=1
@@ -34,6 +34,7 @@ cores=4           # if you have more CPU cores to spare, increasing this will he
 
 outdata=$PWD/data # change this to a good local area to store output files
 
+set -x
 ./run_VBFSUSY_standalone.sh \
     -E ${ecms} \
     -M ${mass} \
@@ -45,8 +46,8 @@ outdata=$PWD/data # change this to a good local area to store output files
     -x ${mmjj_max} \
     -e ${deltaeta} \
     -d ${seed} \
-    -C ${anascript} \
     -I ${MGversion} \
     -s "__${MGversion}" \
     -b ${outdata} \
     -D -A -T # skip everything except madgraph
+set +x
