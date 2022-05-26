@@ -30,11 +30,9 @@ seed=0
 
 deltaeta=3.0
 nevents=5000
-cores=20
-anascript="SimpleAna.py"
-#anascript="Delphes2SA.py"
+cores=4           # if you have more CPU cores to spare, increasing this will help the job go faster
 
-outdata=/data/users/${USER}/SUSY # change this to a good local area to store output files
+outdata=$PWD/data # change this to a good local area to store output files
 
 ./run_VBFSUSY_standalone.sh \
     -E ${ecms} \
