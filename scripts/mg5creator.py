@@ -65,6 +65,10 @@ parser.add_argument(
     "-o", "--output", default="output", help="output directory for generated files"
 )
 
+parser.add_argument(
+    "-I", "--MGversion", default="2.9.9", help="version of MadGraph to run"
+)
+
 args = parser.parse_args()
 
 # Ensure directory exists
@@ -187,11 +191,6 @@ if args.madspin:
     madspin_onoff = "ON"
     madspin_config_path=f"/data/{new_madspin_card_path.name}"
 
-random_seed_option=""
-if "old" not in args.run:
-    random_seed_option=f"""set iseed {args.seed}"""
-
-    
 config = f"""
 {run_mode}
 launch PROC_madgraph
@@ -202,7 +201,19 @@ reweight=OFF
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}
 {pythia_config_path}
-{random_seed_option}
+set iseed {args.seed}
+done
+"""
+
+if "2.4.3" in args.MGversion or "2.3.3" in args.MGversion:
+    config  = f"""
+{run_mode}
+launch PROC_madgraph
+madspin={madspin_onoff}
+reweight=OFF
+{madspin_config_path}
+/data/{new_param_card_path.name}
+/data/{new_run_card_path.name}
 done
 """
 

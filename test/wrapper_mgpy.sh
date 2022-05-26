@@ -118,10 +118,9 @@ MGversion="ghcr.io/scipp-atlas/mario-mapyde/${MGversion}"
 #docker pull ${MGversion}
 
 runcard="default_LO.dat"
-if [[ ${MGversion} == "madgraph-2.3.3" || ${MGversion} == "madgraph-2.4.3" ]]; then
+if [[ ${MGversion} == *"madgraph-2.3.3" || ${MGversion} == *"madgraph-2.4.3" ]]; then
     runcard="default_LO_oldformat.dat"
 fi
-
 
 ./scripts/mg5creator.py \
     -o ${database} \
@@ -136,6 +135,7 @@ fi
     -n ${nevents} \
     -s ${seed} \
     -t ${tag} \
+    -I ${MGversion} \
     ${pythia_onoff} ${clobber_opts}
 
 if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
