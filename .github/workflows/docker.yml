@@ -25,6 +25,7 @@ jobs:
           - madgraph-2.3.3
           - madgraph-2.4.3
           - madgraph-2.5.5
+          - madgraph-2.6.3.2
           - madgraph-2.6.7
           - madgraph-2.7.3
           - madgraph-2.9.3

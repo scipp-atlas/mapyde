@@ -109,7 +109,7 @@ if [[ ${clobber_mgpy} == true ]]; then
 fi
 
 # For Mike, testing local Docker images
-#if [[ ${MGversion} != "madgraph-2.3.3" && ${MGversion} != "madgraph-2.5.5" && ${MGversion} != "madgraph-2.4.3" && ${MGversion} != "madgraph-2.9.3" && ${MGversion} != "madgraph-2.6.7" && ${MGversion} != "madgraph-2.7.3" ]]; then
+#if [[ ${MGversion} != "madgraph-2.6.3.2" ]]; then
 #    MGversion="ghcr.io/scipp-atlas/mario-mapyde/${MGversion}"
 #fi
 MGversion="ghcr.io/scipp-atlas/mario-mapyde/${MGversion}"

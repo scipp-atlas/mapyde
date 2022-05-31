@@ -17,11 +17,11 @@ params=Higgsino
 mass=154
 ecms=13
 subproc="_n2c1p"
-proccard=VBFSUSY_EWKQCD${subproc}
+proccard=VBFSUSY_EWK${subproc}
 
 if [[ $doOldmssm == 1 ]]; then
     params=Higgsino_CMS_v4
-    proccard=VBFSUSY_EWKQCD${subproc}_v4
+    proccard=VBFSUSY_EWK${subproc}_v4
 fi
 
 mmjj=500
@@ -30,7 +30,7 @@ seed=0
 
 deltaeta=3.0
 nevents=5000
-cores=4           # if you have more CPU cores to spare, increasing this will help the job go faster
+cores=20           # if you have more CPU cores to spare, increasing this will help the job go faster
 
 outdata=$PWD/data # change this to a good local area to store output files
 
