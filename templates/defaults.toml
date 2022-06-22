@@ -1,0 +1,50 @@
+[base]
+path = "{{PWD}}"
+database = "/data/users/{{USER}}/SUSY"
+
+[madgraph]
+skip = false
+proc = "VBFSUSY_EWKQCD"
+params = "Higgsino"
+dM = 1
+mass = 150
+mmjj = 500
+mmjjmax = -1
+deltaeta = 3.0
+ecms = 13
+cores = 20
+ktdurham = -1
+xqcut = -1
+nevents = 10000
+seed = 0
+ptj = 20
+ptj1min = 0
+additional_opts = ""
+version = "madgraph"
+runcard = "default_LO.dat"
+proccard = "cards/process/{{madgraph['proc']}}"
+paramcard = "cards/param/{{madgraph['params']}}.slha"
+
+[pythia]
+skip = false
+card = "pythia8_card_dipoleRecoil.dat"
+additional_opts = ""
+
+[delphes]
+skip = false
+additional_opts = ""
+card = "delphes_card_ATLAS.tcl"
+
+[analysis]
+script = "SimpleAna.py"
+XSoverride = -1
+kfactor = -1
+
+[simpleanalysis]
+skip = false
+additional_opts = ""
+name = "EwkCompressed2018"
+
+[pyhf]
+skip = true
+likelihood = "Higgsino_2L_bkgonly"
