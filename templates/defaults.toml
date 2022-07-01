@@ -19,7 +19,7 @@ version = "madgraph"
 batch = false
 paramcard = "{{base['param_path']}}{{madgraph['params']}}.slha"
 
-[madgraph.mass]
+[madgraph.masses]
 MN1 = 150
 MC1 = 100
 
