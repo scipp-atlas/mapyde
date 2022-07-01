@@ -38,6 +38,7 @@ dependencies = [
     "typing_extensions >=3.7; python_version<'3.8'",
     "typer",
     "toml",
+    "jinja2",
 ]
 
 [project.optional-dependencies]
