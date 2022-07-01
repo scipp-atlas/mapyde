@@ -1,6 +1,10 @@
 [base]
 path = "{{PWD}}"
 database = "/data/users/{{USER}}/SUSY"
+process_path = "cards/process/"
+param_path = "cards/param/"
+pythia_path = "cards/pythia/"
+delphes_path = "cards/delphes/"
 
 [madgraph]
 skip = false
@@ -22,12 +26,12 @@ ptj1min = 0
 additional_opts = ""
 version = "madgraph"
 runcard = "default_LO.dat"
-proccard = "cards/process/{{madgraph['proc']}}"
-paramcard = "cards/param/{{madgraph['params']}}.slha"
+proccard = "{{base['process_path']}}{{madgraph['proc']}}"
+paramcard = "{{base['param_path']}}{{madgraph['params']}}.slha"
 
 [pythia]
 skip = false
-card = "pythia8_card_dipoleRecoil.dat"
+card = "{{base['pythia_path']}}pythia8_card_dipoleRecoil.dat"
 additional_opts = ""
 
 [delphes]
