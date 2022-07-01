@@ -1,5 +1,6 @@
 from __future__ import annotations
 import typer
+from mapyde.utils import load_config, build_config
 from mapyde.runner import run_madgraph, run_delphes, run_ana, run_pyhf
 
 
