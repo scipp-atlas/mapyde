@@ -1,5 +1,6 @@
 import typer
 from mapyde.utils import load_config, build_config
+from mapyde.backends import madgraph
 import json
 
 app = typer.Typer()
@@ -19,5 +20,8 @@ def hello():
 
 
 @app.command()
-def generate_mg5():
-    pass
+def generate_mg5(filename: str):
+    user = load_config(filename)
+    config = build_config(user)
+
+    madgraph.generate_mg5config(config)

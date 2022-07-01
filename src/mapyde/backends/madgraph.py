@@ -9,7 +9,7 @@ import multiprocessing
 import sys
 
 
-def generate_mg5(config):
+def generate_mg5config(config):
     output_path = Path(config.base.path).resolve()
 
     # Ensure pythia card exists
