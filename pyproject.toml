@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 
 [project]
-name = "mario_mapyde"
+name = "mapyde"
 version = "0.1.0"
 authors = [
     { name = "Giordon Stark", email = "kratsg@gmail.com" },
@@ -90,7 +90,7 @@ profile = "black"
 
 [tool.pylint]
 master.py-version = "3.7"
-master.ignore-paths= ["src/mario_mapyde/_version.py"]
+master.ignore-paths= ["src/mapyde/_version.py"]
 reports.output-format = "colorized"
 similarities.ignore-imports = "yes"
 messages_control.disable = [
