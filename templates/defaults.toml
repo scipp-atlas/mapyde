@@ -16,7 +16,7 @@ cores = 20
 nevents = 10000
 seed = 0
 version = "madgraph"
-batch = False
+batch = false
 paramcard = "{{base['param_path']}}{{madgraph['params']}}.slha"
 
 [madgraph.mass]
