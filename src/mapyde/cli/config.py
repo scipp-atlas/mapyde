@@ -16,3 +16,8 @@ def parse(filename: str):
 @app.command()
 def hello():
     typer.echo("world")
+
+
+@app.command()
+def generate_mg5():
+    pass

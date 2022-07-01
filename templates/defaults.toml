@@ -3,31 +3,45 @@ path = "{{PWD}}"
 database = "/data/users/{{USER}}/SUSY"
 process_path = "cards/process/"
 param_path = "cards/param/"
+run_path = "cards/run/"
 pythia_path = "cards/pythia/"
 delphes_path = "cards/delphes/"
 
 [madgraph]
 skip = false
-proc = "VBFSUSY_EWKQCD"
 params = "Higgsino"
 dM = 1
-mass = 150
+ecms = 13000
+cores = 20
+nevents = 10000
+seed = 0
+version = "madgraph"
+batch = False
+paramcard = "{{base['param_path']}}{{madgraph['params']}}.slha"
+
+[madgraph.mass]
+MN1 = 150
+MC1 = 100
+
+[madgraph.run]
+card = "{{base['run_path']}}default_LO.dat"
+
+[madgraph.run.options]
 mmjj = 500
 mmjjmax = -1
 deltaeta = 3.0
-ecms = 13000
-cores = 20
 ktdurham = -1
 xqcut = -1
-nevents = 10000
-seed = 0
 ptj = 20
 ptj1min = 0
-additional_opts = ""
-version = "madgraph"
-runcard = "default_LO.dat"
-proccard = "{{base['process_path']}}{{madgraph['proc']}}"
-paramcard = "{{base['param_path']}}{{madgraph['params']}}.slha"
+
+[madgraph.proc]
+name = "VBFSUSY_EWKQCD"
+card = "{{base['process_path']}}{{madgraph['proc']['name']}}"
+
+[madspin]
+skip = true
+card = ''
 
 [pythia]
 skip = false
