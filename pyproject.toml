@@ -39,6 +39,7 @@ dependencies = [
     "typer",
     "toml",
     "jinja2",
+    "docker",
 ]
 
 [project.optional-dependencies]
