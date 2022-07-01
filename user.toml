@@ -1,3 +1,6 @@
+[base]
+output = "mytag"
+
 [madgraph.proc]
 name = "charginos"
 card = "cards/process/{{madgraph['proc']['name']}}"

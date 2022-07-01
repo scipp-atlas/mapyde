@@ -12,7 +12,8 @@ logging.basicConfig()
 log = logging.getLogger()
 
 def generate_mg5config(config):
-    output_path = Path(config.base['path']).resolve()
+    output_path = Path(config.base['path']).joinpath(config.base['output']).resolve()
+    output_path.mkdir(parents=True, exist_ok=True)
 
     # Ensure pythia card exists
     _pythia_card_path = Path(config.pythia['card'])

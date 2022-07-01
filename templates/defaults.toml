@@ -1,5 +1,6 @@
 [base]
 path = "{{PWD}}"
+output = "output"
 database = "/data/users/{{USER}}/SUSY"
 process_path = "cards/process/"
 param_path = "cards/param/"
