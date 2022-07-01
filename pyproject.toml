@@ -58,6 +58,9 @@ docs = [
 homepage = "https://github.com/scipp-atlas/mario-mapyde"
 
 
+[project.scripts]
+mapyde = "mapyde.cli:app"
+
 [tool.hatch.envs.default]
 dependencies = [
   "pytest",

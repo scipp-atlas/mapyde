@@ -1,6 +1,9 @@
 from jinja2 import Environment, FileSystemLoader, Template
 import toml
 import os
+import typer
+
+app = typer.Typer()
 
 def merge(a, b, path=None):
     "merges b into a"
@@ -24,7 +27,7 @@ def get_defaults():
 
   return env.get_template("defaults.toml")
 
-import typer
+@app.command()
 def main(filename: str):
     tpl_defaults = get_defaults()
     defaults = toml.load(open(tpl_defaults.filename))
@@ -41,7 +44,3 @@ def main(filename: str):
 
     import json
     typer.echo(json.dumps(config, indent=4))
-
-if __name__ == "__main__":
-    typer.run(main)
-
