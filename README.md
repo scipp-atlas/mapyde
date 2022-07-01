@@ -1,3 +1,33 @@
+# mario-mapyde
+
+[![Actions Status][actions-badge]][actions-link]
+[![Documentation Status][rtd-badge]][rtd-link]
+
+[![PyPI version][pypi-version]][pypi-link]
+[![Conda-Forge][conda-badge]][conda-link]
+[![PyPI platforms][pypi-platforms]][pypi-link]
+
+[![GitHub Discussion][github-discussions-badge]][github-discussions-link]
+[![Gitter][gitter-badge]][gitter-link]
+
+
+<!-- prettier-ignore-start -->
+[actions-badge]:            https://github.com/scipp-atlas/mario-mapyde/workflows/CI/badge.svg
+[actions-link]:             https://github.com/scipp-atlas/mario-mapyde/actions
+[conda-badge]:              https://img.shields.io/conda/vn/conda-forge/mario-mapyde
+[conda-link]:               https://github.com/conda-forge/mario-mapyde-feedstock
+[github-discussions-badge]: https://img.shields.io/static/v1?label=Discussions&message=Ask&color=blue&logo=github
+[github-discussions-link]:  https://github.com/scipp-atlas/mario-mapyde/discussions
+[gitter-badge]:             https://badges.gitter.im/https://github.com/scipp-atlas/mario-mapyde/community.svg
+[gitter-link]:              https://gitter.im/https://github.com/scipp-atlas/mario-mapyde/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
+[pypi-link]:                https://pypi.org/project/mario-mapyde/
+[pypi-platforms]:           https://img.shields.io/pypi/pyversions/mario-mapyde
+[pypi-version]:             https://badge.fury.io/py/mario-mapyde.svg
+[rtd-badge]:                https://readthedocs.org/projects/mario-mapyde/badge/?version=latest
+[rtd-link]:                 https://mario-mapyde.readthedocs.io/en/latest/?badge=latest
+[sk-badge]:                 https://scikit-hep.org/assets/images/Scikit--HEP-Project-blue.svg
+<!-- prettier-ignore-end -->
+
 ## Docker Images
 
 Docker images are made available in our [container registry](../../../container_registry).

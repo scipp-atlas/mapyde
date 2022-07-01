@@ -1,0 +1,99 @@
+[build-system]
+requires = ["hatchling>=0.7"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "mario_mapyde"
+version = "0.1.0"
+authors = [
+    { name = "Giordon Stark", email = "kratsg@gmail.com" },
+]
+maintainers = [
+    { name = "Mike Hance", email = "mhance@ucsc.edu" },
+]
+
+description = "A great package."
+readme = "README.md"
+
+requires-python = ">=3.7"
+
+classifiers = [
+    "License :: OSI Approved :: BSD License",
+    "Topic :: Scientific/Engineering",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Development Status :: 1 - Planning",
+]
+
+dependencies = [
+    "typing_extensions >=3.7; python_version<'3.8'",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest >=6",
+]
+dev = [
+    "pytest >=6",
+]
+docs = [
+    "Sphinx>=4.0",
+     "myst_parser>=0.13",
+    "sphinx-book-theme>=0.1.0",
+    "sphinx_copybutton",
+]
+
+[project.urls]
+homepage = "https://github.com/scipp-atlas/mario-mapyde"
+
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+]
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+xfail_strict = true
+filterwarnings = ["error"]
+testpaths = [
+    "tests",
+]
+
+
+[tool.mypy]
+files = "src"
+python_version = "3.7"
+warn_unused_configs = true
+strict = true
+show_error_codes = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+warn_unreachable = true
+
+
+[tool.isort]
+profile = "black"
+
+
+[tool.pylint]
+master.py-version = "3.7"
+master.ignore-paths= ["src/mario_mapyde/_version.py"]
+reports.output-format = "colorized"
+similarities.ignore-imports = "yes"
+messages_control.disable = [
+  "design",
+  "fixme",
+  "line-too-long",
+  "wrong-import-position",
+]
