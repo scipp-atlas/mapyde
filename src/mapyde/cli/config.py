@@ -4,6 +4,7 @@ import json
 
 app = typer.Typer()
 
+
 @app.command()
 def parse(filename: str):
     user = load_config(filename)
@@ -11,7 +12,7 @@ def parse(filename: str):
 
     typer.echo(json.dumps(config, indent=4))
 
+
 @app.command()
 def hello():
     typer.echo("world")
-
