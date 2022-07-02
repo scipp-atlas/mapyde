@@ -13,17 +13,17 @@ def run_madgraph(config: dict):
     # ./test/wrapper_mgpy.py config_file
     madgraph.generate_mg5config(config)
 
-    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config.madgraph.version}"
+    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config.madgraph['version']}"
     command = "mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph"
     options = {
-        "name": f"{config.base.output}__mgpy",
+        "name": f"{config.base['output']}__mgpy",
         "remove": True,
         "user": os.geteuid(),
         "group_add": [os.getegid()],
         "mounts": [
-            docker.types.Mount(Path(config.base.path).joinpath("cards"), "/cards"),
+            docker.types.Mount(Path(config.base['path']).joinpath("cards"), "/cards"),
             docker.types.Mount(
-                Path(config.base.path).joinpath(config.base.output), "/data"
+                Path(config.base['path']).joinpath(config.base['output']), "/data"
             ),
         ],
         "working_dir": "/tmp",
