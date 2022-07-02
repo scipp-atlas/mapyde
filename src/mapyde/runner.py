@@ -1,6 +1,7 @@
 from __future__ import annotations
 import typing as T
 
+from pathlib import Path
 from mapyde.backends import madgraph
 import os
 
