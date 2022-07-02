@@ -22,15 +22,16 @@ def run_madgraph(config: dict):
         "user": os.geteuid(),
         "group_add": [os.getegid()],
         "mounts": [
-            docker.types.Mount(Path(config.base['path']).joinpath("cards"), "/cards"),
+            docker.types.Mount(str(Path(config.base['path']).joinpath("cards").resolve()), "/cards"),
             docker.types.Mount(
-                Path(config.base['path']).joinpath(config.base['output']), "/data"
+                str(Path(config.base['path']).joinpath(config.base['output']).resolve()), "/data"
             ),
         ],
         "working_dir": "/tmp",
     }
 
-    client.containers.run(image, command, options)
+    output = client.containers.run(image, command, options)
+    print(output)
 
 
 def run_delphes(config: dict):
