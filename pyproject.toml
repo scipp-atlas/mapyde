@@ -39,7 +39,6 @@ dependencies = [
     "typer",
     "toml",
     "jinja2",
-    "docker",
     "in_place",
 ]
 
