@@ -70,12 +70,42 @@ rsync -rav --exclude hepmc . /data/delphes""",
 
 
 def run_ana(config: dict[str, T.Any]) -> None:
+    # ./test/wrapper_delphes.py config_file
     # recompute XS, override XS if needed,
     # add XS to config, re-dump config file
     # probably want to move this to wrapper_ana.py script
 
-    # ./test/wrapper_ana.py config_file
-    pass
+    xsec = 10  # TODO
+
+    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
+    command = bytes(
+        f"""/scripts/{config['analysis']['script']} --input /data/delphes/delphes.root --output {config['analysis']['output']} --lumi {config['analysis']['lumi']} --XS {xsec} && rsync -rav . /data/analysis""",
+        "utf-8",
+    )
+
+    with Container(
+        image=image,
+        name=f"{config['base']['output']}__hists",
+        mounts=[
+            (str(Path(config["base"]["path"]).joinpath("cards").resolve()), "/cards"),
+            (
+                str(Path(config["base"]["path"]).joinpath("scripts").resolve()),
+                "/scripts",
+            ),
+            (
+                str(
+                    Path(config["base"]["path"])
+                    .joinpath(config["base"]["output"])
+                    .resolve()
+                ),
+                "/data",
+            ),
+        ],
+        stdout=sys.stdout,
+    ) as container:
+        stdout, stderr = container.process.communicate(command)
+
+    return stdout, stderr
 
 
 def run_pyhf(config: dict[str, T.Any]) -> None:
