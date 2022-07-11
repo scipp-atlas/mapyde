@@ -53,6 +53,7 @@ additional_opts = ""
 skip = false
 additional_opts = ""
 card = "delphes_card_ATLAS.tcl"
+version = "delphes"
 
 [analysis]
 script = "SimpleAna.py"
