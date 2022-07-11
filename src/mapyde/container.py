@@ -55,14 +55,22 @@ class Container:
                 "create",
                 f"--name={self.name}",
                 "--interactive",
+                f"--user={self.user}:{self.group}",
                 *[f"--volume={local}:{host}" for local, host in self.mounts],
+                f"--workdir={self.cwd}",
                 self.image,
             ],
             check=True,
         )
 
         self.process = subprocess.Popen(
-            [self.engine, "start", "--attach", "--interactive", self.name],
+            [
+                self.engine,
+                "start",
+                "--attach",
+                "--interactive",
+                self.name,
+            ],
             stdin=self.stdin_config,
             stdout=self.stdout_config,
         )

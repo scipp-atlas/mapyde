@@ -38,7 +38,35 @@ def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
 
 def run_delphes(config: dict[str, T.Any]) -> None:
     # ./test/wrapper_delphes.py config_file
-    pass
+    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
+    command = bytes(
+        f"""pwd && ls -lavh && ls -lavh /data && cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
+gunzip hepmc.gz && \
+/bin/ls -ltrh --color && \
+/usr/local/share/delphes/delphes/DelphesHepMC2 /cards/delphes/{config['delphes']['card']} delphes.root hepmc && \
+rsync -rav --exclude hepmc . /data/delphes""",
+        "utf-8",
+    )
+
+    with Container(
+        image=image,
+        name=f"{config['base']['output']}__delphes",
+        mounts=[
+            (str(Path(config["base"]["path"]).joinpath("cards").resolve()), "/cards"),
+            (
+                str(
+                    Path(config["base"]["path"])
+                    .joinpath(config["base"]["output"])
+                    .resolve()
+                ),
+                "/data",
+            ),
+        ],
+        stdout=sys.stdout,
+    ) as container:
+        stdout, stderr = container.process.communicate(command)
+
+    return stdout, stderr
 
 
 def run_ana(config: dict[str, T.Any]) -> None:
