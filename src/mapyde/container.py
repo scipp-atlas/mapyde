@@ -43,7 +43,7 @@ class Container:
         self.name = name
 
     def __enter__(self) -> Container:
-        self.name = f"mario-mapyde-{uuid.uuid4()}"
+        self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
 
         subprocess.run(
             [
@@ -51,7 +51,7 @@ class Container:
                 "create",
                 f"--name={self.name}",
                 "--interactive",
-                "--volume=/:/host",
+                *[f"--volume={local}:{host}" for local, host in self.mounts],
                 self.image,
             ],
             check=True,
@@ -75,11 +75,13 @@ class Container:
         exc_val: T.Optional[BaseException],
         exc_tb: T.Optional[TracebackType],
     ) -> None:
-        self.stdin.write(b"exit 0\n")
-        self.stdin.flush()
-        self.process.wait(timeout=30)
-        self.stdin.close()
-        self.stdout.close()
+
+        if not self.stdin.closed and not self.stdout.closed:
+            self.stdin.write(b"exit 0\n")
+            self.stdin.flush()
+            self.process.wait(timeout=30)
+            self.stdin.close()
+            self.stdout.close()
 
         assert isinstance(self.name, str)
 

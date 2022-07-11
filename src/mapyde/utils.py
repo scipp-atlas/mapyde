@@ -7,15 +7,9 @@ import toml
 from jinja2 import Environment, FileSystemLoader, Template
 
 
-class dotdict(dict):
-    """dot.notation access to dictionary attributes"""
-
-    __getattr__ = dict.get
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__
-
-
-def merge(a: dict, b: dict, path: list = None) -> dict:
+def merge(
+    a: dict[str, T.Any], b: dict[str, T.Any], path: T.Optional[list[str]] = None
+) -> dict[str, T.Any]:
     "merges b into a"
     if path is None:
         path = []
@@ -34,7 +28,7 @@ def env_override(value: T.Any, key: str) -> T.Any:
     return os.getenv(key, value)
 
 
-def load_config(filename: str, cwd: str = ".") -> dict:
+def load_config(filename: str, cwd: str = ".") -> T.Any:
     env = Environment(loader=FileSystemLoader(cwd))
     env.filters["env_override"] = env_override
 
@@ -42,7 +36,7 @@ def load_config(filename: str, cwd: str = ".") -> dict:
     return toml.load(open(tpl.filename))
 
 
-def build_config(user: dict) -> dict:
+def build_config(user: dict[str, T.Any]) -> T.Any:
     defaults = load_config("defaults.toml", "./templates")
 
     variables = merge(defaults, user)
@@ -51,4 +45,4 @@ def build_config(user: dict) -> dict:
         tpl.render(PWD=os.getenv("PWD"), USER=os.getenv("USER"), **variables)
     )
 
-    return dotdict(config)
+    return config

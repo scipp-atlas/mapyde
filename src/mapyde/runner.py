@@ -7,12 +7,12 @@ from mapyde.backends import madgraph
 from mapyde.container import Container
 
 
-def run_madgraph(config: dict[str, T.Any]) -> None:
+def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     # ./test/wrapper_mgpy.py config_file
     madgraph.generate_mg5config(config)
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['madgraph']['version']}"
-    command = "mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph"
+    command = b"mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph\n"
 
     with Container(
         image=image,
@@ -29,8 +29,9 @@ def run_madgraph(config: dict[str, T.Any]) -> None:
             ),
         ],
     ) as container:
-        container.process.run(command)
-        print(container.stdout.read())
+        stdout, stderr = container.process.communicate(command)
+
+    return stdout, stderr
 
 
 def run_delphes(config: dict[str, T.Any]) -> None:

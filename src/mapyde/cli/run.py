@@ -26,7 +26,9 @@ def all(filename: str):
 @app.command()
 def madgraph(filename: str):
     config = loadfile(filename)
-    run_madgraph(config)
+    stdout, stderr = run_madgraph(config)
+    typer.echo(stdout)
+    typer.echo(stderr, fg=typer.colors.RED)
 
 
 @app.command()
