@@ -18,7 +18,7 @@ class Container:
 
     process: PopenBytes
     stdin: T.IO[bytes]
-    stdout: T.IO[bytes]
+    stdout: T.Optional[T.IO]
 
     def __init__(
         self,
@@ -30,6 +30,7 @@ class Container:
         cwd: T.Optional[PathOrStr] = "/tmp",
         engine: ContainerEngine = "docker",
         name: T.Optional[str] = None,
+        stdout: T.Optional[T.IO] = None,
     ):
         if not image:
             raise ValueError("Must specify an image to run.")
@@ -41,6 +42,9 @@ class Container:
         self.cwd = cwd
         self.engine = engine
         self.name = name
+        self.stdin_config = subprocess.PIPE
+        self.stdout_config = stdout or subprocess.PIPE
+        self.stderr_config = subprocess.STDOUT
 
     def __enter__(self) -> Container:
         self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
@@ -59,11 +63,11 @@ class Container:
 
         self.process = subprocess.Popen(
             [self.engine, "start", "--attach", "--interactive", self.name],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
+            stdin=self.stdin_config,
+            stdout=self.stdout_config,
         )
 
-        assert self.process.stdin and self.process.stdout
+        assert self.process.stdin
         self.stdin = self.process.stdin
         self.stdout = self.process.stdout
 
@@ -76,11 +80,13 @@ class Container:
         exc_tb: T.Optional[TracebackType],
     ) -> None:
 
-        if not self.stdin.closed and not self.stdout.closed:
+        if not self.stdin.closed:
             self.stdin.write(b"exit 0\n")
             self.stdin.flush()
             self.process.wait(timeout=30)
             self.stdin.close()
+
+        if self.stdout and not self.stdout.closed:
             self.stdout.close()
 
         assert isinstance(self.name, str)

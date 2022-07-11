@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 import typing as T
 from pathlib import Path
 
@@ -28,6 +29,7 @@ def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
                 "/data",
             ),
         ],
+        stdout=sys.stdout,
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
