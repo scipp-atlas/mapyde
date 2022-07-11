@@ -3,9 +3,8 @@ from __future__ import annotations
 import typing as T
 from pathlib import Path
 
-from maypde.container import Container
-
 from mapyde.backends import madgraph
+from mapyde.container import Container
 
 
 def run_madgraph(config: dict[str, T.Any]) -> None:

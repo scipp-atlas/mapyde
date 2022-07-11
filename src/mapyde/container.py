@@ -6,9 +6,7 @@ import typing as T
 import uuid
 from types import TracebackType
 
-from typing_extensions import Literal
-
-from mapyde.typing import PathOrStr, PopenBytes
+from mapyde.typing import Literal, PathOrStr, PopenBytes
 
 ContainerEngine = Literal["docker"]  # add support for podman later
 
