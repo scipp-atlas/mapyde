@@ -1,11 +1,15 @@
-import typing as T
-from types import TracebackType
-import os
-import uuid
-import subprocess
+from __future__ import annotations
 
-PathOrStr = T.Union[str, os.PathLike[str]]
-ContainerEngine = T.Literal["docker"]  # add support for podman later
+import subprocess
+import typing as T
+import uuid
+from types import TracebackType
+
+from typing_extensions import Literal
+
+from mapyde.typing import PathOrStr, PopenBytes
+
+ContainerEngine = Literal["docker"]  # add support for podman later
 
 
 class Container:
@@ -13,7 +17,7 @@ class Container:
     An object that represents a running OCI container.
     """
 
-    process: subprocess.Popen[bytes]
+    process: PopenBytes
     stdin: T.IO[bytes]
     stdout: T.IO[bytes]
 
@@ -57,6 +61,8 @@ class Container:
         assert self.process.stdin and self.process.stdout
         self.stdin = self.process.stdin
         self.stdout = self.process.stdout
+
+        return self
 
     def __exit__(
         self,
