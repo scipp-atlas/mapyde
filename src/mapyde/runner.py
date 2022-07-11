@@ -1,11 +1,12 @@
 from __future__ import annotations
-import typing as T
 
-from pathlib import Path
-from mapyde.backends import madgraph
 import os
+import typing as T
+from pathlib import Path
 
 import docker
+
+from mapyde.backends import madgraph
 
 client = docker.from_env()
 
@@ -22,9 +23,14 @@ def run_madgraph(config: dict):
         "user": os.geteuid(),
         "group_add": [os.getegid()],
         "mounts": [
-            docker.types.Mount(str(Path(config.base['path']).joinpath("cards").resolve()), "/cards"),
             docker.types.Mount(
-                str(Path(config.base['path']).joinpath(config.base['output']).resolve()), "/data"
+                str(Path(config.base["path"]).joinpath("cards").resolve()), "/cards"
+            ),
+            docker.types.Mount(
+                str(
+                    Path(config.base["path"]).joinpath(config.base["output"]).resolve()
+                ),
+                "/data",
             ),
         ],
         "working_dir": "/tmp",

@@ -1,8 +1,9 @@
 from __future__ import annotations
-import typer
-from mapyde.utils import load_config, build_config
-from mapyde.runner import run_madgraph, run_delphes, run_ana, run_pyhf
 
+import typer
+
+from mapyde.runner import run_ana, run_delphes, run_madgraph, run_pyhf
+from mapyde.utils import build_config, load_config
 
 app = typer.Typer()
 
@@ -44,4 +45,3 @@ def analysis(filename: str):
 def pyhf(filename: str):
     config = loadfile(filename)
     run_pyhf(config)
-

@@ -1,7 +1,11 @@
-import typer
-from mapyde.utils import load_config, build_config
-from mapyde.backends import madgraph
+from __future__ import annotations
+
 import json
+
+import typer
+
+from mapyde.backends import madgraph
+from mapyde.utils import build_config, load_config
 
 app = typer.Typer()
 

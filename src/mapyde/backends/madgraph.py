@@ -1,12 +1,15 @@
-import shutil
-from string import Template
-from pathlib import Path
-import pprint
-import in_place
-import re
+from __future__ import annotations
+
 import logging
 import multiprocessing
+import pprint
+import re
+import shutil
 import sys
+from pathlib import Path
+from string import Template
+
+import in_place
 
 logging.basicConfig()
 log = logging.getLogger()

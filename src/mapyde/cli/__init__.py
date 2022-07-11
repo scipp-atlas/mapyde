@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import typer
+
 from mapyde.cli import config, run
 
 app = typer.Typer()
