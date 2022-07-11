@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import subprocess
 import typing as T
 import uuid
@@ -25,7 +26,10 @@ class Container:
         self,
         *,
         image: str,
-        cwd: T.Optional[PathOrStr],
+        user: T.Optional[int] = None,
+        group: T.Optional[int] = None,
+        mounts: T.Optional[list[tuple[PathOrStr, PathOrStr]]] = None,
+        cwd: T.Optional[PathOrStr] = "/tmp",
         engine: ContainerEngine = "docker",
         name: T.Optional[str] = None,
     ):
@@ -33,9 +37,12 @@ class Container:
             raise ValueError("Must specify an image to run.")
 
         self.image = image
+        self.user = user or os.geteuid()
+        self.group = group or os.getegid()
+        self.mounts = mounts or []
         self.cwd = cwd
-        self.name = name
         self.engine = engine
+        self.name = name
 
     def __enter__(self) -> Container:
         self.name = f"mario-mapyde-{uuid.uuid4()}"
