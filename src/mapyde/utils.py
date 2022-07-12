@@ -33,6 +33,7 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
     env.filters["env_override"] = env_override
 
     tpl = env.get_template(filename)
+    assert tpl.filename
     return toml.load(open(tpl.filename))
 
 

@@ -11,7 +11,7 @@ app = typer.Typer()
 
 
 @app.command()
-def parse(filename: str):
+def parse(filename: str) -> None:
     user = load_config(filename)
     config = build_config(user)
 
@@ -19,12 +19,12 @@ def parse(filename: str):
 
 
 @app.command()
-def hello():
+def hello() -> None:
     typer.echo("world")
 
 
 @app.command()
-def generate_mg5(filename: str):
+def generate_mg5(filename: str) -> None:
     user = load_config(filename)
     config = build_config(user)
 

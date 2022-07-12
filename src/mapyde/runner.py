@@ -36,7 +36,7 @@ def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     return stdout, stderr
 
 
-def run_delphes(config: dict[str, T.Any]) -> None:
+def run_delphes(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     # ./test/wrapper_delphes.py config_file
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
@@ -69,7 +69,7 @@ rsync -rav --exclude hepmc . /data/delphes""",
     return stdout, stderr
 
 
-def run_ana(config: dict[str, T.Any]) -> None:
+def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     # ./test/wrapper_delphes.py config_file
     # recompute XS, override XS if needed,
     # add XS to config, re-dump config file

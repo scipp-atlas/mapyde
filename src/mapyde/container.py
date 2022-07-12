@@ -18,7 +18,7 @@ class Container:
 
     process: PopenBytes
     stdin: T.IO[bytes]
-    stdout: T.Optional[T.IO]
+    stdout: T.Optional[T.Union[T.IO[bytes], T.IO[str]]]
 
     def __init__(
         self,
@@ -30,7 +30,7 @@ class Container:
         cwd: T.Optional[PathOrStr] = "/tmp",
         engine: ContainerEngine = "docker",
         name: T.Optional[str] = None,
-        stdout: T.Optional[T.IO] = None,
+        stdout: T.Optional[T.Union[T.IO[bytes], T.IO[str]]] = None,
     ):
         if not image:
             raise ValueError("Must specify an image to run.")
