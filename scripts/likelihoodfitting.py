@@ -1,14 +1,17 @@
-import json
-import jsonpatch
-import pathlib
-import copy
+from __future__ import annotations
+
 import argparse
-import cabinetry
-import shutil
+import copy
+import json
 import os
+import pathlib
+import shutil
+
+import cabinetry
+import jsonpatch
 import pyhf
 
-#pyhf.set_backend("jax")
+# pyhf.set_backend("jax")
 
 # patch the background-only fit
 parser = argparse.ArgumentParser(description="Process some arguments.")
@@ -20,20 +23,19 @@ parser.add_argument("-n", "--name", help="name of signal sample")
 args = parser.parse_args()
 
 with open(args.background) as f:
-    bgonly=json.load(f)
+    bgonly = json.load(f)
 with open(args.signal) as f:
-    signal=json.load(f)
+    signal = json.load(f)
 
-res=jsonpatch.apply_patch(bgonly, signal)
+res = jsonpatch.apply_patch(bgonly, signal)
 
-#print(json.dumps(res, indent=4, sort_keys=True))
-jsonws=args.name + "__" + args.background.split("/")[-1].replace("_bkgonly","")
-with open(jsonws, 'w') as f:
+# print(json.dumps(res, indent=4, sort_keys=True))
+jsonws = args.name + "__" + args.background.split("/")[-1].replace("_bkgonly", "")
+with open(jsonws, "w") as f:
     json.dump(res, f, sort_keys=True, indent=4)
 
 
-
-shutil.rmtree("cabinetry_figs",ignore_errors=True)
+shutil.rmtree("cabinetry_figs", ignore_errors=True)
 os.mkdir("cabinetry_figs")
 
 # build a workspace
@@ -56,7 +58,11 @@ cabinetry.visualize.limit(limit_results)
 print(limit_results.observed_limit)
 print(limit_results.expected_limit)
 import pyhf
+
 pyhf.infer.test_statistics.q0
-p_observed,p_expected = pyhf.infer.hypotest(1.0, data, model, test_stat='q0', return_expected=True)
+p_observed, p_expected = pyhf.infer.hypotest(
+    1.0, data, model, test_stat="q0", return_expected=True
+)
 import scipy
+
 scipy.stats.norm.isf(p_expected, 0, 1)
