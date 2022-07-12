@@ -7,7 +7,7 @@
 #
 #  Released on: Nov 14th, 2016
 #
-#  Configuration: FCC-hh baseline detector 
+#  Configuration: FCC-hh baseline detector
 #
 #######################################
 # Order of execution of various modules
@@ -30,22 +30,22 @@ set ExecutionPath {
 
   ECal
   HCal
-  
+
   ElectronFilter
   TrackPileUpSubtractor
 
   Calorimeter
   NeutralEFlowMerger
   EFlowMerger
-  
+
   LeptonFilterNoLep
   LeptonFilterLep
   RunPUPPIBase
   RunPUPPIMerger
   RunPUPPI
-  
+
   EFlowFilter
-  
+
   PhotonEfficiency
   PhotonFilter
   PhotonIsolation
@@ -96,7 +96,7 @@ module PileUpMerger PileUpMerger {
 
   # pre-generated minbias input file
   set PileUpFile MinBias.pileup
-  
+
   # average expected pile up
   set MeanPileUp 200
 
@@ -202,7 +202,7 @@ module MomentumSmearing ChargedHadronMomentumSmearing {
   set InputArray ChargedHadronTrackingEfficiency/chargedHadrons
   set OutputArray chargedHadrons
 
-  source momentumResolutionVsP.tcl 
+  source momentumResolutionVsP.tcl
 }
 
 
@@ -214,7 +214,7 @@ module MomentumSmearing ElectronMomentumSmearing {
   set InputArray ElectronTrackingEfficiency/electrons
   set OutputArray electrons
 
-  source momentumResolutionVsP.tcl 
+  source momentumResolutionVsP.tcl
 }
 
 
@@ -228,7 +228,7 @@ module MomentumSmearing MuonMomentumSmearing {
 
   # TBC for just putting tracker resolution/ need to add improvement at high pT
 
-  source muonMomentumResolutionVsP.tcl 
+  source muonMomentumResolutionVsP.tcl
 }
 
 ##############
@@ -274,9 +274,9 @@ module SimpleCalorimeter ECal {
    set PhiBins {}
   for {set i -256} {$i <= 256} {incr i} {
     add PhiBins [expr {$i * $pi/256.0}]
-  } 
- 
-  # TBC 
+  }
+
+  # TBC
   foreach eta {-2.4875 -2.475 -2.4625 -2.45 -2.4375 -2.425 -2.4125 -2.4 -2.3875 -2.375 -2.3625 -2.35 -2.3375 -2.325 -2.3125 -2.3 -2.2875 -2.275 -2.2625 -2.25 -2.2375 -2.225 -2.2125 -2.2 -2.1875 -2.175 -2.1625 -2.15 -2.1375 -2.125 -2.1125 -2.1 -2.0875 -2.075 -2.0625 -2.05 -2.0375 -2.025 -2.0125 -2 -1.9875 -1.975 -1.9625 -1.95 -1.9375 -1.925 -1.9125 -1.9 -1.8875 -1.875 -1.8625 -1.85 -1.8375 -1.825 -1.8125 -1.8 -1.7875 -1.775 -1.7625 -1.75 -1.7375 -1.725 -1.7125 -1.7 -1.6875 -1.675 -1.6625 -1.65 -1.6375 -1.625 -1.6125 -1.6 -1.5875 -1.575 -1.5625 -1.55 -1.5375 -1.525 -1.5125 -1.5 -1.4875 -1.475 -1.4625 -1.45 -1.4375 -1.425 -1.4125 -1.4 -1.3875 -1.375 -1.3625 -1.35 -1.3375 -1.325 -1.3125 -1.3 -1.2875 -1.275 -1.2625 -1.25 -1.2375 -1.225 -1.2125 -1.2 -1.1875 -1.175 -1.1625 -1.15 -1.1375 -1.125 -1.1125 -1.1 -1.0875 -1.075 -1.0625 -1.05 -1.0375 -1.025 -1.0125 -1.0 -0.9875 -0.975 -0.9625 -0.95 -0.9375 -0.925 -0.9125 -0.9 -0.8875 -0.875 -0.8625 -0.85 -0.8375 -0.825 -0.8125 -0.8 -0.7875 -0.775 -0.7625 -0.75 -0.7375 -0.725 -0.7125 -0.7 -0.6875 -0.675 -0.6625 -0.65 -0.6375 -0.625 -0.6125 -0.6 -0.5875 -0.575 -0.5625 -0.55 -0.5375 -0.525 -0.5125 -0.5 -0.4875 -0.475 -0.4625 -0.45 -0.4375 -0.425 -0.4125 -0.4 -0.3875 -0.375 -0.3625 -0.35 -0.3375 -0.325 -0.3125 -0.3 -0.2875 -0.275 -0.2625 -0.25 -0.2375 -0.225 -0.2125 -0.2 -0.1875 -0.175 -0.1625 -0.15 -0.1375 -0.125 -0.1125 -0.1 -0.0875 -0.075 -0.0625 -0.05 -0.0375 -0.025 -0.0125 0 0.0125 0.025 0.0375 0.05 0.0625 0.075 0.0875 0.1 0.1125 0.125 0.1375 0.15 0.1625 0.175 0.1875 0.2 0.2125 0.225 0.2375 0.25 0.2625 0.275 0.2875 0.3 0.3125 0.325 0.3375 0.35 0.3625 0.375 0.3875 0.4 0.4125 0.425 0.4375 0.45 0.4625 0.475 0.4875 0.5 0.5125 0.525 0.5375 0.55 0.5625 0.575 0.5875 0.6 0.6125 0.625 0.6375 0.65 0.6625 0.675 0.6875 0.7 0.7125 0.725 0.7375 0.75 0.7625 0.775 0.7875 0.8 0.8125 0.825 0.8375 0.85 0.8625 0.875 0.8875 0.9 0.9125 0.925 0.9375 0.95 0.9625 0.975 0.9875 1.0 1.0125 1.025 1.0375 1.05 1.0625 1.075 1.0875 1.1 1.1125 1.125 1.1375 1.15 1.1625 1.175 1.1875 1.2 1.2125 1.225 1.2375 1.25 1.2625 1.275 1.2875 1.3 1.3125 1.325 1.3375 1.35 1.3625 1.375 1.3875 1.4 1.4125 1.425 1.4375 1.45 1.4625 1.475 1.4875 1.5 1.5125 1.525 1.5375 1.55 1.5625 1.575 1.5875 1.6 1.6125 1.625 1.6375 1.65 1.6625 1.675 1.6875 1.7 1.7125 1.725 1.7375 1.75 1.7625 1.775 1.7875 1.8 1.8125 1.825 1.8375 1.85 1.8625 1.875 1.8875 1.9 1.9125 1.925 1.9375 1.95 1.9625 1.975 1.9875 2 2.0125 2.025 2.0375 2.05 2.0625 2.075 2.0875 2.1 2.1125 2.125 2.1375 2.15 2.1625 2.175 2.1875 2.2 2.2125 2.225 2.2375 2.25 2.2625 2.275 2.2875 2.3 2.3125 2.325 2.3375 2.35 2.3625 2.375 2.3875 2.4 2.4125 2.425 2.4375 2.45 2.4625 2.475 2.4875 2.5} {
     add EtaPhiBins $eta $PhiBins
   }
@@ -356,7 +356,7 @@ module SimpleCalorimeter HCal {
     add PhiBins [expr {$i * $pi/64.0}]
   }
 
-  # TBC 
+  # TBC
   foreach eta {-2.45 -2.4 -2.35 -2.3 -2.25 -2.2 -2.15 -2.1 -2.05 -2.0 -1.95 -1.9 -1.85 -1.8 -1.75 -1.7 -1.65 -1.6 -1.55 -1.5 -1.45 -1.4 -1.35 -1.3 -1.25 -1.2 -1.15 -1.1 -1.05 -1.0 -0.95 -0.9 -0.85 -0.8 -0.75 -0.7 -0.65 -0.6 -0.55 -0.5 -0.45 -0.4 -0.35 -0.3 -0.25 -0.2 -0.15 -0.1 -0.05 0.0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 0.9 0.95 1.0 1.05 1.1 1.15 1.2 1.25 1.3 1.35 1.4 1.45 1.5 1.55 1.6 1.65 1.7 1.75 1.8 1.85 1.9 1.95 2.0 2.05 2.1 2.15 2.2 2.25 2.3 2.35 2.4 2.45 2.5} {
     add EtaPhiBins $eta $PhiBins
   }
@@ -424,7 +424,7 @@ module PdgCodeFilter ElectronFilter {
 module PdgCodeFilter ChargedHadronFilter {
   set InputArray HCal/eflowTracks
   set OutputArray chargedHadrons
-  
+
   add PdgCode {11}
   add PdgCode {-11}
   add PdgCode {13}
@@ -519,19 +519,19 @@ module RunPUPPI RunPUPPIBase {
   set UseNoLep          false
 
   ## define puppi algorithm parameters (more than one for the same eta region is possible)
-  add EtaMinBin           0.0   4.0   
-  add EtaMaxBin           4.0   10.0   
-  add PtMinBin            0.0   0.0   
-  add ConeSizeBin         0.2   0.2   
-  add RMSPtMinBin         0.1   0.5   
-  add RMSScaleFactorBin   1.0   1.0   
-  add NeutralMinEBin      0.2   0.2   
+  add EtaMinBin           0.0   4.0
+  add EtaMaxBin           4.0   10.0
+  add PtMinBin            0.0   0.0
+  add ConeSizeBin         0.2   0.2
+  add RMSPtMinBin         0.1   0.5
+  add RMSScaleFactorBin   1.0   1.0
+  add NeutralMinEBin      0.2   0.2
   add NeutralPtSlope      0.006 0.013
-  add ApplyCHS            true  true  
-  add UseCharged          true  true  
-  add ApplyLowPUCorr      true  true  
-  add MetricId            5     5     
-  add CombId              0     0    
+  add ApplyCHS            true  true
+  add UseCharged          true  true
+  add ApplyLowPUCorr      true  true
+  add MetricId            5     5
+  add CombId              0     0
 
   ## output name
   set OutputArray         PuppiParticles
@@ -559,7 +559,7 @@ module RecoPuFilter RunPUPPI {
 module PdgCodeFilter EFlowFilter {
   set InputArray RunPUPPI/PuppiParticles
   set OutputArray eflow
-  
+
   add PdgCode {11}
   add PdgCode {-11}
   add PdgCode {13}
@@ -731,11 +731,11 @@ module Efficiency PhotonEfficiency {
   (abs(eta) <= 2.5) * (pt > 1.0 && pt < 5.0)  * (0.70) +
   (abs(eta) <= 2.5) * (pt > 5.0 && pt < 10.0) * (0.85) +
   (abs(eta) <= 2.5) * (pt > 10.0)             * (0.95) +
-    
-  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 1.0 && pt < 5.0)  * (0.60) + 
-  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 5.0 && pt < 10.0) * (0.80) + 
-  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 10.0)  * (0.90) +   
-  
+
+  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 1.0 && pt < 5.0)  * (0.60) +
+  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 5.0 && pt < 10.0) * (0.80) +
+  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 10.0)  * (0.90) +
+
   (abs(eta) > 4.0 && abs(eta) <= 6.0) * (pt > 1.0 && pt < 5.0)  * (0.50) + \
   (abs(eta) > 4.0 && abs(eta) <= 6.0) * (pt > 5.0 && pt < 10.0) * (0.70) + \
   (abs(eta) > 4.0 && abs(eta) <= 6.0) * (pt > 10.0)             * (0.80) + \
@@ -868,12 +868,12 @@ module BTagging BTagging {
   add EfficiencyFormula {5} {
 
   (pt <= 10.0)                                                       * (0.00) +
-  (abs(eta) < 2.5)                    * (pt > 10.0 && pt < 500)      * (0.85) + 
-  (abs(eta) < 2.5)                    * (pt > 500.0 && pt < 20000.0) * (0.85)*(1.0 - pt/20000.) + 
-  (abs(eta) < 2.5)                    * (pt > 20000.0)               * (0.000) + 
-  (abs(eta) >= 2.5 && abs(eta) < 4.0) * (pt > 10.0 && pt < 500)      * (0.64) + 
-  (abs(eta) >= 2.5 && abs(eta) < 4.0) * (pt > 500.0 && pt < 20000.0) * (0.64)*(1.0 - pt/20000.) + 
-  (abs(eta) <= 2.5 && abs(eta) < 4.0) * (pt > 20000.0)               * (0.000) + 
+  (abs(eta) < 2.5)                    * (pt > 10.0 && pt < 500)      * (0.85) +
+  (abs(eta) < 2.5)                    * (pt > 500.0 && pt < 20000.0) * (0.85)*(1.0 - pt/20000.) +
+  (abs(eta) < 2.5)                    * (pt > 20000.0)               * (0.000) +
+  (abs(eta) >= 2.5 && abs(eta) < 4.0) * (pt > 10.0 && pt < 500)      * (0.64) +
+  (abs(eta) >= 2.5 && abs(eta) < 4.0) * (pt > 500.0 && pt < 20000.0) * (0.64)*(1.0 - pt/20000.) +
+  (abs(eta) <= 2.5 && abs(eta) < 4.0) * (pt > 20000.0)               * (0.000) +
   (abs(eta) >= 4.0) * (0.00)}
 
 }
@@ -1008,4 +1008,3 @@ module TreeWriter TreeWriter {
   add Branch PuppiMissingET/momentum PuppiMissingET MissingET
   add Branch ScalarHT/energy ScalarHT ScalarHT
 }
-
