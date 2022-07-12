@@ -92,7 +92,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTruK:O
 	    deltaeta=0
 	    pythia_card="pythia8_card.dat"
 	    stopopts="-r";;
-	u) 
+	u)
 	    proc=ttbar_and_gluino
 	    params=GluinoBino
 	    mmjj=0
@@ -100,7 +100,7 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTruK:O
 	    pythia_card="pythia8_card.dat"
 	    stopopts="-G";;
 	O) chargino=$OPTARG;;
-	    
+
 	*) exit;;
     esac
 done
@@ -230,4 +230,3 @@ if $skip_PYHF; then
 else
     ./test/wrapper_pyhf.sh           ${tag} ${lumi} ${database} ${simpleanalysis} ${likelihood}
 fi
-

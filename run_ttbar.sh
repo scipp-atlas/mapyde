@@ -17,7 +17,7 @@ nevents=10000
 
 
 for ecms in 13; do
-    
+
     if [[ $ecms == 13 ]]; then
 	lumi=140000
 	delphescard="delphes_card_ATLAS.tcl"
@@ -28,12 +28,12 @@ for ecms in 13; do
 	lumi=3000000
 	delphescard="FCChh.tcl"
     fi
-    
+
     tag="ttbar_${ecms}_${seed}"
-	
+
     base=${PWD}
     datadir=${tag}
-    
+
     # ---------------------------------------------------------------------------------------
     # run madgraph+pythia
     ./scripts/mg5creator.py \
@@ -46,7 +46,7 @@ for ecms in 13; do
 	-s ${seed} \
 	-n ${nevents} \
 	-t ${tag}
-	
+
     # only run the job if the creation script succeeded
     if [[ $? == 0 ]]; then
 	docker run \
@@ -59,12 +59,12 @@ for ecms in 13; do
 	       -w /tmp \
 	       gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
 	       "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph" #   && chown -R $UID /data/madgraph
-	
+
 	# dump docker logs to text file
 	journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > $database/$datadir/docker_mgpy.log
     fi
     # ---------------------------------------------------------------------------------------
-	
+
     # should not clobber existing output
     #./test/wrapper_delphes.sh ${tag} ${delphescard} ${clobber_delphes}
 
@@ -82,5 +82,5 @@ for ecms in 13; do
 
     #./test/wrapper_root2hdf5.sh ${tag}
     python3 scripts/root2hdf5.py /data/users/mhance/SUSY/${tag}/analysis/lowlevelAna.root:allev/lowleveltree
-   
+
 done

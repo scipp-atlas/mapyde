@@ -27,7 +27,7 @@ for proc in 'Zbb' 'gluons' 'quarks'; do
 	-s ${seed} \
 	-n ${nevents} \
 	-t ${tag} \
-	-R ptj1min ${ptj1min} 
+	-R ptj1min ${ptj1min}
 
     # only run the job if the creation script succeeded
     if [[ $? == 0 ]]; then
@@ -40,7 +40,7 @@ for proc in 'Zbb' 'gluons' 'quarks'; do
                -w /tmp \
                gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
                "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph" #   && chown -R $UID /data/madgraph
-        
+
         # dump docker logs to text file
         journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > $database/$tag/docker_mgpy.log
     fi
@@ -48,6 +48,5 @@ for proc in 'Zbb' 'gluons' 'quarks'; do
 
 #               --user $(id -u):$(id -g) \
 #               "wget http://madgraph.physics.illinois.edu/Downloads/models//heft.tgz && mv heft.tgz /usr/local/MG5_aMC_v2_7_3_py3/models && pushd /usr/local/MG5_aMC_v2_7_3_py3/models && tar -zxvf heft.tgz && popd && mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph" #   && chown -R $UID /data/madgraph
-    
-done
 
+done

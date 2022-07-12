@@ -44,9 +44,8 @@ for params in Higgsino; do
 		    -x ${mmjj_max} \
 		    -e ${deltaeta} \
 		    -d ${seed} \
-		    -C ${anascript} 
+		    -C ${anascript}
 	    done
 	done
     done
 done
-

@@ -5,7 +5,7 @@ version=$1
 if [[ $1 == "" ]]; then
     version="2.4.3"
 fi
-    
+
 doOldmssm=1
 # force older mssm_v4 for older versions of MG
 if [[ ${version} == "2.4.3" || ${version} == "2.3.3" ]]; then

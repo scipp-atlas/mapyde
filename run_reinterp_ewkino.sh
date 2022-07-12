@@ -49,7 +49,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:" opt; do
 	*) exit;;
     esac
 done
-	
+
 
 clobberopts=""
 if $clobber_mgpy; then

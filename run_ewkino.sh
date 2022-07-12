@@ -49,7 +49,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:" opt; do
 	*) exit;;
     esac
 done
-	
+
 
 clobberopts=""
 if $clobber_mgpy; then
@@ -97,6 +97,6 @@ for thisproc in "${proc}nodecays" "${proc}"; do
 	-I "madgraph-2.9.3" \
 	${skipopts} \
 	${clobberopts} \
-	${XSopts} 
+	${XSopts}
     set +x
 done
