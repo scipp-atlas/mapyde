@@ -59,6 +59,8 @@ version = "delphes"
 script = "SimpleAna.py"
 XSoverride = -1
 kfactor = -1
+output = "SimpleAna.root"
+lumi = 1000
 
 [simpleanalysis]
 skip = false
