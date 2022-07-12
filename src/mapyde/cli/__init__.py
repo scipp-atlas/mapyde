@@ -1,3 +1,6 @@
+"""
+Top-level entrypoint for the command line interface.
+"""
 from __future__ import annotations
 
 import typer

@@ -1,3 +1,6 @@
+"""
+File containing functionality for running the various steps in the workflow.
+"""
 from __future__ import annotations
 
 import sys
@@ -9,6 +12,9 @@ from mapyde.container import Container
 
 
 def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+    """
+    Run madgraph.
+    """
     # ./test/wrapper_mgpy.py config_file
     madgraph.generate_mg5config(config)
 
@@ -37,6 +43,9 @@ def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
 
 
 def run_delphes(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+    """
+    Run delphes.
+    """
     # ./test/wrapper_delphes.py config_file
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
@@ -70,6 +79,9 @@ rsync -rav --exclude hepmc . /data/delphes""",
 
 
 def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+    """
+    Run analysis.
+    """
     # ./test/wrapper_delphes.py config_file
     # recompute XS, override XS if needed,
     # add XS to config, re-dump config file
@@ -109,5 +121,8 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
 
 
 def run_pyhf(config: dict[str, T.Any]) -> None:
+    """
+    Run statistical inference via pyhf.
+    """
     # ./test/wrapper_pyhf.py config_file
-    pass
+    assert config

@@ -1,3 +1,7 @@
+"""
+Helpers for madgraph
+"""
+
 from __future__ import annotations
 
 import logging
@@ -16,11 +20,14 @@ log = logging.getLogger()
 
 
 def generate_mg5config(config: dict[str, T.Any]) -> None:
+    """
+    Helper for generating the madgraph configs. Replaces mg5creator.py.
+    """
     old_versions = ["2.4.3", "2.3.3"]
-    OLD_VERSION = False
+    is_old_version = False
     if any(version in config["madgraph"]["version"] for version in old_versions):
-        OLD_VERSION = True
-        log.warning(f"Old madgraph version detected: {config['madgraph']['version']}.")
+        is_old_version = True
+        log.warning("Old madgraph version detected: %s", config["madgraph"]["version"])
 
     output_path = (
         Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
@@ -30,7 +37,7 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
     # Ensure pythia card exists
     _pythia_card_path = Path(config["pythia"]["card"])
     if not _pythia_card_path.exists():
-        log.error(f"{_pythia_card_path} does not exist.")
+        log.error("%s does not exist.", _pythia_card_path)
         sys.exit(1)
 
     pythia_config_path = f"/{_pythia_card_path}"
@@ -48,35 +55,37 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
     )
 
     masses = config["madgraph"].get("masses", {})
-    if any(key in masses for key in substitution.keys()):
+    if any(key in masses for key in substitution):
         raise ValueError("Particles cannot be named ecms, nevents, or iseed.")
 
     substitution.update(masses)
 
     log.info("The following values will be substituted in where possible:")
     for key, value in substitution.items():
-        log.info(f"    ${key} = {value}")
+        log.info("    $%s = %s", key, value)
 
     # Update the param card
     param_card_path = Path(config["madgraph"]["paramcard"]).resolve()
     new_param_card_path = output_path.joinpath(param_card_path.name)
-    log.info(f"Param Card: {new_param_card_path}")
+    log.info("Param Card: %s", new_param_card_path)
 
     new_param_card_path.write_text(
-        Template(param_card_path.read_text()).substitute(substitution)
+        Template(param_card_path.read_text(encoding="utf-8")).substitute(substitution),
+        encoding="utf-8",
     )
 
     # Update the run card
     run_card_path = Path(config["madgraph"]["run"]["card"]).resolve()
-    if OLD_VERSION:
+    if is_old_version:
         log.warning("Changing the run card due to old madgraph version.")
         run_card_path = run_card_path.parent.joinpath("default_LO_oldformat.dat")
     new_run_card_path = output_path.joinpath(run_card_path.name)
-    log.info(f"Run Card: {new_run_card_path}")
+    log.info("Run Card: %s", new_run_card_path)
 
     # -- first do global opts
     new_run_card_path.write_text(
-        Template(run_card_path.read_text()).substitute(substitution)
+        Template(run_card_path.read_text(encoding="utf-8")).substitute(substitution),
+        encoding="utf-8",
     )
 
     # -- now specific opts.  may want to reverse this order at some point, and do the specific before global.
@@ -86,8 +95,8 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
     pattern = re.compile(
         r"^\s*(?P<value>[^\s]+)\s*=\s*(?P<key>[a-z_0-9]+)\s*\!.*$", re.DOTALL
     )
-    with in_place.InPlace(new_run_card_path) as fp:
-        for line in fp:
+    with in_place.InPlace(new_run_card_path) as fpointer:
+        for line in fpointer:
             match = pattern.match(line)
             if match:
                 groups = match.groupdict()
@@ -97,35 +106,36 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
                 line = line[: span[0]] + newvalue + line[span[1] :]
                 if not newvalue == groups["value"]:
                     log.info(
-                        f"    replacing value for {groups['key']}: {groups['value']} -> {newvalue}"
+                        "    replacing value for %s: %s -> %s",
+                        groups["key"],
+                        groups["value"],
+                        newvalue,
                     )
-            fp.write(line)
+            fpointer.write(line)
 
     unused_keys = list(run_options.keys())
     if unused_keys:
-        log.error(f"Unused keys supplied by you: {unused_keys}")
+        log.error("Unused keys supplied by you: %s", unused_keys)
         raise KeyError(unused_keys[0])
 
     # Copy the proc card
     proc_card_path = Path(config["madgraph"]["proc"]["card"]).resolve()
     new_proc_card_path = output_path.joinpath(proc_card_path.name)
-    log.info(f"Process Card: {new_proc_card_path}")
+    log.info("Process Card: %s", new_proc_card_path)
 
     shutil.copyfile(proc_card_path, new_proc_card_path)
 
     # Create the madgraph configuration card
     mgconfig_card_path = output_path.joinpath("run.mg5")
-    log.info(f"MadGraph Config: {mgconfig_card_path}")
+    log.info("MadGraph Config: %s", mgconfig_card_path)
 
     # Figure out the run_mode.  0=single core, 1=cluster, 2=multicore.
     if config["madgraph"]["batch"]:
         run_mode = "set run_mode 0"  # we don't have MadGraph launch cluster jobs for us, we handle that ourselves.
     elif int(config["madgraph"]["cores"]) > 0:
-        run_mode = "set run_mode 2\nset nb_core %d" % int(config["madgraph"]["cores"])
+        run_mode = f"set run_mode 2\nset nb_core {config['madgraph']['cores']}"
     else:
-        run_mode = "set run_mode 2\nset nb_core %d" % int(
-            multiprocessing.cpu_count() / 2
-        )
+        run_mode = f"set run_mode 2\nset nb_core {multiprocessing.cpu_count() / 2}"
 
     # figure out if running with madspin or not, and if so, put the card in the right place
     madspin_onoff = "OFF"
@@ -134,7 +144,7 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
         # Copy the madspin card
         madspin_card_path = Path(config["madspin"]["card"]).resolve()
         new_madspin_card_path = output_path.joinpath("madspin_card.dat")
-        log.info(f"MadSpin Card: {new_madspin_card_path}")
+        log.info("MadSpin Card: %s", new_madspin_card_path)
         shutil.copyfile(madspin_card_path, new_madspin_card_path)
         madspin_onoff = "ON"
         madspin_config_path = f"/data/{new_madspin_card_path.name}"
@@ -152,7 +162,7 @@ reweight=OFF
 set iseed {config['madgraph']['seed']}
 done
 """
-    if OLD_VERSION:
+    if is_old_version:
         mg5config = f"""
 {run_mode}
 launch PROC_madgraph
@@ -164,11 +174,11 @@ reweight=OFF
 done
 """
 
-    with mgconfig_card_path.open(mode="w") as fp:
-        for proc_line in new_proc_card_path.open():
+    with mgconfig_card_path.open(mode="w", encoding="utf-8") as fpointer:
+        for proc_line in new_proc_card_path.open(encoding="utf-8"):
             if not proc_line.strip():
                 continue
             if proc_line.startswith("output"):
                 proc_line = "output PROC_madgraph\n"
-            fp.write(proc_line)
-        fp.write(mg5config)
+            fpointer.write(proc_line)
+        fpointer.write(mg5config)

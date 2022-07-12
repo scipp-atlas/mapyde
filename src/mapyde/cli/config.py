@@ -1,3 +1,7 @@
+"""
+Command line interface for config
+"""
+
 from __future__ import annotations
 
 import json
@@ -12,6 +16,9 @@ app = typer.Typer()
 
 @app.command()
 def parse(filename: str) -> None:
+    """
+    Parse the configuration file and print to screen.
+    """
     user = load_config(filename)
     config = build_config(user)
 
@@ -19,12 +26,10 @@ def parse(filename: str) -> None:
 
 
 @app.command()
-def hello() -> None:
-    typer.echo("world")
-
-
-@app.command()
 def generate_mg5(filename: str) -> None:
+    """
+    Generate the madgraph configurations and write to local disk.
+    """
     user = load_config(filename)
     config = build_config(user)
 
