@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling>=0.7"]
+requires = ["hatchling>=0.7", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 
@@ -65,7 +65,21 @@ source = "https://github.com/scipp-atlas/mario-mapyde"
 mapyde = "mapyde.cli:app"
 
 [tool.hatch.version]
-path = "src/mapyde/__init__.py"
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+local_scheme = "no-local-version"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/mapyde/_version.py"
+
+[tool.hatch.build]
+include = [
+  "src/mapyde",
+  "cards/",
+]
+exclude = [
+]
 
 [tool.hatch.envs.default]
 dependencies = [
