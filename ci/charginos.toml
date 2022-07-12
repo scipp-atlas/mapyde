@@ -1,0 +1,15 @@
+[base]
+output = "githubci"
+
+[madgraph]
+ecms = 100000
+cores = 1
+nevents = 1000
+
+[madgraph.proc]
+name = "charginos"
+
+[madgraph.masses]
+MN1 = 150.0
+MN2 = 155.0
+MC1 = 155.0
