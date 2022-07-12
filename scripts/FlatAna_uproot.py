@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import sys
 
-import hist
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import uproot

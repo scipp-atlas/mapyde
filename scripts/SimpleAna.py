@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 
-#### You can "safely" ignore the warnings about the missing dictionaries...
+# You can "safely" ignore the warnings about the missing dictionaries...
 
 from __future__ import annotations
 
 import argparse
-import array
-import math
 import os
 import re
 import sys
 
 import ROOT
-from HistCollections import *
+from HistCollections import DelphesEvent, Hists
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", action="store", default="input.txt")
@@ -78,8 +76,8 @@ SR = Hists("SR", outfile)
 # SR_jetbins=JetBins("SR_jetbins",outfile)
 
 weightscale = float(args.lumi) / numFiles
-### Loop through all events in chain to get the sum of weights before filling trees and hists
-### There should be a better way to do this....
+# Loop through all events in chain to get the sum of weights before filling trees and hists
+# There should be a better way to do this....
 if reweightEvents:
     print("Computing sum of weights")
     entry = 0
@@ -98,7 +96,7 @@ if reweightEvents:
     # compute appropriate weights for each event
     weightscale *= XS / sumofweights
 
-### Loop through all events in chain
+# Loop through all events in chain
 print("Processing events")
 entry = 0
 for event in chain:

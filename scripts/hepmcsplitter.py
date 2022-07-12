@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 import argparse
-import os
 import subprocess
 
-import numpy as np
 import pyhepmc_ng as hep
-import pytest
 
 parser = argparse.ArgumentParser(description="Process some arguments.")
 

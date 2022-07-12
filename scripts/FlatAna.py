@@ -3,17 +3,12 @@
 from __future__ import annotations
 
 import argparse
-import array
-import math
-import os
 import sys
 
 import matplotlib
 import ROOT
 
 matplotlib.use("TkAgg")
-import matplotlib.pyplot as plt
-import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -51,11 +46,11 @@ outfile = ROOT.TFile.Open(args.output, "RECREATE")
 # make a histogram
 h_MET = ROOT.TH1F("MET", "MET", 100, 0, 1000)
 
-## make an array to keep MET vals for matplotlib
+# make an array to keep MET vals for matplotlib
 # a_MET = []
 # a_weights = []
 
-### Loop through all events in chain
+# Loop through all events in chain
 entry = 0
 for event in chain:
     entry += 1

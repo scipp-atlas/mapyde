@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 
-#### You can "safely" ignore the warnings about the missing dictionaries...
+# You can "safely" ignore the warnings about the missing dictionaries...
 
 from __future__ import annotations
 
 import argparse
-import array
-import math
 import os
 import sys
 
 import ROOT
-from HistCollections import *
+from HistCollections import DelphesEvent, tthhTree
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", action="store", default="input.txt")
@@ -56,7 +54,7 @@ outfile = ROOT.TFile.Open(args.output, "RECREATE")
 # Make the output tree
 allev = tthhTree("allev", outfile)
 
-### Loop through all events in chain
+# Loop through all events in chain
 entry = 0
 for event in chain:
     entry += 1

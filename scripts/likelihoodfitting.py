@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import os
-import pathlib
 import shutil
 
 import cabinetry
 import jsonpatch
 import pyhf
+import scipy
 
 # pyhf.set_backend("jax")
 
@@ -57,12 +56,10 @@ print("visualizing results")
 cabinetry.visualize.limit(limit_results)
 print(limit_results.observed_limit)
 print(limit_results.expected_limit)
-import pyhf
 
 pyhf.infer.test_statistics.q0
 p_observed, p_expected = pyhf.infer.hypotest(
     1.0, data, model, test_stat="q0", return_expected=True
 )
-import scipy
 
 scipy.stats.norm.isf(p_expected, 0, 1)

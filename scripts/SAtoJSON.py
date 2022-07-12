@@ -5,7 +5,6 @@ import copy
 import json
 
 import jsonpatch
-import numpy as np
 import pyhf
 import uproot
 
@@ -30,9 +29,12 @@ rootfile = uproot.open(args.input)
 tree = rootfile["ntuple"]
 branches = tree.arrays()
 
-# this function converts the name of the SR in the serialized likelihood into
-# the name of the SR in the SimpleAnalysis output
+
 def JSONtoSA(SRname, background):
+    """this function converts the name of the SR in the serialized likelihood into
+    the name of the SR in the SimpleAnalysis output
+    """
+
     SRname_split = SRname.split("_")
     if "CR" in SRname_split[0]:
         return None

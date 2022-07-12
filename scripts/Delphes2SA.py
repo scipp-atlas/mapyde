@@ -8,6 +8,8 @@
 
 from __future__ import annotations
 
+import argparse
+import os
 import sys
 from array import array
 
@@ -19,7 +21,6 @@ if len(sys.argv) < 3:
 
 # Make sure that the interpreter points to the DELPHES classes in order to read through DELPHES events.
 # may need to run something like: export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:/home/mhance/Delphes/Delphes-3.4.1/:/home/mhance/Delphes/Delphes-3.4.1/external/
-import os
 
 delphespath = os.environ.get("DELPHES_PATH")
 ROOT.gInterpreter.Declare('#include "%s/classes/DelphesClasses.h"' % delphespath)
@@ -32,7 +33,7 @@ ROOT.gSystem.Load("%s/libDelphes.so" % delphespath)
 try:
     ROOT.gInterpreter.Declare('#include "classes/DelphesClasses.h"')
     ROOT.gInterpreter.Declare('#include "external/ExRootAnalysis/ExRootTreeReader.h"')
-except:
+except Exception:
     pass
 
 
@@ -96,8 +97,6 @@ class ObjectVector:
 
 inputFile = sys.argv[1]
 outputFile = sys.argv[2]
-
-import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input", action="store")

@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import math
 from array import array
 
 import ROOT
-from ROOT import TLorentzVector
 
 
 class DelphesEvent:
@@ -75,9 +73,9 @@ class Hists:
         self.detaillevel = detaillevel
         self.collections = {}
 
-        ### Make all the histograms here (!)
+        # Make all the histograms here (!)
 
-        ### Basics
+        # Basics
         self.hists["nElec"] = ROOT.TH1F(
             "h_" + tag + "_nElec", tag + "_nElec;Number of Electrons;Events", 10, 0, 10
         )
@@ -101,7 +99,7 @@ class Hists:
             10,
         )
 
-        ### B-jets
+        # B-jets
         self.hists["bPT"] = ROOT.TH1F(
             "h_" + tag + "_bPT", tag + "_bPT;p_{T,b-jets};Events/(10GeV)", 50, 0, 500
         )
@@ -112,7 +110,7 @@ class Hists:
             "h_" + tag + "_bEta", tag + "_bEta;#eta(b-jets);Events/(0.5)", 20, -5, 5
         )
 
-        ### Jets
+        # Jets
         self.hists["jPT"] = ROOT.TH1F(
             "h_" + tag + "_jPT", tag + "_jPT;p_{T,jets};Events/(10GeV)", 50, 0, 500
         )
@@ -126,7 +124,7 @@ class Hists:
             "h_" + tag + "_mjj", tag + "_mjj;m(jj);Events/(100 GeV)", 100, 0, 10000
         )
 
-        ### Electrons
+        # Electrons
         self.hists["ePT"] = ROOT.TH1F(
             "h_" + tag + "_ePT", tag + "_ePT;p^{e}_{T};Events/(10GeV)", 50, 0, 500
         )
@@ -158,7 +156,7 @@ class Hists:
             5,
         )
 
-        ### Muons
+        # Muons
         self.hists["mPT"] = ROOT.TH1F(
             "h_" + tag + "_mPT", tag + "_mPT;p^{#mu}_{T};Events/(10GeV)", 50, 0, 500
         )
@@ -190,7 +188,7 @@ class Hists:
             5,
         )
 
-        ### Taus
+        # Taus
         self.hists["tPT"] = ROOT.TH1F(
             "h_" + tag + "_tPT", tag + "_tPT;p^{#tau}_{T};Events/(10GeV)", 50, 0, 500
         )
@@ -222,7 +220,7 @@ class Hists:
             5,
         )
 
-        ### MET
+        # MET
         self.hists["MET"] = ROOT.TH1F(
             "h_" + tag + "_MET",
             tag + "_MET;E_{T}^{miss} [GeV];Events/(10 GeV)",
@@ -238,7 +236,7 @@ class Hists:
             1000,
         )
 
-        for i, j in self.hists.iteritems():
+        for _, j in self.hists.iteritems():
             j.Sumw2()
 
         self.branches = {}
@@ -292,9 +290,9 @@ class Hists:
         self,
     ):
         self.newdir.cd()
-        for i, k in self.hists.iteritems():
+        for _, k in self.hists.iteritems():
             k.Write()
-        for i, k in self.collections.iteritems():
+        for _, k in self.collections.iteritems():
             k.write()
         self.tree.Write()
         self.topdir.cd()
@@ -311,12 +309,12 @@ class Hists:
 
         defaultfill = -9
 
-        for i, k in self.collections.iteritems():
+        for _, k in self.collections.iteritems():
             k.fill(event, weight)
 
         self.branches["weight"][0] = weight
 
-        ### Do some characterizations
+        # Do some characterizations
         leadingLep = (
             event.sortedleptons[0].P4() if len(event.sortedleptons) > 0 else None
         )
@@ -334,7 +332,7 @@ class Hists:
         for m in event.muons:
             muonsmomentum += m.P4()
 
-        ### Fill generic hists
+        # Fill generic hists
         self.hists["nElec"].Fill(len(event.elecs), weight)
         self.hists["nMuon"].Fill(len(event.muons), weight)
         self.hists["nTau"].Fill(len(event.tautags), weight)
@@ -355,13 +353,13 @@ class Hists:
         self.branches["njet"][0] = len(event.jets)
         self.branches["nLep"][0] = len(event.elecs) + len(event.muons)
 
-        ### B-jets
+        # B-jets
         for aBJet in event.btags:
             self.hists["bPT"].Fill(aBJet.PT, weight)
             self.hists["bEta"].Fill(aBJet.Eta, weight)
             self.hists["bPhi"].Fill(aBJet.Phi, weight)
 
-        ### Jets
+        # Jets
         for aJet in event.exclJets:
             self.hists["jPT"].Fill(aJet.PT, weight)
             self.hists["jEta"].Fill(aJet.Eta, weight)
@@ -370,7 +368,7 @@ class Hists:
             mjj = (event.exclJets[0].P4() + event.exclJets[1].P4()).M()
             self.hists["mjj"].Fill(mjj, weight)
             self.branches["mjj"][0] = mjj
-        ### Electrons
+        # Electrons
         for aElec in event.elecs:
             self.hists["ePT"].Fill(aElec.PT, weight)
             self.hists["eEta"].Fill(aElec.Eta, weight)
@@ -380,7 +378,7 @@ class Hists:
             self.hists["leEta"].Fill(event.elecs[0].Eta, weight)
             self.hists["lePhi"].Fill(event.elecs[0].Phi, weight)
 
-        ### Muons
+        # Muons
         for aMuon in event.muons:
             self.hists["mPT"].Fill(aMuon.PT, weight)
             self.hists["mEta"].Fill(aMuon.Eta, weight)
@@ -390,7 +388,7 @@ class Hists:
             self.hists["lmEta"].Fill(event.muons[0].Eta, weight)
             self.hists["lmPhi"].Fill(event.muons[0].Phi, weight)
 
-        ### Taus
+        # Taus
         for aTau in event.tautags:
             self.hists["tPT"].Fill(aTau.PT, weight)
             self.hists["tEta"].Fill(aTau.Eta, weight)
@@ -407,7 +405,7 @@ class Hists:
             self.branches["tau1Eta"][0] = defaultfill
             self.branches["tau1Phi"][0] = defaultfill
 
-        ### b-jets
+        # b-jets
         if len(event.btags) > 0:
             self.branches["bj1PT"][0] = event.btags[0].P4().Pt()
             self.branches["bj1Eta"][0] = event.btags[0].P4().Eta()
@@ -425,7 +423,7 @@ class Hists:
             self.branches["bj2Eta"][0] = defaultfill
             self.branches["bj2Phi"][0] = defaultfill
 
-        ### non-b/tau-jets
+        # non-b/tau-jets
         if len(event.exclJets) > 0:
             self.branches["j1PT"][0] = event.exclJets[0].P4().Pt()
             self.branches["j1Eta"][0] = event.exclJets[0].P4().Eta()
@@ -443,7 +441,7 @@ class Hists:
             self.branches["j2Eta"][0] = defaultfill
             self.branches["j2Phi"][0] = defaultfill
 
-        ### Leptons
+        # Leptons
         if leadingLep:
             self.branches["lep1PT"][0] = leadingLep.Pt()
             self.branches["lep1Eta"][0] = leadingLep.Eta()
@@ -530,9 +528,9 @@ class tthhTree:
         self,
     ):
         self.newdir.cd()
-        for i, k in self.hists.iteritems():
+        for _, k in self.hists.iteritems():
             k.Write()
-        for i, k in self.collections.iteritems():
+        for _, k in self.collections.iteritems():
             k.write()
         self.tree.Write()
         self.topdir.cd()
@@ -549,21 +547,21 @@ class tthhTree:
 
         defaultfill = -9
 
-        for i, k in self.collections.iteritems():
+        for _, k in self.collections.iteritems():
             k.fill(event, weight)
 
         self.branches["weight"][0] = weight
 
         nbjets = len(event.btags)
 
-        ### Fill generic hists
+        # Fill generic hists
         self.branches["met"][0] = event.met.Pt()
         self.branches["metphi"][0] = event.met.Phi()
         self.branches["numlep"][0] = len(event.sortedleptons)
         self.branches["btag"][0] = nbjets
         self.branches["numjet"][0] = len(event.jets)
 
-        ### Jets
+        # Jets
         jetCount = 1
         cen_sum_E = 0
         cen_sum_Pt = 0
@@ -584,17 +582,17 @@ class tthhTree:
                 break
 
         # fill in dummy values for "missing" jets
-        for jetCount in range(jetCount, self.maxjets):
-            self.branches["jet%dpT" % jetCount][0] = -9
-            self.branches["jet%deta" % jetCount][0] = -9
-            self.branches["jet%dphi" % jetCount][0] = -9
-            self.branches["jet%db" % jetCount][0] = -9
+        for i in range(jetCount, self.maxjets):
+            self.branches["jet%dpT" % i][0] = defaultfill
+            self.branches["jet%deta" % i][0] = defaultfill
+            self.branches["jet%dphi" % i][0] = defaultfill
+            self.branches["jet%db" % i][0] = defaultfill
 
         # centrality
         if cen_sum_E > 0:
             self.branches["cent"][0] = cen_sum_Pt / cen_sum_E
         else:
-            self.branches["cent"][0] = -9
+            self.branches["cent"][0] = defaultfill
 
         # btagged jets separately
         HB_sum_Pt = 0
@@ -612,7 +610,7 @@ class tthhTree:
                     btjmaxPt = vec_sum_Pt
                     btjmaxM = (aJet.P4() + bJet.P4()).M()
         # srap
-        etasum_N = -9
+        etasum_N = defaultfill
         if nbjets > 1:
             etasum_N = etasum / (nbjets**2 - nbjets)
         self.branches["srap"][0] = etasum_N
@@ -624,7 +622,7 @@ class tthhTree:
         self.branches["h_b"][0] = HB_sum_Pt
 
         # chi^2
-        chisq = [-9]
+        chisq = [defaultfill]
         for i1 in range(0, nbjets):
             for i2 in range(i1 + 1, nbjets):
                 for i3 in range(i2 + 1, nbjets):
@@ -658,7 +656,7 @@ class tthhTree:
                         )
         self.branches["chi"][0] = min(chisq)
 
-        ### Leptons
+        # Leptons
         lepCount = 1
         for aLep in event.sortedleptons:
             self.branches["lepton%dpT" % lepCount][0] = aLep.PT
@@ -678,12 +676,12 @@ class tthhTree:
             if lepCount >= self.maxleptons:
                 break
 
-        for lepCount in range(lepCount, self.maxleptons):
-            self.branches["lepton%dpT" % lepCount][0] = -9
-            self.branches["lepton%dpT" % lepCount][0] = -9
-            self.branches["lepton%dpT" % lepCount][0] = -9
-            self.branches["mt%d" % lepCount][0] = -9
-            self.branches["dr%d" % lepCount][0] = -9
+        for i in range(lepCount, self.maxleptons):
+            self.branches["lepton%dpT" % i][0] = defaultfill
+            self.branches["lepton%dpT" % i][0] = defaultfill
+            self.branches["lepton%dpT" % i][0] = defaultfill
+            self.branches["mt%d" % i][0] = defaultfill
+            self.branches["dr%d" % i][0] = defaultfill
 
         self.tree.Fill()
 
@@ -732,9 +730,9 @@ class lowlevelTree:
         self,
     ):
         self.newdir.cd()
-        for i, k in self.hists.iteritems():
+        for _, k in self.hists.iteritems():
             k.Write()
-        for i, k in self.collections.iteritems():
+        for _, k in self.collections.iteritems():
             k.write()
         self.tree.Write()
         self.topdir.cd()
@@ -751,21 +749,21 @@ class lowlevelTree:
 
         defaultfill = -9
 
-        for i, k in self.collections.iteritems():
+        for _, k in self.collections.iteritems():
             k.fill(event, weight)
 
         self.branches["weight"][0] = weight
 
         nbjets = len(event.btags)
 
-        ### Fill generic hists
+        # Fill generic hists
         self.branches["met"][0] = event.met.Pt()
         self.branches["metphi"][0] = event.met.Phi()
         self.branches["numlepton"][0] = len(event.sortedleptons)
         self.branches["numbtagjet"][0] = nbjets
         self.branches["numjet"][0] = len(event.jets)
 
-        ### Jets
+        # Jets
         jetCount = 1
         for aJet in event.sortedjets:
             self.branches["jet%dpT" % jetCount][0] = aJet.PT
@@ -780,13 +778,13 @@ class lowlevelTree:
                 break
 
         # fill in dummy values for "missing" jets
-        for jetCount in range(jetCount, self.maxjets):
-            self.branches["jet%dpT" % jetCount][0] = -9
-            self.branches["jet%deta" % jetCount][0] = -9
-            self.branches["jet%dphi" % jetCount][0] = -9
-            self.branches["jet%db" % jetCount][0] = -9
+        for i in range(jetCount, self.maxjets):
+            self.branches["jet%dpT" % i][0] = defaultfill
+            self.branches["jet%deta" % i][0] = defaultfill
+            self.branches["jet%dphi" % i][0] = defaultfill
+            self.branches["jet%db" % i][0] = defaultfill
 
-        ### Leptons
+        # Leptons
         lepCount = 1
         for aLep in event.sortedleptons:
             self.branches["lepton%dpT" % lepCount][0] = aLep.PT
@@ -806,12 +804,12 @@ class lowlevelTree:
             if lepCount >= self.maxleptons:
                 break
 
-        for lepCount in range(lepCount, self.maxleptons):
-            self.branches["lepton%dpT" % lepCount][0] = -9
-            self.branches["lepton%dpT" % lepCount][0] = -9
-            self.branches["lepton%dpT" % lepCount][0] = -9
-            self.branches["lepton%dmT" % lepCount][0] = -9
-            self.branches["lepton%dminjetdr" % lepCount][0] = -9
+        for i in range(lepCount, self.maxleptons):
+            self.branches["lepton%dpT" % i][0] = defaultfill
+            self.branches["lepton%dpT" % i][0] = defaultfill
+            self.branches["lepton%dpT" % i][0] = defaultfill
+            self.branches["lepton%dmT" % i][0] = defaultfill
+            self.branches["lepton%dminjetdr" % i][0] = defaultfill
 
         self.tree.Fill()
 
@@ -838,7 +836,7 @@ class HistCollection:
 
     def write(self):
         self.newdir.cd()
-        for i, k in self.collections.iteritems():
+        for _, k in self.collections.iteritems():
             k.write()
         self.topdir.cd()
 
@@ -854,13 +852,11 @@ class HistCollection:
             if i in coll:
                 k.add(coll[i])
 
-    def fill(self, event, weight=0):
+    def fill(self, event, tag=None, weight=0):
         for i, k in self.collections.iteritems():
-            k.fill(event, weight)
-
-    def fill(self, event, tag, weight=0):
-        for i, k in self.collections.iteritems():
-            if i == tag:
+            if tag is None:
+                k.fill(event, weight)
+            elif i == tag:
                 k.fill(event, weight)
                 break
 
@@ -888,13 +884,13 @@ class JetBins:
 
         # fill the inclusive hist collections here by adding the constituents, should be faster
         # than doing it in 'fill'
-        for i, k in self.collections["njets"].collections.iteritems():
+        for _, k in self.collections["njets"].collections.iteritems():
             if k.tag == "njets_inclusive":
                 continue
             else:
                 self.collections["njets"].collections["inclusive"].add(k)
 
-        for i, k in self.collections.iteritems():
+        for _, k in self.collections.iteritems():
             k.write()
         self.topdir.cd()
 
