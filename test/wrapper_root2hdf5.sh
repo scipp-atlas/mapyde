@@ -22,4 +22,3 @@ docker run \
 # dump docker logs to text file
 journalctl -u docker CONTAINER_NAME="${tag}__root2hdf5" > ${database}/${datadir}/docker_root2hdf5.log
 # --------------------------------------------------------------------------------------------------
-

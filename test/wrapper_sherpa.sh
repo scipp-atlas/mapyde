@@ -28,7 +28,7 @@ docker run \
 
 #       /bin/bash -c "ls -ltrh && ls -ltrh /cards/sherpa/sherpa.tar && tar -xvf /cards/sherpa/sherpa.tar && Sherpa -f /cards/sherpa/${proc} -e ${events}"
 
-mv ${database}/${datadir}/sherpa/sherpa.hepmc.hepmc2g ${database}/${datadir}/sherpa/sherpa.hepmc.gz 
+mv ${database}/${datadir}/sherpa/sherpa.hepmc.hepmc2g ${database}/${datadir}/sherpa/sherpa.hepmc.gz
 
 # dump docker logs to text file
 journalctl -u docker CONTAINER_NAME="${tag}__sherpa" > ${database}/${datadir}/docker_sherpa.log

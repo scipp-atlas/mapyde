@@ -40,7 +40,7 @@ if [[ $HOSTNAME == slugpu* ]]; then
 	"set -x && \
         /scripts/${script} --input /data/delphes/delphes.root --output ${outname}.root --lumi ${lumi} --XS ${XS} && \
         rsync -rav . /data/analysis"
-    
+
     # dump docker logs to text file
     journalctl -u docker CONTAINER_NAME="${tag}__hists" > ${database}/${datadir}/docker_ana.log
 else

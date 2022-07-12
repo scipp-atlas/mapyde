@@ -41,4 +41,3 @@ docker run \
 
 # dump docker logs to text file
 journalctl -u docker CONTAINER_NAME="${tag}__delphes" > ${database}/${datadir}/docker_delphes.log
-
