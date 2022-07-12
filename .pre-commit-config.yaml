@@ -93,6 +93,8 @@ repos:
     rev: v2.1.0
     hooks:
       - id: codespell
+        exclude: cards
+        args: ["-w", "-L", "hist"]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.8.0.4
