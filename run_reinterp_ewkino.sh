@@ -42,7 +42,7 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:" opt; do
 	J) ptj1min=$OPTARG;;
 	S) masssplitting=$OPTARG;;
 	d) seed=$OPTARG;;
-	L) delphescard=$OPTARG;;
+	L) delphes_card=$OPTARG;;
 	f) analysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
 	b) database=$OPTARG;;
@@ -62,14 +62,14 @@ fi
 
 
 for thisproc in "${proc}nodecays" "${proc}"; do
-    echo $thisproc
+    echo "$thisproc"
 
     skipopts=""
     XSopts=""
     if [[ $thisproc == *nodecays ]]; then
 	skipopts="-D -A -T" # don't run delphes or analysis or pythia or simpleanalysis for the nodecays case, there aren't enough useful events
     else
-	nodecayXS=$(grep "Cross-section" /data/users/${USER}/SUSY/SUSY_${ecms}_${params}_${mass}_${masssplitting}_${thisproc}nodecays_${suffix}/docker_mgpy.log | tail -1 | awk '{print $8}')
+	nodecayXS=$(grep "Cross-section" /data/users/"${USER}"/SUSY/SUSY_"${ecms}"_"${params}"_"${mass}"_"${masssplitting}"_"${thisproc}"nodecays_"${suffix}"/docker_mgpy.log | tail -1 | awk '{print $8}')
 	XSoverride=$(python3 -c "print(${kfactor}*0.1*${nodecayXS})") # k-factor * BR * XS before BR
 	XSopts="-h ${XSoverride}"
 	skipopts="-i -o"
@@ -77,26 +77,26 @@ for thisproc in "${proc}nodecays" "${proc}"; do
 
     set -x
     ./run_VBFSUSY_standalone.sh \
-	-E ${ecms} \
-	-M ${mass} \
-	-b ${database} \
-	-P ${thisproc} \
-	-c ${cores} \
+	-E "${ecms}" \
+	-M "${mass}" \
+	-b "${database}" \
+	-P "${thisproc}" \
+	-c "${cores}" \
 	-m ${mmjj} \
 	-e ${deltaeta} \
-	-p ${params} \
-	-S ${masssplitting} \
-	-N ${nevents} \
-	-d ${seed} \
-	-J ${ptj1min} \
+	-p "${params}" \
+	-S "${masssplitting}" \
+	-N "${nevents}" \
+	-d "${seed}" \
+	-J "${ptj1min}" \
 	-y ${pythia_card} \
-	-L ${delphes_card} \
-	-f ${analysis} \
-	-F ${likelihood} \
-	-s ${suffix} \
+	-L "${delphes_card}" \
+	-f "${analysis}" \
+	-F "${likelihood}" \
+	-s "${suffix}" \
 	-I "madgraph-2.9.3" \
-	${skipopts} \
+	"${skipopts}" \
 	${clobberopts} \
-	${XSopts}
+	"${XSopts}"
     set +x
 done

@@ -43,8 +43,8 @@ while getopts "E:M:S:N:c:d:f:P:p:J:L:F:s:glab:Z:" opt; do
 	J) ptj1min=$OPTARG;;
 	S) masssplitting=$OPTARG;;
 	d) seed=$OPTARG;;
-	L) delphescard=$OPTARG;;
-	f) simpleanalysis=$OPTARG;;
+	L) delphes_card=$OPTARG;;
+	f) analysis=$OPTARG;;
 	F) likelihood=$OPTARG;;
 	b) database=$OPTARG;;
 	Z) charginofraction=$OPTARG;;
@@ -68,26 +68,26 @@ if [[ $charginofraction != "" ]]; then
 fi
 
 ./run_VBFSUSY_standalone.sh \
-    -E ${ecms} \
+    -E "${ecms}" \
     -K ${kfactor} \
-    -M ${mass} \
-    -P ${proc} \
-    -c ${cores} \
+    -M "${mass}" \
+    -P "${proc}" \
+    -c "${cores}" \
     -m ${mmjj} \
     -e ${deltaeta} \
-    -p ${params} \
-    -S ${masssplitting} \
-    -N ${nevents} \
-    -d ${seed} \
-    -J ${ptj1min} \
+    -p "${params}" \
+    -S "${masssplitting}" \
+    -N "${nevents}" \
+    -d "${seed}" \
+    -J "${ptj1min}" \
     -i -o \
     -y ${pythia_card} \
-    -L ${delphes_card} \
-    -f ${analysis} \
-    -F ${likelihood} \
-    -s ${suffix} \
+    -L "${delphes_card}" \
+    -f "${analysis}" \
+    -F "${likelihood}" \
+    -s "${suffix}" \
     -n \
-    -b ${database} \
+    -b "${database}" \
     -I "madgraph-2.9.3" \
-    ${newmodelopts} \
+    "${newmodelopts}" \
     ${clobberopts}

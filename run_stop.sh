@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 mass=400
 splitting=399
 

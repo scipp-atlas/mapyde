@@ -25,7 +25,7 @@ clobber_delphes=false
 clobber_ana=false
 base=${PWD}
 database=/data/users/${USER}/SUSY
-datadir=${tag}
+#datadir=${tag}
 ktdurham=-1
 xqcut=-1
 seed=0
@@ -37,7 +37,7 @@ XSoverride=""
 MGversion=""
 sleptonopts=""
 stopopts=""
-gluinoopts=""
+#gluinoopts=""
 skip_pythia=false
 kfactor=-1
 chargino=-1
@@ -64,7 +64,9 @@ while getopts "E:M:P:p:N:m:x:s:e:c:GDAglaB:b:j:J:S:y:k:d:C:iL:f:F:X:h:I:nvTruK:O
 	g) clobber_mgpy=true;;
 	l) clobber_delphes=true;;
 	a) clobber_ana=true;;
-	B) base=$OPTARG;;
+	B)
+    # shellcheck disable=SC2034
+    base=$OPTARG;;
 	b) database=$OPTARG;;
 	j) ptj=$OPTARG;;
 	J) ptj1min=$OPTARG;;
@@ -159,29 +161,29 @@ else
 
     set -x
     ./test/wrapper_mgpy.sh \
-	-b ${database} \
+	-b "${database}" \
 	-P ${proc} \
 	-p ${params} \
 	-y ${pythia_card} \
-	-S ${dM} \
-	-M ${mass} \
+	-S "${dM}" \
+	-M "${mass}" \
 	-m ${mmjj} \
-	-x ${mmjjmax} \
+	-x "${mmjjmax}" \
 	-e ${deltaeta} \
-	-E ${ecms} \
-	-c ${cores} \
-	-k ${ktdurham} \
-	-X ${xqcut} \
-	-N ${nevents} \
-	-d ${seed} \
-	-j ${ptj} \
-	-J ${ptj1min} \
+	-E "${ecms}" \
+	-c "${cores}" \
+	-k "${ktdurham}" \
+	-X "${xqcut}" \
+	-N "${nevents}" \
+	-d "${seed}" \
+	-j "${ptj}" \
+	-J "${ptj1min}" \
 	${clobberopt} \
 	${pythia_onoff} \
-	${sleptonopts} \
+	"${sleptonopts}" \
 	${stopopts} \
-	${mgversionopt} \
-	${tag}
+	"${mgversionopt}" \
+	"${tag}"
     set +x
 fi
 
@@ -189,18 +191,18 @@ fi
 if $skip_delphes; then
     echo "Skipping delphes for this job."
 else
-    ./test/wrapper_delphes.sh ${tag} ${delphescard}  ${cores} ${clobber_delphes} ${database}
+    ./test/wrapper_delphes.sh "${tag}" "${delphescard}"  "${cores}" ${clobber_delphes} "${database}"
 fi
 
 
-XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
+XS=$(grep "Cross-section :" "${database}"/"${tag}"/docker_mgpy.log | tail -1 | awk '{print $8}')
 # if we're doing matching, then take a different value
 if [[ $xqcut != -1 ]]; then
-    XS=$(grep "cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $9}')
+    XS=$(grep "cross-section :" "${database}"/"${tag}"/docker_mgpy.log | tail -1 | awk '{print $9}')
 fi
 
 if [[ $kfactor != -1 ]]; then
-    origXS=$(grep "Cross-section" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
+    origXS=$(grep "Cross-section" "${database}"/"${tag}"/docker_mgpy.log | tail -1 | awk '{print $8}')
     XSoverride=$(python3 -c "print(${kfactor}*${origXS})") # k-factor * LO XS
     echo "Changing cross section from $origXS to $XSoverride to account for k-factors"
 fi
@@ -214,19 +216,19 @@ fi
 if $skip_ana; then
     echo "Skipping ana for this job."
 else
-    ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${anascript} ${XS}
+    ./test/wrapper_ana.sh "${tag}" ${lumi} ${clobber_ana} "${database}" "${anascript}" "${XS}"
 fi
 
 # run SimpleAnalysis + likelihoods.  not usual.
 if $skip_SA; then
     echo "Skipping SimpleAnalysis for this job."
 else
-    ./test/wrapper_ana.sh            ${tag} ${lumi} true ${database} "Delphes2SA.py" ${XS}
-    ./test/wrapper_SimpleAnalysis.sh ${tag} ${lumi} ${database} ${simpleanalysis}
+    ./test/wrapper_ana.sh            "${tag}" ${lumi} true "${database}" "Delphes2SA.py" "${XS}"
+    ./test/wrapper_SimpleAnalysis.sh "${tag}" ${lumi} "${database}" "${simpleanalysis}"
 fi
 
 if $skip_PYHF; then
     echo "Skipping likelihoods for this job."
 else
-    ./test/wrapper_pyhf.sh           ${tag} ${lumi} ${database} ${simpleanalysis} ${likelihood}
+    ./test/wrapper_pyhf.sh           "${tag}" ${lumi} "${database}" "${simpleanalysis}" "${likelihood}"
 fi

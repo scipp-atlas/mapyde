@@ -3,7 +3,7 @@ set -e # exit when any command fails
 
 tag=${1:-"test_Higgsino_001"}
 delphescard=${2:-"delphes_card_ATLAS.tcl"}
-cores=${3:-"1"}
+#cores=${3:-"1"}
 clobber_delphes=${4:-"false"}
 base=${PWD}
 database=${5:-/data/users/${USER}/SUSY}
@@ -16,7 +16,7 @@ if [[ -e ${database}/${datadir}/delphes && $clobber_delphes != true ]]; then
 elif [[ -e ${database}/${datadir}/delphes && $clobber_delphes == true ]]; then
     dtst=$(date +%Y%m%d%H%M%S)
     echo "archiving previous delphes output as ${database}/${datadir}/delphes_${dtst} for later, just in case you want it again."
-    cp -a ${database}/${datadir}/delphes ${database}/${datadir}/delphes_${dtst}
+    cp -a "${database}"/"${datadir}"/delphes "${database}"/"${datadir}"/delphes_"${dtst}"
 fi
 
 set -x
@@ -25,12 +25,12 @@ set -x
 docker run \
        --log-driver=journald \
        --name "${tag}__delphes" \
-       --user $(id -u):$(id -g) \
+       --user "$(id -u):$(id -g)" \
        --rm \
-       -v ${base}/cards:/cards \
-       -v ${database}/${datadir}:/data \
+       -v "${base}"/cards:/cards \
+       -v "${database}"/"${datadir}":/data \
        -w /tmp \
-       --env delphescard=${delphescard} \
+       --env delphescard="${delphescard}" \
        ghcr.io/scipp-atlas/mario-mapyde/delphes:latest \
        'set -x && \
         cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
@@ -40,4 +40,4 @@ docker run \
         rsync -rav --exclude hepmc . /data/delphes'
 
 # dump docker logs to text file
-journalctl -u docker CONTAINER_NAME="${tag}__delphes" > ${database}/${datadir}/docker_delphes.log
+journalctl -u docker CONTAINER_NAME="${tag}__delphes" > "${database}"/"${datadir}"/docker_delphes.log

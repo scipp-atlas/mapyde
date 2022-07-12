@@ -20,16 +20,16 @@ docker run \
        --log-driver=journald \
        --name "${tag}__SAtoJSON" \
        --rm \
-       --user $(id -u):$(id -g) \
-       -v ${database}/${datadir}:/data \
-       -v ${base}/scripts:/scripts \
-       -v ${base}/likelihoods:/likelihoods \
+       --user "$(id -u):$(id -g)" \
+       -v "${database}"/"${datadir}":/data \
+       -v "${base}"/scripts:/scripts \
+       -v "${base}"/likelihoods:/likelihoods \
        -w /data \
        ghcr.io/scipp-atlas/mario-mapyde/pyplotting:latest \
        "python /scripts/SAtoJSON.py -i ${analysis}.root -o ${analysis}_patch.json -n ${tag} -b /likelihoods/${likelihood}.json -l ${lumi}"
 
 # dump docker logs to text file
-journalctl -u docker CONTAINER_NAME="${tag}__SAtoJSON" > ${database}/${datadir}/docker_SAtoJSON.log
+journalctl -u docker CONTAINER_NAME="${tag}__SAtoJSON" > "${database}"/"${datadir}"/docker_SAtoJSON.log
 # --------------------------------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------------------------------
@@ -45,16 +45,16 @@ docker run \
        --name "${USER}_${tag}__muscan" \
        --gpus all \
        --rm \
-       --user $(id -u):$(id -g) \
-       -v ${database}/${datadir}:/data \
-       -v ${base}/scripts:/scripts \
-       -v ${base}/likelihoods:/likelihoods \
+       --user "$(id -u):$(id -g)" \
+       -v "${database}"/"${datadir}":/data \
+       -v "${base}"/scripts:/scripts \
+       -v "${base}"/likelihoods:/likelihoods \
        -w /data \
        ghcr.io/scipp-atlas/mario-mapyde/pyplotting-cuda:latest \
        "time python3.8 /scripts/muscan.py -b /likelihoods/${likelihood}.json -s ${analysis}_patch.json -n ${tag} ${GPUopts}"
 
 # dump docker logs to text file
-journalctl -u docker CONTAINER_NAME="${USER}_${tag}__muscan" > ${database}/${datadir}/docker_muscan.log
+journalctl -u docker CONTAINER_NAME="${USER}_${tag}__muscan" > "${database}"/"${datadir}"/docker_muscan.log
 # --------------------------------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------------------------------

@@ -11,7 +11,9 @@ anascript="SimpleAna.py"
 
 seed=2
 
+# shellcheck disable=SC2043
 for EWKQCD in "EWK"; do
+    # shellcheck disable=SC2043
     for ecms in 100; do # omit 14 for re-running analysis
 	max_mmjj_TeV=1
 	mmjj_step=1
@@ -25,7 +27,7 @@ for EWKQCD in "EWK"; do
 
             mmjj="${i_mmjj}000" # was 1 TeV for more inclusive sample
 	    mmjjmax="$((mmjj+mmjj_step*1000))"
-	    if [[ $i_mmjj == $max_mmjj_TeV ]]; then
+	    if [[ $i_mmjj == "${max_mmjj_TeV}" ]]; then
 		mmjjmax="-1"
 	    fi
 
@@ -53,41 +55,42 @@ for EWKQCD in "EWK"; do
 	    # ---------------------------------------------------------------------------------------
 	    # run madgraph+pythia
 	    ./scripts/mg5creator.py \
-		-o ${database} \
+		-o "${database}" \
 		-P cards/process/Vjj${EWKQCD} \
 		-r cards/run/default_LO.dat \
 		-p cards/param/${params}.slha \
 		-y pythia8_card_dipoleRecoil.dat \
-		-R mmjj ${mmjj} -R mmjjmax ${mmjjmax} -R deltaeta ${deltaeta}  -R mmll 40 \
+		-R mmjj "${mmjj}" -R mmjjmax ${mmjjmax} -R deltaeta ${deltaeta}  -R mmll 40 \
 		-E "${ecms}000" \
 		-c ${cores} \
 		-s ${seed} \
 		-n ${nevents} \
-		-t ${tag}
+		-t "${tag}"
 
 	    # only run the job if the creation script succeeded
+      # shellcheck disable=SC2181
 	    if [[ $? == 0 ]]; then
 		docker run \
 		       --log-driver=journald \
 		       --name "${tag}__mgpy" \
 		       --rm \
-		       --user $(id -u):$(id -g) \
-		       -v ${base}/cards:/cards \
-		       -v ${database}/${datadir}:/data \
+		       --user "$(id -u):$(id -g)" \
+		       -v "${base}"/cards:/cards \
+		       -v "${database}"/"${datadir}":/data \
 		       -w /tmp \
            ghcr.io/scipp-atlas/mario-mapyde/madgraph:latest \
 		       "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph  && chown -R $UID /data/madgraph"
 
 		# dump docker logs to text file
-		journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > $database/$datadir/docker_mgpy.log
+		journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > "$database"/"$datadir"/docker_mgpy.log
 	    fi
 	    # ---------------------------------------------------------------------------------------
 
 	    # should not clobber existing output
-	    ./test/wrapper_delphes.sh ${tag} ${delphescard} ${clobber_delphes}
+	    ./test/wrapper_delphes.sh "${tag}" ${delphescard} ${clobber_delphes}
 
 	    # should not clobber existing output
-	    XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
+	    XS=$(grep "Cross-section :" "${database}"/"${tag}"/docker_mgpy.log | tail -1 | awk '{print $8}')
 	    echo "tag=$tag"
 	    echo "lumi=$lumi"
 	    echo "clobber=$clobber_ana"
@@ -95,7 +98,7 @@ for EWKQCD in "EWK"; do
 	    echo "script=$anascript"
 	    echo "XS=$XS"
 	    set -x
-	    ./test/wrapper_ana.sh ${tag} ${lumi} ${clobber_ana} ${database} ${anascript} ${XS}
+	    ./test/wrapper_ana.sh "${tag}" ${lumi} ${clobber_ana} "${database}" ${anascript} "${XS}"
 	    set +x
 
 	done

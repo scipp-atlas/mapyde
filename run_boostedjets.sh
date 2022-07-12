@@ -6,10 +6,10 @@ ecms=13
 cores=20
 nevents=100000
 params=sm
-mmjj=-1
-mmjjmax=-1
-deltaeta=-1
-ptj=20
+#mmjj=-1
+#mmjjmax=-1
+#deltaeta=-1
+#ptj=20
 ptj1min=500
 seed=123
 database=/data/users/${USER}/boostedjets
@@ -18,7 +18,7 @@ for proc in 'Zbb' 'gluons' 'quarks'; do
 
     tag="${proc}"
     ./scripts/mg5creator.py \
-	-o ${database} \
+	-o "${database}" \
 	-P cards/process/${proc} \
 	-r cards/run/default_LO.dat \
 	-p cards/param/${params}.slha \
@@ -29,20 +29,23 @@ for proc in 'Zbb' 'gluons' 'quarks'; do
 	-t ${tag} \
 	-R ptj1min ${ptj1min}
 
+    base=${PWD}
+
     # only run the job if the creation script succeeded
+    # shellcheck disable=SC2181
     if [[ $? == 0 ]]; then
         docker run \
                --log-driver=journald \
                --name "${tag}__mgpy" \
                --rm \
-               -v ${base}/cards:/cards \
-               -v ${database}/${tag}:/data \
+               -v "${base}"/cards:/cards \
+               -v "${database}"/${tag}:/data \
                -w /tmp \
                gitlab-registry.cern.ch/scipp/mario-mapyde/madgraph:master \
                "mg5_aMC /data/run.mg5 && rsync -rav PROC_madgraph /data/madgraph" #   && chown -R $UID /data/madgraph
 
         # dump docker logs to text file
-        journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > $database/$tag/docker_mgpy.log
+        journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > "$database"/$tag/docker_mgpy.log
     fi
     # ---------------------------------------------------------------------------------------
 

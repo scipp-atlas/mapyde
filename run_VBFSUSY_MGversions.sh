@@ -48,6 +48,6 @@ set -x
     -d ${seed} \
     -I ${MGversion} \
     -s "__${MGversion}" \
-    -b ${outdata} \
+    -b "${outdata}" \
     -D -A -T # skip everything except madgraph
 set +x

@@ -8,10 +8,13 @@ anascript="SimpleAna.py"
 #anascript="Delphes2SA.py"
 
 # Higgsino WinoBino
+# shellcheck disable=SC2043
 for params in Higgsino; do
     # 13 100
+    # shellcheck disable=SC2043
     for ecms in 13; do
 	# 150 250 2000
+  # shellcheck disable=SC2043
 	for mass in 250; do
 	    min_mjj=0.5
             mmjj_step=0.5
@@ -27,7 +30,7 @@ for params in Higgsino; do
 
 		mmjj=$(bc <<< "scale=0; ${i_mmjj}*1000/1")
 		mmjj_max=$(bc <<< "scale=0; (${mmjj}+${mmjj_step}*1000)/1")
-		if [[ $i_mmjj == $max_mmjj_TeV ]]; then
+		if [[ $i_mmjj == "${max_mmjj_TeV}" ]]; then
                     mmjj_max="-1"
 		fi
 
@@ -40,7 +43,7 @@ for params in Higgsino; do
 		    -c ${cores} \
 		    -p ${params} \
 		    -N ${nevents} \
-		    -m ${mmjj} \
+		    -m "${mmjj}" \
 		    -x ${mmjj_max} \
 		    -e ${deltaeta} \
 		    -d ${seed} \

@@ -14,13 +14,7 @@ mmjjmax=-1
 deltaeta=3.0
 ptj=20
 ptj1min=0
-suffix=""
-skip_mgpy=false
-skip_delphes=false
-skip_ana=false
 clobber_mgpy=false
-clobber_delphes=false
-clobber_ana=false
 database=/data/users/${USER}/SUSY
 ktdurham="-1"
 xqcut="-1"
@@ -66,10 +60,11 @@ while getopts "E:M:P:p:N:m:x:e:c:GgB:b:S:y:k:sd:j:J:X:I:vTrO:" opt; do
     esac
 done
 
+# shellcheck disable=SC2004
 shift $(($OPTIND - 1))
 tag=${1:-"test_Higgsino_001"}
 datadir=${tag}
-mkdir -p ${database}
+mkdir -p "${database}"
 
 mN1=$(bc <<< "scale=2; ${mass}-${dM}")
 
@@ -123,19 +118,19 @@ if [[ ${MGversion} == *"madgraph-2.3.3" || ${MGversion} == *"madgraph-2.4.3" ]];
 fi
 
 ./scripts/mg5creator.py \
-    -o ${database} \
-    -P cards/process/${proc} \
+    -o "${database}" \
+    -P cards/process/"${proc}" \
     -r cards/run/${runcard} \
-    -p cards/param/${params}.slha \
-    -y ${pythia_card} \
-    -m MN1 ${mN1} ${massopts} \
-    -R ptj ${ptj} -R ptj1min ${ptj1min} -R deltaeta ${deltaeta} -R mmjj ${mmjj} -R mmjjmax ${mmjjmax} -R ktdurham ${ktdurham} -R xqcut ${xqcut} \
-    -c ${cores} \
-    -E ${ecms}000 \
-    -n ${nevents} \
-    -s ${seed} \
-    -t ${tag} \
-    -I ${MGversion} \
+    -p cards/param/"${params}".slha \
+    -y "${pythia_card}" \
+    -m MN1 "${mN1}" "${massopts}" \
+    -R ptj "${ptj}" -R ptj1min "${ptj1min}" -R deltaeta "${deltaeta}" -R mmjj "${mmjj}" -R mmjjmax "${mmjjmax}" -R ktdurham "${ktdurham}" -R xqcut "${xqcut}" \
+    -c "${cores}" \
+    -E "${ecms}"000 \
+    -n "${nevents}" \
+    -s "${seed}" \
+    -t "${tag}" \
+    -I "${MGversion}" \
     ${pythia_onoff} ${clobber_opts}
 
 if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
@@ -144,14 +139,14 @@ if [[ $? == 0 || ${clobber_mgpy} == true ]]; then
 	   --log-driver=journald \
 	   --name "${tag}__mgpy" \
 	   --rm \
-	   --user $(id -u):$(id -g) \
-	   -v ${base}/cards:/cards \
-	   -v ${database}/${datadir}:/data \
+	   --user "$(id -u):$(id -g)" \
+	   -v "${base}"/cards:/cards \
+	   -v "${database}"/"${datadir}":/data \
 	   -w /tmp \
-	   ${MGversion} \
+	   "${MGversion}" \
 	   "mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph"
     set +x
 
     # dump docker logs to text file
-    journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > ${database}/${datadir}/docker_mgpy.log
+    journalctl -u docker CONTAINER_NAME="${tag}__mgpy" > "${database}"/"${datadir}"/docker_mgpy.log
 fi
