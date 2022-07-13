@@ -89,6 +89,7 @@ repos:
         args: []
         additional_dependencies:
           ["types-Jinja2", "types-toml", "typer", "importlib_resources"]
+        exclude: src/mapyde/data
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.1.0

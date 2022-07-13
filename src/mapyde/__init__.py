@@ -20,6 +20,7 @@ else:
 
 data = resources.files("mapyde") / "data"
 cards = data / "cards"
+scripts = data / "scripts"
 templates = data / "templates"
 
-__all__ = ("__version__", "data", "cards", "templates")
+__all__ = ("__version__", "data", "cards", "scripts", "templates")
