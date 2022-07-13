@@ -94,21 +94,22 @@ class Container:
         exc_tb: T.Optional[TracebackType],
     ) -> None:
 
-        # dump log files
-        logfiletag = self.name[self.name.rfind("__") + 2 :]
-        with Path(self.output).joinpath(f"/docker_{logfiletag}.log").open(
-            "w", encoding="utf-8"
-        ) as logfile:
-            subprocess.run(
-                [
-                    self.engine,
-                    "logs",
-                    self.name,
-                ],
-                stdout=logfile,
-                stderr=logfile,
-                check=False,
-            )
+        if self.output:
+            # dump log files
+            logfiletag = self.name[self.name.rfind("__") + 2 :]
+            with Path(self.output).joinpath(f"/docker_{logfiletag}.log").open(
+                "w", encoding="utf-8"
+            ) as logfile:
+                subprocess.run(
+                    [
+                        self.engine,
+                        "logs",
+                        self.name,
+                    ],
+                    stdout=logfile,
+                    stderr=logfile,
+                    check=False,
+                )
 
         if not self.stdin.closed:
             self.stdin.write(b"exit 0\n")
