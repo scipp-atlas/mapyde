@@ -5,10 +5,21 @@ Utilities for managing configuration.
 from __future__ import annotations
 
 import os
+import sys
 import typing as T
+from pathlib import Path
 
 import toml
 from jinja2 import Environment, FileSystemLoader, Template
+
+from mapyde import cards, data, scripts, templates
+
+# importlib.resources.as_file wasn't added until Python 3.9
+# c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
+if sys.version_info >= (3, 9):
+    from importlib import resources
+else:
+    import importlib_resources as resources
 
 
 def merge(
@@ -30,6 +41,17 @@ def merge(
     return left
 
 
+def path_join(path: str) -> T.Callable[[list[str]], str]:
+    """
+    Helper function for jinja2 to join paths
+    """
+
+    def wrapper(paths: list[str]) -> str:
+        return str(Path(path).joinpath(*paths))
+
+    return wrapper
+
+
 def env_override(value: T.Any, key: str) -> T.Any:
     """
     Helper function for jinja2 to override environment variables
@@ -43,6 +65,7 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
     """
     env = Environment(loader=FileSystemLoader(cwd))
     env.filters["env_override"] = env_override
+    env.filters["path_join"] = path_join
 
     tpl = env.get_template(filename)
     assert tpl.filename
@@ -53,12 +76,21 @@ def build_config(user: dict[str, T.Any]) -> T.Any:
     """
     Function to build a configuration from a user-provided toml configuration on top of the base/template one.
     """
-    defaults = load_config("defaults.toml", "./templates")
+    with resources.as_file(templates.joinpath("defaults.toml")) as template:
+        defaults = load_config(template.name, str(template.parent))
 
     variables = merge(defaults, user)
     tpl = Template(toml.dumps(variables))
     config = toml.loads(
-        tpl.render(PWD=os.getenv("PWD"), USER=os.getenv("USER"), **variables)
+        tpl.render(
+            PWD=os.getenv("PWD"),
+            USER=os.getenv("USER"),
+            MAPYDE_DATA=data,
+            MAPYDE_CARDS=cards,
+            MAPYDE_SCRIPTS=scripts,
+            MAPYDE_TEMPLATES=templates,
+            **variables,
+        )
     )
 
     return config
