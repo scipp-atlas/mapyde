@@ -98,7 +98,7 @@ class Container:
             # dump log files
             assert self.name
             logfiletag = self.name[self.name.rfind("__") + 2 :]
-            with Path(self.output).joinpath(f"/docker_{logfiletag}.log").open(
+            with Path(self.output).joinpath(f"docker_{logfiletag}.log").open(
                 "w", encoding="utf-8"
             ) as logfile:
                 subprocess.run(
