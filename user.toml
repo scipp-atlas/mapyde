@@ -1,6 +1,6 @@
 [base]
-path="/data/users/{{USER}}/SUSY"
-output = "myTag"
+path = "/data/users/{{USER}}/SUSY"
+output = "mytag"
 
 [madgraph.proc]
 name = "charginos"
