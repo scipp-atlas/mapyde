@@ -96,6 +96,7 @@ class Container:
 
         if self.output:
             # dump log files
+            assert self.name
             logfiletag = self.name[self.name.rfind("__") + 2 :]
             with Path(self.output).joinpath(f"/docker_{logfiletag}.log").open(
                 "w", encoding="utf-8"
