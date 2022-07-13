@@ -8,7 +8,7 @@ import typing as T
 
 import typer
 
-from mapyde.runner import run_ana, run_delphes, run_madgraph, run_pyhf
+from mapyde.runner import run_ana, run_delphes, run_madgraph, run_pyhf, run_sa2json
 from mapyde.utils import build_config, load_config
 
 app = typer.Typer()
@@ -62,6 +62,15 @@ def analysis(filename: str) -> None:
     """
     config = loadfile(filename)
     run_ana(config)
+
+
+@app.command()
+def sa2json(filename: str) -> None:
+    """
+    Run sa2json.
+    """
+    config = loadfile(filename)
+    run_sa2json(config)
 
 
 @app.command()
