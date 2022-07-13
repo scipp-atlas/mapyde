@@ -36,6 +36,7 @@ class Container:
         name: T.Optional[str] = None,
         stdout: T.Optional[T.Union[T.IO[bytes], T.IO[str]]] = None,
         output: T.Optional[PathOrStr] = None,
+        additional_options: T.Optional[list[str]] = None,
     ):
         if not image:
             raise ValueError("Must specify an image to run.")
@@ -51,6 +52,7 @@ class Container:
         self.stdout_config = stdout or subprocess.PIPE
         self.stderr_config = subprocess.STDOUT
         self.output = output
+        self.additional_options = additional_options or []
 
     def __enter__(self) -> Container:
         self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
@@ -65,6 +67,7 @@ class Container:
                 *[f"--volume={local}:{host}" for local, host in self.mounts],
                 f"--workdir={self.cwd}",
                 self.image,
+                *self.additional_options,
             ],
             check=True,
         )

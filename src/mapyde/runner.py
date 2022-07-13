@@ -141,9 +141,90 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     return stdout, stderr
 
 
-def run_pyhf(config: dict[str, T.Any]) -> None:
+def run_sa2json(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+    """
+    Convert SA ROOT file to HiFa JSON.
+    """
+    assert config
+
+    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['sa2json']['image']}"
+    command = bytes(
+        f"""python /scripts/SAtoJSON.py -i {config['analysis']['output']} -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']}""",
+        "utf-8",
+    )
+
+    with Container(
+        image=image,
+        name=f"{config['base']['output']}__SA2json",
+        mounts=[
+            (
+                str(Path(config["base"]["scripts_path"]).resolve()),
+                "/scripts",
+            ),
+            (
+                str(Path(config["base"]["likelihoods_path"]).resolve()),
+                "/likelihoods",
+            ),
+            (
+                str(
+                    Path(config["base"]["path"])
+                    .joinpath(config["base"]["output"])
+                    .resolve()
+                ),
+                "/data",
+            ),
+        ],
+        stdout=sys.stdout,
+        output=str(
+            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
+        ),
+        cwd="/data",
+    ) as container:
+        stdout, stderr = container.process.communicate(command)
+
+    return stdout, stderr
+
+
+def run_pyhf(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     """
     Run statistical inference via pyhf.
     """
-    # ./test/wrapper_pyhf.py config_file
     assert config
+
+    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['pyhf']['image']}"
+    command = bytes(
+        f"""time python3.8 /scripts/muscan.py -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']}""",
+        "utf-8",
+    )
+
+    with Container(
+        image=image,
+        name=f"{config['base']['output']}__muscan",
+        mounts=[
+            (
+                str(Path(config["base"]["scripts_path"]).resolve()),
+                "/scripts",
+            ),
+            (
+                str(Path(config["base"]["likelihoods_path"]).resolve()),
+                "/likelihoods",
+            ),
+            (
+                str(
+                    Path(config["base"]["path"])
+                    .joinpath(config["base"]["output"])
+                    .resolve()
+                ),
+                "/data",
+            ),
+        ],
+        stdout=sys.stdout,
+        output=str(
+            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
+        ),
+        cwd="/data",
+        additional_options=["--gpus=all"],
+    ) as container:
+        stdout, stderr = container.process.communicate(command)
+
+    return stdout, stderr

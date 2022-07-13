@@ -10,6 +10,7 @@ run_path = "{{MAPYDE_CARDS}}/run/"
 pythia_path = "{{MAPYDE_CARDS}}/pythia/"
 delphes_path = "{{MAPYDE_CARDS}}/delphes/"
 madspin_path = "{{MAPYDE_CARDS}}/madspin/"
+likelihoods_path = "{{MAPYDE_LIKELIHOODS}}/likelihoods/"
 
 [madgraph]
 skip = false
@@ -69,6 +70,12 @@ skip = false
 additional_opts = ""
 name = "EwkCompressed2018"
 
+[sa2json]
+image = "pyplotting:latest"
+output = "SimpleAna_patch.json"
+
 [pyhf]
 skip = true
-likelihood = "Higgsino_2L_bkgonly"
+likelihood = "Higgsino_2L_bkgonly.json"
+image = "pyplotting-cuda:latest"
+gpu-options = ""

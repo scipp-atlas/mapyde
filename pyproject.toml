@@ -79,7 +79,6 @@ version-file = "src/mapyde/_version.py"
 exclude = [
   "/ci",
   "/Dockerfiles",
-  "/likelihoods/",
   "/stats/",
   "/test/",
   "/noxfile.py",
@@ -92,6 +91,7 @@ exclude = [
 
 [tool.hatch.build.targets.wheel.shared-data]
 "cards" = "share/mapyde/cards"
+"likelihoods" = "share/mapyde/likelihoods"
 "scripts" = "share/mapyde/scripts"
 "templates" = "share/mapyde/templates"
 

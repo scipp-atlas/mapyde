@@ -12,7 +12,7 @@ from pathlib import Path
 import toml
 from jinja2 import Environment, FileSystemLoader, Template
 
-from mapyde import cards, data, scripts, templates
+from mapyde import cards, data, likelihoods, scripts, templates
 
 # importlib.resources.as_file wasn't added until Python 3.9
 # c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
@@ -49,6 +49,7 @@ def render_string(blob: str, variables: T.Optional[dict[str, T.Any]] = None) -> 
         USER=os.getenv("USER"),
         MAPYDE_DATA=data,
         MAPYDE_CARDS=cards,
+        MAPYDE_LIKELIHOODS=likelihoods,
         MAPYDE_SCRIPTS=scripts,
         MAPYDE_TEMPLATES=templates,
         **variables,
