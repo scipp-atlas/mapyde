@@ -92,38 +92,26 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     """
     Run analysis.
     """
-    # ./test/wrapper_delphes.py config_file
-    # recompute XS, override XS if needed,
-    # add XS to config, re-dump config file
-    # probably want to move this to wrapper_ana.py script
+    xsec = 1000
 
-    xsec = 10  # TODO
-
-    print(config['analysis']['XSoverride'])
-    
     if config['analysis']['XSoverride']>0:
         xsec=config['analysis']['XSoverride']
     else:
-        print(str(Path(config["base"]["database"]).resolve()))
-        logfile=str(Path(config["base"]["database"]).joinpath(config["base"]["output"]).resolve())
-        print(logfile)
-        #with open(f"{}/{}/docker_mgpy.log"
-        """
-        XS=$(grep "Cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
-        # if we're doing matching, then take a different value
-        if [[ $xqcut != -1 ]]; then
-            XS=$(grep "cross-section :" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $9}')
-        fi
+        logfile=str(Path(config["base"]["path"]).joinpath(config["base"]["output"]).joinpath("docker_mgpy.log").resolve())
+        with open(logfile,'r') as lf:
+            for line in lf.readlines():
+                if 'xqcut' in config['madgraph'] and config['madgraph']['xqcut']>0:
+                    if 'cross-section :' in line:
+                        print(line)
+                        xsec=float(line.split()[3]) # take the last instance
+                else:
+                    if 'Cross-section :' in line:
+                        print(line)
+                        xsec=float(line.split()[2]) # take the last instance
 
-        if [[ $kfactor != -1 ]]; then
-            origXS=$(grep "Cross-section" ${database}/${tag}/docker_mgpy.log | tail -1 | awk '{print $8}')
-            XSoverride=$(python3 -c "print(${kfactor}*${origXS})") # k-factor * LO XS
-            echo "Changing cross section from $origXS to $XSoverride to account for k-factors"
-        fi
-        """
+    if config['analysis']['kfactor']>0:
+        xsec*=config['analysis']['kfactor']
 
-    print("heyo")
-    return None,None
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
         f"""/scripts/{config['analysis']['script']} --input /data/delphes/delphes.root --output {config['analysis']['output']} --lumi {config['analysis']['lumi']} --XS {xsec} && rsync -rav . /data/analysis""",
@@ -153,7 +141,7 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
                     Path(config["base"]["path"])
                     .joinpath(config["base"]["output"])
                     .resolve()
-                )
+        )
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
