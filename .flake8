@@ -5,3 +5,4 @@ per-file-ignores =
     tests/*: T
     noxfile.py: T
     scripts/*: T20
+    src/mapyde/cli/*: B008
