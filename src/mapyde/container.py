@@ -7,6 +7,7 @@ import os
 import subprocess
 import typing as T
 import uuid
+from pathlib import Path
 from types import TracebackType
 
 from mapyde.typing import Literal, PathOrStr, PopenBytes
