@@ -93,14 +93,10 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     if config["analysis"]["XSoverride"] > 0:
         xsec = config["analysis"]["XSoverride"]
     else:
-        logfile = str(
-            Path(config["base"]["path"])
-            .joinpath(config["base"]["output"])
-            .joinpath("docker_mgpy.log")
-            .resolve()
-        )
-        with open(logfile) as lf:
-            for line in lf.readlines():
+        with Path(config["base"]["path"]).joinpath(config["base"]["output"]).joinpath(
+            "docker_mgpy.log"
+        ).open(encoding="utf-8") as fpointer:
+            for line in fpointer.readlines():
                 if "xqcut" in config["madgraph"] and config["madgraph"]["xqcut"] > 0:
                     if "cross-section :" in line:
                         xsec = float(line.split()[3])  # take the last instance
