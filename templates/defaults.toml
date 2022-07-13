@@ -69,7 +69,12 @@ skip = false
 additional_opts = ""
 name = "EwkCompressed2018"
 
+[sa2json]
+image = "pyplotting:latest"
+output = "SimpleAna_patch.json"
+
 [pyhf]
 skip = true
-likelihood = "Higgsino_2L_bkgonly"
-image = "pyplotting:latest"
+likelihood = "Higgsino_2L_bkgonly.json"
+image = "pyplotting-cuda:latest"
+gpu-options = ""
