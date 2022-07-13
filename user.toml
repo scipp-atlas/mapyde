@@ -1,5 +1,5 @@
 [base]
-output = "mytag"
+output = "/data/users/{{USER}}/SUSY"
 
 [madgraph.proc]
 name = "charginos"
