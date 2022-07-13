@@ -37,10 +37,8 @@ def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
         ],
         stdout=sys.stdout,
         output=str(
-                    Path(config["base"]["path"])
-                    .joinpath(config["base"]["output"])
-                    .resolve()
-                )
+            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
+        ),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
@@ -78,10 +76,8 @@ rsync -rav --exclude hepmc . /data/delphes""",
         ],
         stdout=sys.stdout,
         output=str(
-                    Path(config["base"]["path"])
-                    .joinpath(config["base"]["output"])
-                    .resolve()
-                )
+            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
+        ),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
@@ -92,25 +88,28 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     """
     Run analysis.
     """
-    xsec = 1000
+    xsec = 1000.0
 
-    if config['analysis']['XSoverride']>0:
-        xsec=config['analysis']['XSoverride']
+    if config["analysis"]["XSoverride"] > 0:
+        xsec = config["analysis"]["XSoverride"]
     else:
-        logfile=str(Path(config["base"]["path"]).joinpath(config["base"]["output"]).joinpath("docker_mgpy.log").resolve())
-        with open(logfile,'r') as lf:
+        logfile = str(
+            Path(config["base"]["path"])
+            .joinpath(config["base"]["output"])
+            .joinpath("docker_mgpy.log")
+            .resolve()
+        )
+        with open(logfile) as lf:
             for line in lf.readlines():
-                if 'xqcut' in config['madgraph'] and config['madgraph']['xqcut']>0:
-                    if 'cross-section :' in line:
-                        print(line)
-                        xsec=float(line.split()[3]) # take the last instance
+                if "xqcut" in config["madgraph"] and config["madgraph"]["xqcut"] > 0:
+                    if "cross-section :" in line:
+                        xsec = float(line.split()[3])  # take the last instance
                 else:
-                    if 'Cross-section :' in line:
-                        print(line)
-                        xsec=float(line.split()[2]) # take the last instance
+                    if "Cross-section :" in line:
+                        xsec = float(line.split()[2])  # take the last instance
 
-    if config['analysis']['kfactor']>0:
-        xsec*=config['analysis']['kfactor']
+    if config["analysis"]["kfactor"] > 0:
+        xsec *= config["analysis"]["kfactor"]
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
@@ -138,10 +137,8 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
         ],
         stdout=sys.stdout,
         output=str(
-                    Path(config["base"]["path"])
-                    .joinpath(config["base"]["output"])
-                    .resolve()
-        )
+            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
+        ),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
