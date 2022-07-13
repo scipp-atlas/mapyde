@@ -1,11 +1,11 @@
 [base]
 path = "{{PWD}}"
 output = "output"
-process_path = "{{ 'process' | path_join('cards') }}"
-param_path = "{{ 'param' | path_join('cards') }}"
-run_path = "{{ 'run' | path_join('cards') }}"
-pythia_path = "{{ 'pythia' | path_join('cards') }}"
-delphes_path = "{{ 'delphes' | path_join('cards') }}"
+process_path = "cards/process/"
+param_path = "cards/param/"
+run_path = "cards/run/"
+pythia_path = "cards/pythia/"
+delphes_path = "cards/delphes/"
 
 [madgraph]
 skip = false
