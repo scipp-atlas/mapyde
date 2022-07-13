@@ -25,7 +25,7 @@ def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
         image=image,
         name=f"{config['base']['output']}__mgpy",
         mounts=[
-            (str(Path(config["base"]["path"]).joinpath("cards").resolve()), "/cards"),
+            (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
             (
                 str(
                     Path(config["base"]["path"])
@@ -61,7 +61,7 @@ rsync -rav --exclude hepmc . /data/delphes""",
         image=image,
         name=f"{config['base']['output']}__delphes",
         mounts=[
-            (str(Path(config["base"]["path"]).joinpath("cards").resolve()), "/cards"),
+            (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
             (
                 str(
                     Path(config["base"]["path"])
@@ -99,9 +99,9 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
         image=image,
         name=f"{config['base']['output']}__hists",
         mounts=[
-            (str(Path(config["base"]["path"]).joinpath("cards").resolve()), "/cards"),
+            (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
             (
-                str(Path(config["base"]["path"]).joinpath("scripts").resolve()),
+                str(Path(config["base"]["scripts_path"]).resolve()),
                 "/scripts",
             ),
             (
