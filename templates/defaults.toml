@@ -72,3 +72,4 @@ name = "EwkCompressed2018"
 [pyhf]
 skip = true
 likelihood = "Higgsino_2L_bkgonly"
+image = "pyplotting"
