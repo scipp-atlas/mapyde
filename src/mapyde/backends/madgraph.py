@@ -35,12 +35,14 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
     output_path.mkdir(parents=True, exist_ok=True)
 
     # Ensure pythia card exists
-    _pythia_card_path = Path(config["pythia"]["card"])
+    _pythia_card_path = Path(config["base"]["pythia_path"]).joinpath(
+        config["pythia"]["card"]
+    )
     if not _pythia_card_path.exists():
         log.error("%s does not exist.", _pythia_card_path)
         sys.exit(1)
 
-    pythia_config_path = f"/{_pythia_card_path}"
+    pythia_config_path = f"/cards/pythia/{config['pythia']['card']}"
 
     # Controls whether to run Pythia8 or not
     pythia_onoff = "Pythia8"
@@ -65,7 +67,11 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
         log.info("    $%s = %s", key, value)
 
     # Update the param card
-    param_card_path = Path(config["madgraph"]["paramcard"]).resolve()
+    param_card_path = (
+        Path(config["base"]["param_path"])
+        .joinpath(config["madgraph"]["paramcard"])
+        .resolve()
+    )
     new_param_card_path = output_path.joinpath(param_card_path.name)
     log.info("Param Card: %s", new_param_card_path)
 
@@ -75,7 +81,11 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
     )
 
     # Update the run card
-    run_card_path = Path(config["madgraph"]["run"]["card"]).resolve()
+    run_card_path = (
+        Path(config["base"]["run_path"])
+        .joinpath(config["madgraph"]["run"]["card"])
+        .resolve()
+    )
     if is_old_version:
         log.warning("Changing the run card due to old madgraph version.")
         run_card_path = run_card_path.parent.joinpath("default_LO_oldformat.dat")
@@ -119,7 +129,11 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
         raise KeyError(unused_keys[0])
 
     # Copy the proc card
-    proc_card_path = Path(config["madgraph"]["proc"]["card"]).resolve()
+    proc_card_path = (
+        Path(config["base"]["process_path"])
+        .joinpath(config["madgraph"]["proc"]["card"])
+        .resolve()
+    )
     new_proc_card_path = output_path.joinpath(proc_card_path.name)
     log.info("Process Card: %s", new_proc_card_path)
 
@@ -142,7 +156,11 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
     madspin_config_path = ""
     if not config["madspin"]["skip"]:
         # Copy the madspin card
-        madspin_card_path = Path(config["madspin"]["card"]).resolve()
+        madspin_card_path = (
+            Path(config["base"]["madspin_card"])
+            .joinpath(config["madspin"]["card"])
+            .resolve()
+        )
         new_madspin_card_path = output_path.joinpath("madspin_card.dat")
         log.info("MadSpin Card: %s", new_madspin_card_path)
         shutil.copyfile(madspin_card_path, new_madspin_card_path)
