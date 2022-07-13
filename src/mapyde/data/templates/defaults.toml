@@ -17,14 +17,14 @@ nevents = 10000
 seed = 0
 version = "madgraph"
 batch = false
-paramcard = "{{ madgraph['params'] | path_join(base['param_path']) }}.slha"
+paramcard = "{{base['param_path']}}{{madgraph['params']}}.slha"
 
 [madgraph.masses]
 MN1 = 150
 MC1 = 100
 
 [madgraph.run]
-card = "{{ 'default_LO.dat' | path_join(base['run_path']) }}"
+card = "{{base['run_path']}}default_LO.dat"
 
 [madgraph.run.options]
 mmjj = 500
@@ -37,7 +37,7 @@ ptj1min = 0
 
 [madgraph.proc]
 name = "VBFSUSY_EWKQCD"
-card = "{{ madgraph['proc']['name'] | path_join(base['process_path']) }}"
+card = "{{base['process_path']}}{{madgraph['proc']['name']}}"
 
 [madspin]
 skip = true
@@ -45,7 +45,7 @@ card = ''
 
 [pythia]
 skip = false
-card = "{{ 'pythia8_card_dipoleRecoil.dat' | path_join(base['pythia_path']) }}"
+card = "{{base['pythia_path']}}pythia8_card_dipoleRecoil.dat"
 additional_opts = ""
 
 [delphes]
