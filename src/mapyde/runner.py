@@ -77,6 +77,11 @@ rsync -rav --exclude hepmc . /data/delphes""",
             ),
         ],
         stdout=sys.stdout,
+        output=str(
+                    Path(config["base"]["path"])
+                    .joinpath(config["base"]["output"])
+                    .resolve()
+                )
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
@@ -144,6 +149,11 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
             ),
         ],
         stdout=sys.stdout,
+        output=str(
+                    Path(config["base"]["path"])
+                    .joinpath(config["base"]["output"])
+                    .resolve()
+                )
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
