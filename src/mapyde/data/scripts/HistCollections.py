@@ -236,7 +236,7 @@ class Hists:
             1000,
         )
 
-        for _, j in self.hists.iteritems():
+        for _, j in self.hists.items():
             j.Sumw2()
 
         self.branches = {}
@@ -290,18 +290,18 @@ class Hists:
         self,
     ):
         self.newdir.cd()
-        for _, k in self.hists.iteritems():
+        for _, k in self.hists.items():
             k.Write()
-        for _, k in self.collections.iteritems():
+        for _, k in self.collections.items():
             k.write()
         self.tree.Write()
         self.topdir.cd()
 
     def add(self, coll):
-        for i, k in self.hists.iteritems():
+        for i, k in self.hists.items():
             if i in coll.hists:
                 k.Add(coll.hists[i])
-        for i, k in self.collections.iteritems():
+        for i, k in self.collections.items():
             if i in coll.collections:
                 k.add(coll.collections[i])
 
@@ -309,7 +309,7 @@ class Hists:
 
         defaultfill = -9
 
-        for _, k in self.collections.iteritems():
+        for _, k in self.collections.items():
             k.fill(event, weight)
 
         self.branches["weight"][0] = weight
@@ -528,18 +528,18 @@ class tthhTree:
         self,
     ):
         self.newdir.cd()
-        for _, k in self.hists.iteritems():
+        for _, k in self.hists.items():
             k.Write()
-        for _, k in self.collections.iteritems():
+        for _, k in self.collections.items():
             k.write()
         self.tree.Write()
         self.topdir.cd()
 
     def add(self, coll):
-        for i, k in self.hists.iteritems():
+        for i, k in self.hists.items():
             if i in coll.hists:
                 k.Add(coll.hists[i])
-        for i, k in self.collections.iteritems():
+        for i, k in self.collections.items():
             if i in coll.collections:
                 k.add(coll.collections[i])
 
@@ -547,7 +547,7 @@ class tthhTree:
 
         defaultfill = -9
 
-        for _, k in self.collections.iteritems():
+        for _, k in self.collections.items():
             k.fill(event, weight)
 
         self.branches["weight"][0] = weight
@@ -730,18 +730,18 @@ class lowlevelTree:
         self,
     ):
         self.newdir.cd()
-        for _, k in self.hists.iteritems():
+        for _, k in self.hists.items():
             k.Write()
-        for _, k in self.collections.iteritems():
+        for _, k in self.collections.items():
             k.write()
         self.tree.Write()
         self.topdir.cd()
 
     def add(self, coll):
-        for i, k in self.hists.iteritems():
+        for i, k in self.hists.items():
             if i in coll.hists:
                 k.Add(coll.hists[i])
-        for i, k in self.collections.iteritems():
+        for i, k in self.collections.items():
             if i in coll.collections:
                 k.add(coll.collections[i])
 
@@ -749,7 +749,7 @@ class lowlevelTree:
 
         defaultfill = -9
 
-        for _, k in self.collections.iteritems():
+        for _, k in self.collections.items():
             k.fill(event, weight)
 
         self.branches["weight"][0] = weight
@@ -836,7 +836,7 @@ class HistCollection:
 
     def write(self):
         self.newdir.cd()
-        for _, k in self.collections.iteritems():
+        for _, k in self.collections.items():
             k.write()
         self.topdir.cd()
 
@@ -848,12 +848,12 @@ class HistCollection:
         self.topdir.cd()
 
     def add(self, coll):
-        for i, k in self.collections.iteritems():
+        for i, k in self.collections.items():
             if i in coll:
                 k.add(coll[i])
 
     def fill(self, event, tag=None, weight=0):
-        for i, k in self.collections.iteritems():
+        for i, k in self.collections.items():
             if tag is None:
                 k.fill(event, weight)
             elif i == tag:
@@ -884,13 +884,13 @@ class JetBins:
 
         # fill the inclusive hist collections here by adding the constituents, should be faster
         # than doing it in 'fill'
-        for _, k in self.collections["njets"].collections.iteritems():
+        for _, k in self.collections["njets"].collections.items():
             if k.tag == "njets_inclusive":
                 continue
             else:
                 self.collections["njets"].collections["inclusive"].add(k)
 
-        for _, k in self.collections.iteritems():
+        for _, k in self.collections.items():
             k.write()
         self.topdir.cd()
 
@@ -900,7 +900,7 @@ class JetBins:
         self.topdir.cd()
 
     def add(self, coll):
-        for i, k in self.collections.iteritems():
+        for i, k in self.collections.items():
             if i in coll:
                 k.add(coll[i])
 
