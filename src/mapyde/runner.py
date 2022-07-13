@@ -141,6 +141,46 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     return stdout, stderr
 
 
+def run_SimpleAnalysis(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+    """
+    Run SimpleAnalysis.
+    """
+
+    image = "gitlab-registry.cern.ch/atlas-phys-susy-wg/simpleanalysis:master"
+    command = bytes(
+        f"""simpleAnalysis -a {config['simpleanalysis']['name']} analysis/Delphes2SA.root -n""",
+        "utf-8",
+    )
+
+    with Container(
+        image=image,
+        name=f"{config['base']['output']}__SimpleAnalysis",
+        mounts=[
+            (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
+            (
+                str(Path(config["base"]["scripts_path"]).resolve()),
+                "/scripts",
+            ),
+            (
+                str(
+                    Path(config["base"]["path"])
+                    .joinpath(config["base"]["output"])
+                    .resolve()
+                ),
+                "/data",
+            ),
+        ],
+        stdout=sys.stdout,
+        cwd="/data",
+        output=str(
+            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
+        ),
+    ) as container:
+        stdout, stderr = container.process.communicate(command)
+
+    return stdout, stderr
+
+
 def run_sa2json(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     """
     Convert SA ROOT file to HiFa JSON.
