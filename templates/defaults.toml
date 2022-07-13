@@ -30,9 +30,9 @@ MC1 = 150
 card = "default_LO.dat"
 
 [madgraph.run.options]
-mmjj = 500
+mmjj = 0
 mmjjmax = -1
-deltaeta = 3.0
+deltaeta = 0
 ktdurham = -1
 xqcut = -1
 ptj = 20
