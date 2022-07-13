@@ -7,10 +7,9 @@ from __future__ import annotations
 import os
 import sys
 import typing as T
-from pathlib import Path
 
 import toml
-from jinja2 import Environment, FileSystemLoader, Template, filters
+from jinja2 import Environment, FileSystemLoader, Template
 
 from mapyde import cards, data, scripts, templates
 
@@ -41,28 +40,6 @@ def merge(
     return left
 
 
-def path_join(path: str, prefix: str) -> str:
-    """
-    Helper function for jinja2 to join a path.
-
-      {{ "path/to/file.dat" | path_join('/my/prefix') }}
-
-    """
-
-    return str(Path(prefix).joinpath(path))
-
-
-def paths_join(paths: list[str], prefix: str) -> str:
-    """
-    Helper function for jinja2 to join paths.
-
-      {{ ["base/path", "file.dat"] | paths_join('/my/prefix') }}
-
-    """
-
-    return str(Path(prefix).joinpath(*paths))
-
-
 def env_override(value: T.Any, key: str) -> T.Any:
     """
     Helper function for jinja2 to override environment variables
@@ -70,16 +47,12 @@ def env_override(value: T.Any, key: str) -> T.Any:
     return os.getenv(key, value)
 
 
-filters.FILTERS["env_override"] = env_override
-filters.FILTERS["path_join"] = path_join
-filters.FILTERS["paths_join"] = paths_join
-
-
 def load_config(filename: str, cwd: str = ".") -> T.Any:
     """
     Helper function to load a local toml configuration by filename
     """
     env = Environment(loader=FileSystemLoader(cwd))
+    env.filters["env_override"] = env_override
 
     tpl = env.get_template(filename)
     assert tpl.filename
