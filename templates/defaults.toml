@@ -59,10 +59,10 @@ card = "delphes_card_ATLAS.tcl"
 version = "delphes"
 
 [analysis]
-script = "SimpleAna.py"
+script = "Delphes2SA.py"
 XSoverride = -1
 kfactor = -1
-output = "SimpleAna.root"
+output = "Delphes2SA.root"
 lumi = 1000
 
 [simpleanalysis]
