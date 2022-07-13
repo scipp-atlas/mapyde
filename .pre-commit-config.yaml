@@ -87,13 +87,14 @@ repos:
       - id: mypy
         files: src
         args: []
-        additional_dependencies: ["types-Jinja2", "types-toml", "typer"]
+        additional_dependencies:
+          ["types-Jinja2", "types-toml", "typer", "importlib_resources"]
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.1.0
     hooks:
       - id: codespell
-        exclude: cards
+        exclude: src/mapyde/data/cards
         args: ["-w", "-L", "hist"]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
