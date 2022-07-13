@@ -23,8 +23,8 @@ batch = false
 paramcard = "{{madgraph['params']}}.slha"
 
 [madgraph.masses]
-MN1 = 150
-MC1 = 100
+MN1 = 100
+MC1 = 150
 
 [madgraph.run]
 card = "default_LO.dat"
