@@ -9,6 +9,7 @@ param_path = "{{MAPYDE_CARDS}}/param/"
 run_path = "{{MAPYDE_CARDS}}/run/"
 pythia_path = "{{MAPYDE_CARDS}}/pythia/"
 delphes_path = "{{MAPYDE_CARDS}}/delphes/"
+madspin_path = "{{MAPYDE_CARDS}}/madspin/"
 
 [madgraph]
 skip = false
