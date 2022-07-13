@@ -78,17 +78,27 @@ version-file = "src/mapyde/_version.py"
 [tool.hatch.build]
 exclude = [
   "/ci",
-  "/Dockerfiles/",
-  "/docs/",
+  "/Dockerfiles",
   "/likelihoods/",
   "/stats/",
   "/test/",
-  "/tests/",
   "/noxfile.py",
   "/.*",
   "/*.sh",
   "/*.toml", # note: does not remove pyproject.toml
 ]
+
+# NB: harmonize with wheel.shared-data as by convention it should include
+# everything that is required to build a wheel without making network requests.
+[tool.hatch.build.targets.sdist.sources]
+"cards" = "shared-data/cards"
+"scripts" = "shared-data/scripts"
+"templates" = "shared-data/templates"
+
+[tool.hatch.build.targets.wheel.shared-data]
+"cards" = "share/mapyde/cards"
+"scripts" = "share/mapyde/scripts"
+"templates" = "share/mapyde/templates"
 
 [tool.hatch.envs.default]
 dependencies = [

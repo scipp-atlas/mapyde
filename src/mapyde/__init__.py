@@ -7,18 +7,12 @@ mario-mapyde: A great package.
 
 from __future__ import annotations
 
-import sys
+import sysconfig
+from pathlib import Path
 
 from mapyde._version import __version__
 
-# importlib.resources.as_file wasn't added until Python 3.9
-# c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
-if sys.version_info >= (3, 9):
-    from importlib import resources
-else:
-    import importlib_resources as resources
-
-data = resources.files("mapyde") / "data"
+data = Path(sysconfig.get_path("data")).joinpath("share", __name__)
 cards = data / "cards"
 scripts = data / "scripts"
 templates = data / "templates"
