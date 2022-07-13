@@ -23,6 +23,7 @@ class Prefix(str, Enum):
 
     DATA = "data"
     CARDS = "cards"
+    LIKELIHOODS = "likelihoods"
     SCRIPTS = "scripts"
     TEMPLATES = "templates"
 
@@ -45,6 +46,7 @@ def main(
             {
                 Prefix.DATA: mapyde.data,
                 Prefix.CARDS: mapyde.cards,
+                Prefix.LIKELIHOODS: mapyde.likelihoods,
                 Prefix.SCRIPTS: mapyde.scripts,
                 Prefix.TEMPLATES: mapyde.templates,
             }[prefix].resolve()
