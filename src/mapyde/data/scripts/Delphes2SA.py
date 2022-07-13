@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Example for converting Delphes output to SimpleAnalysis slimmed format
 # lepton id/isolation and flavour tagging levels are not implemented
