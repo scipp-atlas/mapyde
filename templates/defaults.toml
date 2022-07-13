@@ -14,7 +14,6 @@ madspin_path = "{{MAPYDE_CARDS}}/madspin/"
 [madgraph]
 skip = false
 params = "Higgsino"
-dM = 1
 ecms = 13000
 cores = 20
 nevents = 10000
