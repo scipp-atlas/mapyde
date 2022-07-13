@@ -263,7 +263,7 @@ def run_pyhf(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
             Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
         ),
         cwd="/data",
-        additional_options=["--gpus=all"],
+        additional_options=["--gpus", "all"],
     ) as container:
         stdout, stderr = container.process.communicate(command)
 

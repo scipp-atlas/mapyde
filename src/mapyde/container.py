@@ -66,8 +66,8 @@ class Container:
                 f"--user={self.user}:{self.group}",
                 *[f"--volume={local}:{host}" for local, host in self.mounts],
                 f"--workdir={self.cwd}",
-                self.image,
                 *self.additional_options,
+                self.image,
             ],
             check=True,
         )
