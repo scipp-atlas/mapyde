@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import sys
 import typing as T
+from pathlib import Path
 
 import toml
 from jinja2 import Environment, FileSystemLoader, Template
@@ -40,6 +41,20 @@ def merge(
     return left
 
 
+def render_string(blob: str, variables: T.Optional[dict[str, T.Any]] = None) -> str:
+    variables = variables or {}
+    tpl = Template(blob)
+    return tpl.render(
+        PWD=os.getenv("PWD"),
+        USER=os.getenv("USER"),
+        MAPYDE_DATA=data,
+        MAPYDE_CARDS=cards,
+        MAPYDE_SCRIPTS=scripts,
+        MAPYDE_TEMPLATES=templates,
+        **variables,
+    )
+
+
 def env_override(value: T.Any, key: str) -> T.Any:
     """
     Helper function for jinja2 to override environment variables
@@ -63,21 +78,19 @@ def build_config(user: dict[str, T.Any]) -> T.Any:
     """
     Function to build a configuration from a user-provided toml configuration on top of the base/template one.
     """
-    with resources.as_file(templates.joinpath("defaults.toml")) as template:
+
+    template_path = Path(
+        render_string(
+            user["base"].get("template", "{{MAPYDE_TEMPLATES}}/defaults.toml")
+        )
+    )
+
+    with resources.as_file(template_path) as template:
+        if not template.exists():
+            raise OSError(f"{template_path} does not exist.")
         defaults = load_config(template.name, str(template.parent))
 
     variables = merge(defaults, user)
-    tpl = Template(toml.dumps(variables))
-    config = toml.loads(
-        tpl.render(
-            PWD=os.getenv("PWD"),
-            USER=os.getenv("USER"),
-            MAPYDE_DATA=data,
-            MAPYDE_CARDS=cards,
-            MAPYDE_SCRIPTS=scripts,
-            MAPYDE_TEMPLATES=templates,
-            **variables,
-        )
-    )
+    config = toml.loads(render_string(toml.dumps(variables), variables))
 
     return config
