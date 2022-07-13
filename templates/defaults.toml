@@ -48,7 +48,7 @@ card = ''
 
 [pythia]
 skip = false
-card = "pythia8_card_dipoleRecoil.dat"
+card = "pythia8_card.dat"
 additional_opts = ""
 
 [delphes]
