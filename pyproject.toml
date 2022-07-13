@@ -75,15 +75,12 @@ local_scheme = "no-local-version"
 [tool.hatch.build.hooks.vcs]
 version-file = "src/mapyde/_version.py"
 
-[tool.hatch.build.targets.sdist]
-include = []
+[tool.hatch.build]
 exclude = [
-  "/cards",
   "/ci",
   "/Dockerfiles/",
   "/docs/",
   "/likelihoods/",
-  "/scripts/",
   "/stats/",
   "/test/",
   "/tests/",
@@ -92,8 +89,6 @@ exclude = [
   "/*.sh",
   "/*.toml", # note: does not remove pyproject.toml
 ]
-
-[tool.hatch.build.targets.wheel]
 
 [tool.hatch.envs.default]
 dependencies = [
