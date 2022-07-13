@@ -34,6 +34,7 @@ class Container:
         engine: ContainerEngine = "docker",
         name: T.Optional[str] = None,
         stdout: T.Optional[T.Union[T.IO[bytes], T.IO[str]]] = None,
+        output: T.Optional[str] = None,
     ):
         if not image:
             raise ValueError("Must specify an image to run.")
@@ -48,6 +49,7 @@ class Container:
         self.stdin_config = subprocess.PIPE
         self.stdout_config = stdout or subprocess.PIPE
         self.stderr_config = subprocess.STDOUT
+        self.output = output or "/dev/null"
 
     def __enter__(self) -> Container:
         self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
@@ -90,6 +92,20 @@ class Container:
         exc_val: T.Optional[BaseException],
         exc_tb: T.Optional[TracebackType],
     ) -> None:
+
+        # dump log files
+        logfiletag=self.name[self.name.rfind("__")+2:]
+        with open(self.output+f"/docker_{logfiletag}.log",'w') as logfile:
+            subprocess.run(
+                [
+                    self.engine,
+                    "logs",
+                    self.name,
+                ],
+                stdout=logfile,
+                stderr=logfile,
+                check=False
+            )
 
         if not self.stdin.closed:
             self.stdin.write(b"exit 0\n")
