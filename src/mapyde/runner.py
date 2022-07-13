@@ -141,7 +141,7 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     return stdout, stderr
 
 
-def run_SimpleAnalysis(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+def run_simpleanalysis(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     """
     Run SimpleAnalysis.
     """
@@ -154,7 +154,7 @@ def run_SimpleAnalysis(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
 
     with Container(
         image=image,
-        name=f"{config['base']['output']}__SimpleAnalysis",
+        name=f"{config['base']['output']}__simpleanalysis",
         mounts=[
             (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
             (

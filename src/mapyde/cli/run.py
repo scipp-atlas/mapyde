@@ -14,7 +14,7 @@ from mapyde.runner import (
     run_madgraph,
     run_pyhf,
     run_sa2json,
-    run_SimpleAnalysis,
+    run_simpleanalysis,
 )
 from mapyde.utils import build_config, load_config
 
@@ -77,7 +77,7 @@ def simpleanalysis(filename: str) -> None:
     Run simpleanalysis (ATLAS tool)
     """
     config = loadfile(filename)
-    run_SimpleAnalysis(config)
+    run_simpleanalysis(config)
 
 
 @app.command()

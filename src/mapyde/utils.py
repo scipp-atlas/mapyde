@@ -42,6 +42,9 @@ def merge(
 
 
 def render_string(blob: str, variables: T.Optional[dict[str, T.Any]] = None) -> str:
+    """
+    Render a string using various variables set by the mapyde package.
+    """
     variables = variables or {}
     tpl = Template(blob)
     return tpl.render(
