@@ -1,6 +1,7 @@
 [base]
 path = "{{PWD}}"
 output = "output"
+cards_path = "{{MAPYDE_CARDS}}"
 process_path = "{{MAPYDE_CARDS}}/process/"
 param_path = "{{MAPYDE_CARDS}}/param/"
 run_path = "{{MAPYDE_CARDS}}/run/"
