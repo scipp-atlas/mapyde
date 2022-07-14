@@ -17,48 +17,57 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # JOB to run change detection
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      # Expose matched filters as job 'images' output variable
+      images: ${{ steps.filter.outputs.changes }}
+    steps:
+    # For pull requests it's not necessary to checkout the code
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          delphes: Dockerfiles/delphes
+          delphes-snowmass: Dockerfiles/delphes-snowmass
+          madgraph: Dockerfiles/madgraph
+          madgraph-2.3.3: Dockerfiles/madgraph-2.3.3
+          madgraph-2.4.3: Dockerfiles/madgraph-2.4.3
+          madgraph-2.5.5: Dockerfiles/madgraph-2.5.5
+          madgraph-2.6.3.2: Dockerfiles/madgraph-2.6.3.2
+          madgraph-2.6.7: Dockerfiles/madgraph-2.6.7
+          madgraph-2.7.3: Dockerfiles/madgraph-2.7.3
+          madgraph-2.9.3: Dockerfiles/madgraph-2.9.3
+          madgraph-2.9.9: Dockerfiles/madgraph-2.9.9
+          madgraph-2.9.10: Dockerfiles/madgraph-2.9.10
+          pyplotting: Dockerfiles/pyplotting
+          pyplotting-cuda: Dockerfiles/pyplotting-cuda
+
   build:
     name: Build ${{ matrix.image }}
+    needs: [changes]
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image:
-          - delphes
-          - delphes-snowmass
-          - madgraph
-          - madgraph-2.3.3
-          - madgraph-2.4.3
-          - madgraph-2.5.5
-          - madgraph-2.6.3.2
-          - madgraph-2.6.7
-          - madgraph-2.7.3
-          - madgraph-2.9.3
-          - madgraph-2.9.9
-          - madgraph-2.9.10
-          - pyplotting
-          - pyplotting-cuda
+        image: ${{ fromJSON(needs.changes.outputs.images) }}
     steps:
       - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            image:
-              - 'Dockerfiles/${{ matrix.image }}'
       - name: Prepare
         id: prep
         run: |
-          TAGS="${{ matrix.image }}:latest,${{ matrix.image }}:sha-${GITHUB_SHA::8}"
+          DOCKER_IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
+          TAGS="${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
           VERSION=latest
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}
           elif [[ $GITHUB_REF == refs/pull/* ]]; then
             VERSION=pr-${{ github.event.number }}
           fi
-          TAGS="$TAGS,${{ matrix.image }}:${VERSION}"
+          TAGS="$TAGS,${DOCKER_IMAGE}:${VERSION}"
           # Releases also have GITHUB_REFs that are tags, so reuse VERSION
           if [ "${{ github.event_name }}" = "release" ]; then
-            TAGS="$TAGS,${{ matrix.image }}:latest-stable,ghcr.io/${{github.repository}}:latest-stable,ghcr.io/${{github.repository}}:${VERSION}"
+            TAGS="$TAGS,${DOCKER_IMAGE}:latest-stable"
           fi
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=tags::${TAGS}
@@ -71,7 +80,6 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build image
-        if: steps.filter.outputs.image == 'true'
         id: docker_build_test
         uses: docker/build-push-action@v3
         with:
@@ -85,11 +93,9 @@ jobs:
           outputs: type=docker,dest=image.tar
 
       - name: Image digest
-        if: steps.filter.outputs.image == 'true'
         run: echo ${{ steps.docker_build_test.outputs.digest }}
 
       - name: List built images
-        if: steps.filter.outputs.image == 'true'
         run: docker images
 
       - name: Upload artifact
@@ -168,44 +174,21 @@ jobs:
            rsync -rav . /data/analysis"
 
   deploy:
-    needs: [build, run]
+    needs: [changes, build, run]
     name: Deploy ${{ matrix.image }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image:
-          - delphes
-          - delphes-snowmass
-          - madgraph
-          - madgraph-2.3.3
-          - madgraph-2.4.3
-          - madgraph-2.5.5
-          - madgraph-2.6.3.2
-          - madgraph-2.6.7
-          - madgraph-2.7.3
-          - madgraph-2.9.3
-          - madgraph-2.9.9
-          - madgraph-2.9.10
-          - pyplotting
-          - pyplotting-cuda
+        image: ${{ fromJSON(needs.changes.outputs.images) }}
     steps:
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            image:
-              - 'Dockerfiles/${{ matrix.image }}'
-
       - name: Set up QEMU
-        if: steps.filter.outputs.image == 'true'
         uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
-        if: steps.filter.outputs.image == 'true'
         uses: docker/setup-buildx-action@v2
 
       - name: Login to GitHub Container Registry
-        if: github.event_name != 'pull_request' && steps.filter.outputs.image == 'true'
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -213,21 +196,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download artifact
-        if: steps.filter.outputs.image == 'true'
         uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.image }}
-          path: image.tar
+          path: images
 
       - name: Load images
-        if: steps.filter.outputs.image == 'true'
         run:  |
-          docker load --input image.tar
+          docker load --input images/image.tar
           docker image ls -a
 
       - name: Publish to registry
         # every PR will trigger a push event on main if the file has changed, so check the push event is actually coming from main
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde' && steps.filter.outputs.image == 'true'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde'
         uses: docker/build-push-action@v3
         with:
           context: .
