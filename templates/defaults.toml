@@ -1,6 +1,7 @@
 [base]
 path = "{{PWD}}"
 output = "output"
+logs = "logs"
 data_path = "{{MAPYDE_DATA}}"
 cards_path = "{{MAPYDE_CARDS}}"
 scripts_path = "{{MAPYDE_SCRIPTS}}"
@@ -22,6 +23,9 @@ seed = 0
 version = "madgraph"
 batch = false
 paramcard = "{{madgraph['params']}}.slha"
+
+[madgraph.generator]
+output = "run.mg5"
 
 [madgraph.masses]
 MN1 = 100
@@ -57,12 +61,13 @@ skip = false
 additional_opts = ""
 card = "delphes_card_ATLAS.tcl"
 version = "delphes"
+output = "delphes/delphes.root"
 
 [analysis]
 script = "Delphes2SA.py"
 XSoverride = -1
 kfactor = -1
-output = "Delphes2SA.root"
+output = "analysis/Delphes2SA.root"
 lumi = 1000
 
 [simpleanalysis]

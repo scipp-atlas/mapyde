@@ -28,8 +28,8 @@
 # Warning: Do not generate more than 1M events in a single run       *
 # If you want to run Pythia, avoid more than 50k events in a run.    *
 #*********************************************************************
-  ${nevents} = nevents ! Number of unweighted events requested
-  ${iseed}   = iseed   ! rnd seed (0=assigned automatically=default))
+  {{nevents}} = nevents ! Number of unweighted events requested
+  {{iseed}}   = iseed   ! rnd seed (0=assigned automatically=default))
 #*********************************************************************
 # Collider type and energy                                           *
 # lpp: 0=No PDF, 1=proton, -1=antiproton, 2=photon from proton,      *
@@ -37,8 +37,8 @@
 #*********************************************************************
      1        = lpp1    ! beam 1 type
      1        = lpp2    ! beam 2 type
-     ${ecms}  = ebeam1  ! beam 1 total energy in GeV
-     ${ecms}  = ebeam2  ! beam 2 total energy in GeV
+     {{ecms}}  = ebeam1  ! beam 1 total energy in GeV
+     {{ecms}}  = ebeam2  ! beam 2 total energy in GeV
 #*********************************************************************
 # Beam polarization from -100 (left-handed) to 100 (right-handed)    *
 #*********************************************************************

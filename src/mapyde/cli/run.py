@@ -39,6 +39,8 @@ def run_all(filename: str) -> None:
     run_madgraph(config)
     run_delphes(config)
     run_ana(config)
+    run_sa2json(config)
+    run_simpleanalysis(config)
     run_pyhf(config)
 
 

@@ -4,14 +4,15 @@ File containing functionality for running the various steps in the workflow.
 from __future__ import annotations
 
 import sys
-import typing as T
 from pathlib import Path
 
+from mapyde import utils
 from mapyde.backends import madgraph
 from mapyde.container import Container
+from mapyde.typing import ImmutableConfig
 
 
-def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run madgraph.
     """
@@ -19,7 +20,10 @@ def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     madgraph.generate_mg5config(config)
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['madgraph']['version']}"
-    command = b"mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph\n"
+    command = bytes(
+        f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
+        "utf-8",
+    )
 
     with Container(
         image=image,
@@ -27,25 +31,19 @@ def run_madgraph(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
         mounts=[
             (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
             (
-                str(
-                    Path(config["base"]["path"])
-                    .joinpath(config["base"]["output"])
-                    .resolve()
-                ),
+                str(utils.output_path(config)),
                 "/data",
             ),
         ],
         stdout=sys.stdout,
-        output=str(
-            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
-        ),
+        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
     return stdout, stderr
 
 
-def run_delphes(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+def run_delphes(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run delphes.
     """
@@ -55,8 +53,9 @@ def run_delphes(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
         f"""pwd && ls -lavh && ls -lavh /data && cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
 gunzip hepmc.gz && \
 /bin/ls -ltrh --color && \
-/usr/local/share/delphes/delphes/DelphesHepMC2 /cards/delphes/{config['delphes']['card']} delphes.root hepmc && \
-rsync -rav --exclude hepmc . /data/delphes""",
+mkdir -p {Path(config['delphes']['output']).parent} && \
+/usr/local/share/delphes/delphes/DelphesHepMC2 /cards/delphes/{config['delphes']['card']} {Path(config['delphes']['output'])} hepmc && \
+rsync -rav --exclude hepmc . /data/""",
         "utf-8",
     )
 
@@ -66,25 +65,19 @@ rsync -rav --exclude hepmc . /data/delphes""",
         mounts=[
             (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
             (
-                str(
-                    Path(config["base"]["path"])
-                    .joinpath(config["base"]["output"])
-                    .resolve()
-                ),
+                str(utils.output_path(config)),
                 "/data",
             ),
         ],
         stdout=sys.stdout,
-        output=str(
-            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
-        ),
+        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
     return stdout, stderr
 
 
-def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run analysis.
     """
@@ -93,11 +86,13 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     if config["analysis"]["XSoverride"] > 0:
         xsec = config["analysis"]["XSoverride"]
     else:
-        with Path(config["base"]["path"]).joinpath(config["base"]["output"]).joinpath(
-            "docker_mgpy.log"
+        with utils.output_path(config).joinpath(
+            config["base"]["logs"], "docker_mgpy.log"
         ).open(encoding="utf-8") as fpointer:
             for line in fpointer.readlines():
-                if "xqcut" in config["madgraph"] and config["madgraph"]["xqcut"] > 0:
+                # TODO: can we flip this logic around to be better?
+                # refactor into a parse_xsec utility or something?
+                if config["madgraph"]["run"]["options"]["xqcut"] > 0:
                     if "cross-section :" in line:
                         xsec = float(line.split()[3])  # take the last instance
                 else:
@@ -109,7 +104,12 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
-        f"""/scripts/{config['analysis']['script']} --input /data/delphes/delphes.root --output {config['analysis']['output']} --lumi {config['analysis']['lumi']} --XS {xsec} && rsync -rav . /data/analysis""",
+        f"""mkdir -p {Path(config['analysis']['output']).parent} && \
+/scripts/{config['analysis']['script']} --input {Path('/data').joinpath(config['delphes']['output'])} \
+                                        --output {config['analysis']['output']} \
+                                        --lumi {config['analysis']['lumi']} \
+                                        --XS {xsec} && \
+rsync -rav . /data/""",
         "utf-8",
     )
 
@@ -123,32 +123,26 @@ def run_ana(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
                 "/scripts",
             ),
             (
-                str(
-                    Path(config["base"]["path"])
-                    .joinpath(config["base"]["output"])
-                    .resolve()
-                ),
+                str(utils.output_path(config)),
                 "/data",
             ),
         ],
         stdout=sys.stdout,
-        output=str(
-            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
-        ),
+        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
     return stdout, stderr
 
 
-def run_simpleanalysis(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run SimpleAnalysis.
     """
 
     image = "gitlab-registry.cern.ch/atlas-phys-susy-wg/simpleanalysis:master"
     command = bytes(
-        f"""simpleAnalysis -a {config['simpleanalysis']['name']} analysis/Delphes2SA.root -n""",
+        f"""simpleAnalysis -a {config['simpleanalysis']['name']} {config['analysis']['output']} -n""",
         "utf-8",
     )
 
@@ -162,26 +156,20 @@ def run_simpleanalysis(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
                 "/scripts",
             ),
             (
-                str(
-                    Path(config["base"]["path"])
-                    .joinpath(config["base"]["output"])
-                    .resolve()
-                ),
+                str(utils.output_path(config)),
                 "/data",
             ),
         ],
         stdout=sys.stdout,
         cwd="/data",
-        output=str(
-            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
-        ),
+        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
     return stdout, stderr
 
 
-def run_sa2json(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Convert SA ROOT file to HiFa JSON.
     """
@@ -206,18 +194,12 @@ def run_sa2json(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
                 "/likelihoods",
             ),
             (
-                str(
-                    Path(config["base"]["path"])
-                    .joinpath(config["base"]["output"])
-                    .resolve()
-                ),
+                str(utils.output_path(config)),
                 "/data",
             ),
         ],
         stdout=sys.stdout,
-        output=str(
-            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
-        ),
+        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
         cwd="/data",
     ) as container:
         stdout, stderr = container.process.communicate(command)
@@ -225,7 +207,7 @@ def run_sa2json(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
     return stdout, stderr
 
 
-def run_pyhf(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
+def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run statistical inference via pyhf.
     """
@@ -250,18 +232,12 @@ def run_pyhf(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
                 "/likelihoods",
             ),
             (
-                str(
-                    Path(config["base"]["path"])
-                    .joinpath(config["base"]["output"])
-                    .resolve()
-                ),
+                str(utils.output_path(config)),
                 "/data",
             ),
         ],
         stdout=sys.stdout,
-        output=str(
-            Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
-        ),
+        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
         cwd="/data",
         additional_options=["--gpus", "all"],
     ) as container:
