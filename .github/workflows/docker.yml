@@ -36,8 +36,8 @@ jobs:
     - id: set
       run: |
         ALL_IMAGES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]')
-        echo "::set-output name=all_files::${ALL_IMAGES}"
-        printf "Setting all_files=${ALL_IMAGES}\n"
+        echo "::set-output name=all_images::${ALL_IMAGES}"
+        printf "Setting all_images=${ALL_IMAGES}\n"
 
         CHANGED_IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
         echo "::set-output name=changed_images::${CHANGED_IMAGES}"
