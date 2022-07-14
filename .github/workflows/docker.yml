@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: set-matrix
-        run: echo "::set-output name=matrix::$(ls Dockerfiles/* | jq -R -s -c 'split("\n")[:-1]')"
+        run: echo "::set-output name=matrix::$(ls Dockerfiles/* | jq -R -s -c 'split(\"\n\")[:-1]')"
 
   # JOB to run change detection
   changes:
@@ -58,7 +58,7 @@ jobs:
           pyplotting-cuda: Dockerfiles/pyplotting-cuda
     - id: set
       run: |
-        echo "::set-output name=changes::$(echo ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[] |= split("/")[1]'"
+        echo "::set-output name=changes::$(echo ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[] |= split(\"/\")[1]'"
         echo "::set-output name=files::$(echo ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[1:]'"
 
   build:
