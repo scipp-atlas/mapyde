@@ -34,9 +34,8 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      # Expose matched filters as job 'images' output variable
-      images: ${{ steps.set.outputs.changes }}
-      files: ${{ steps.set.outputs.files }}
+      changed: ${{ steps.filter.outputs.changed }}
+      images: ${{ steps.set.outputs.images }}
     steps:
     # For pull requests it's not necessary to checkout the code
     - uses: dorny/paths-filter@v2
@@ -45,31 +44,16 @@ jobs:
         list-files: json
         filters: |
           changed: Dockerfiles/**
-          delphes: Dockerfiles/delphes
-          delphes-snowmass: Dockerfiles/delphes-snowmass
-          madgraph: Dockerfiles/madgraph
-          madgraph-2.3.3: Dockerfiles/madgraph-2.3.3
-          madgraph-2.4.3: Dockerfiles/madgraph-2.4.3
-          madgraph-2.5.5: Dockerfiles/madgraph-2.5.5
-          madgraph-2.6.3.2: Dockerfiles/madgraph-2.6.3.2
-          madgraph-2.6.7: Dockerfiles/madgraph-2.6.7
-          madgraph-2.7.3: Dockerfiles/madgraph-2.7.3
-          madgraph-2.9.3: Dockerfiles/madgraph-2.9.3
-          madgraph-2.9.9: Dockerfiles/madgraph-2.9.9
-          madgraph-2.9.10: Dockerfiles/madgraph-2.9.10
-          pyplotting: Dockerfiles/pyplotting
-          pyplotting-cuda: Dockerfiles/pyplotting-cuda
     - id: set
       run: |
-        CHANGES=$(printf ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[1:]')
-        FILES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
-        echo "::set-output name=changes::${CHANGES}"
-        echo "::set-output name=files::${FILES}"
-        printf "Setting changes=${CHANGES}, files=${FILES}"
+        IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
+        echo "::set-output name=images::${IMAGES}"
+        printf "Setting images=${IMAGES}"
 
   build:
     name: Build ${{ matrix.image }}
     needs: [changes]
+    if: ${{ needs.changes.outputs.changed == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -79,7 +63,6 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          echo ${{ fromJSON(needs.changes.outputs.files) }}
           DOCKER_IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
           TAGS="${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
           VERSION=latest
