@@ -53,7 +53,7 @@ def run_delphes(config: Config) -> tuple[bytes, bytes]:
         f"""pwd && ls -lavh && ls -lavh /data && cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
 gunzip hepmc.gz && \
 /bin/ls -ltrh --color && \
-/usr/local/share/delphes/delphes/DelphesHepMC2 /cards/delphes/{config['delphes']['card']} delphes.root hepmc && \
+/usr/local/share/delphes/delphes/DelphesHepMC2 /cards/delphes/{config['delphes']['card']} {config['delphes']['output']} hepmc && \
 rsync -rav --exclude hepmc . /data/delphes""",
         "utf-8",
     )
@@ -103,7 +103,7 @@ def run_ana(config: Config) -> tuple[bytes, bytes]:
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
-        f"""/scripts/{config['analysis']['script']} --input /data/delphes/delphes.root --output {config['analysis']['output']} --lumi {config['analysis']['lumi']} --XS {xsec} && rsync -rav . /data/analysis""",
+        f"""/scripts/{config['analysis']['script']} --input /data/delphes/{config['delphes']['output']} --output {config['analysis']['output']} --lumi {config['analysis']['lumi']} --XS {xsec} && rsync -rav . /data/analysis""",
         "utf-8",
     )
 

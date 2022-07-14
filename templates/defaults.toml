@@ -60,6 +60,7 @@ skip = false
 additional_opts = ""
 card = "delphes_card_ATLAS.tcl"
 version = "delphes"
+output = "delphes.root"
 
 [analysis]
 script = "Delphes2SA.py"
