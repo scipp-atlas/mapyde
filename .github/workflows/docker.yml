@@ -32,8 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       # Expose matched filters as job 'images' output variable
-      images: ${{ steps.filter.outputs.changes }}
-      files: ${{ steps.filter.outputs.changed_files }}
+      images: ${{ steps.filter.outputs.changes.splice(1) }}
+      files: ${{ steps.filter.outputs.changed_files.map(path => path.slice(11, path.length)) }}
     steps:
     # For pull requests it's not necessary to checkout the code
     - uses: dorny/paths-filter@v2
