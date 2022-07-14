@@ -1,4 +1,33 @@
-FROM hello-world
+FROM nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04 as base
+
+
+FROM base as builder
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y \
+    python3 \
+    python3-pip && \
+    apt-get install -y python3.8 && \
+    apt-get -y autoclean && \
+    apt-get -y autoremove && \
+    rm -rf /var/lib/apt-get/lists/*
+RUN python3.8 -m pip install --upgrade pip && \
+    python3.8 -m pip install --upgrade --no-cache-dir pip && \
+    python3.8 -m pip install --no-cache-dir tensorflow torch && \
+    python3.8 -m pip install --no-cache-dir pandas matplotlib numpy uproot hist pyhf jsonpatch awkward cabinetry && \
+    python3.8 -m pip install --upgrade "jax[cuda11_cudnn82]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
+    python3.8 -m pip list
+
+FROM base
+# Use C.UTF-8 locale to avoid issues with ASCII encoding
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+COPY --from=builder /lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
+COPY --from=builder /usr/local /usr/local
+COPY --from=builder /usr/bin/python3.8 /usr/bin/python3.8
+COPY --from=builder /usr/local/bin/pip3.8 /usr/local/bin/pip3.8
+COPY --from=builder /usr/lib/python3.8 /usr/lib/python3.8
+COPY --from=builder /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
 CMD [ "/bin/bash" ]
