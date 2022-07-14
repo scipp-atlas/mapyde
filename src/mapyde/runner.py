@@ -36,7 +36,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
             ),
         ],
         stdout=sys.stdout,
-        output=str(utils.output_path(config)),
+        output=(utils.output_path(config).joinpath("logs")),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
@@ -70,7 +70,7 @@ rsync -rav --exclude hepmc . /data/""",
             ),
         ],
         stdout=sys.stdout,
-        output=str(utils.output_path(config)),
+        output=(utils.output_path(config).joinpath("logs")),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
@@ -128,7 +128,7 @@ rsync -rav . /data/""",
             ),
         ],
         stdout=sys.stdout,
-        output=str(utils.output_path(config)),
+        output=(utils.output_path(config).joinpath("logs")),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
@@ -162,7 +162,7 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
         ],
         stdout=sys.stdout,
         cwd="/data",
-        output=str(utils.output_path(config)),
+        output=(utils.output_path(config).joinpath("logs")),
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
@@ -199,7 +199,7 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
             ),
         ],
         stdout=sys.stdout,
-        output=str(utils.output_path(config)),
+        output=(utils.output_path(config).joinpath("logs")),
         cwd="/data",
     ) as container:
         stdout, stderr = container.process.communicate(command)
@@ -237,7 +237,7 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
             ),
         ],
         stdout=sys.stdout,
-        output=str(utils.output_path(config)),
+        output=(utils.output_path(config).joinpath("logs")),
         cwd="/data",
         additional_options=["--gpus", "all"],
     ) as container:

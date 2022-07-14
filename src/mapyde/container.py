@@ -35,7 +35,7 @@ class Container:
         engine: ContainerEngine = "docker",
         name: T.Optional[str] = None,
         stdout: T.Optional[T.Union[T.IO[bytes], T.IO[str]]] = None,
-        output: T.Optional[PathOrStr] = None,
+        output: T.Optional[Path] = None,
         additional_options: T.Optional[list[str]] = None,
     ):
         if not image:
@@ -101,7 +101,8 @@ class Container:
             # dump log files
             assert self.name
             logfiletag = self.name[self.name.rfind("__") + 2 :]
-            with Path(self.output).joinpath(f"docker_{logfiletag}.log").open(
+            self.output.mkdir(parents=True, exist_ok=True)
+            with self.output.joinpath(f"docker_{logfiletag}.log").open(
                 "w", encoding="utf-8"
             ) as logfile:
                 subprocess.run(
