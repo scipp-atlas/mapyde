@@ -107,11 +107,9 @@ def generate_mg5config(config: ImmutableConfig) -> None:
     # Note: this will only work with options in the run card that contain a "!" in the line, indicating a comment at the end of the line.
     run_options = {**config["madgraph"]["run"].get("options", {})}
 
-    """
-    env = Environment()
-    parsed_content = env.parse('my text here')
-    tpl_variables = meta.find_undeclared_variables(parsed)
-    """
+    # env = Environment()
+    # parsed_content = env.parse('my text here')
+    # tpl_variables = meta.find_undeclared_variables(parsed)
 
     pattern = re.compile(
         r"^\s*(?P<value>[^\s]+)\s*=\s*(?P<key>[a-z_0-9]+)\s*\!.*$", re.DOTALL
