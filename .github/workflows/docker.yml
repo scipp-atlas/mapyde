@@ -17,61 +17,61 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  docker:
-    name: ${{ matrix.image }}
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.filter.outputs.changed }}
+      all_images: ${{ steps.set.outputs.all_images }}
+      changed_images: ${{ steps.set.outputs.changed_images }}
+      unchanged_images: ${{ steps.set.outputs.unchanged_images }}
+    steps:
+    # For pull requests it's not necessary to checkout the code
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        list-files: json
+        filters: |
+          changed: Dockerfiles/**
+    - uses: actions/checkout@v3
+    - id: set
+      run: |
+        ALL_IMAGES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]')
+        echo "::set-output name=all_images::${ALL_IMAGES}"
+        printf "Setting all_images=${ALL_IMAGES}\n"
+
+        CHANGED_IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
+        echo "::set-output name=changed_images::${CHANGED_IMAGES}"
+        printf "Setting changed_images=${CHANGED_IMAGES}\n"
+
+        UNCHANGED_IMAGES=$(jq -n -c --argjson all_images ${ALL_IMAGES} --argjson changed_images ${CHANGED_IMAGES} '$all_images-$changed_images')
+        echo "::set-output name=unchanged_images::${UNCHANGED_IMAGES}"
+        printf "Setting unchanged_images=${UNCHANGED_IMAGES}\n"
+
+  build:
+    name: Build ${{ matrix.image }}
+    needs: [changes]
+    if: ${{ needs.changes.outputs.changed == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image:
-          - delphes
-          - delphes-snowmass
-          - madgraph
-          - madgraph-2.3.3
-          - madgraph-2.4.3
-          - madgraph-2.5.5
-          - madgraph-2.6.3.2
-          - madgraph-2.6.7
-          - madgraph-2.7.3
-          - madgraph-2.9.3
-          - madgraph-2.9.9
-          - madgraph-2.9.10
-          - pyplotting
-          - pyplotting-cuda
+        image: ${{ fromJSON(needs.changes.outputs.changed_images) }}
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-
-      - name: Install MaPyDe
-        run: |
-          python -m pip install --upgrade pip setuptools wheel
-          python -m pip install --upgrade .
-
-      - name: List installed Python packages
-        run: python -m pip list
-
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            image:
-              - 'Dockerfiles/${{ matrix.image }}'
       - name: Prepare
         id: prep
         run: |
-          TAGS="${{ matrix.image }}:latest,${{ matrix.image }}:sha-${GITHUB_SHA::8}"
+          DOCKER_IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
+          TAGS="${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
           VERSION=latest
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}
           elif [[ $GITHUB_REF == refs/pull/* ]]; then
             VERSION=pr-${{ github.event.number }}
           fi
-          TAGS="$TAGS,${{ matrix.image }}:${VERSION}"
+          TAGS="$TAGS,${DOCKER_IMAGE}:${VERSION}"
           # Releases also have GITHUB_REFs that are tags, so reuse VERSION
           if [ "${{ github.event_name }}" = "release" ]; then
-            TAGS="$TAGS,${{ matrix.image }}:latest-stable,ghcr.io/${{github.repository}}:latest-stable,ghcr.io/${{github.repository}}:${VERSION}"
+            TAGS="$TAGS,${DOCKER_IMAGE}:latest-stable"
           fi
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=tags::${TAGS}
@@ -83,36 +83,62 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login to GitHub Container Registry
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test build
-        if: steps.filter.outputs.image == 'true'
+      - name: Build image
         id: docker_build_test
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: Dockerfiles/${{ matrix.image }}
+          context: Dockerfiles
           tags: ${{ steps.prep.outputs.tags }}
+          file: Dockerfiles/${{ matrix.image }}
           labels: |
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
-          load: true
-          push: false
+          outputs: type=docker,dest=image.tar
 
       - name: Image digest
-        if: steps.filter.outputs.image == 'true'
         run: echo ${{ steps.docker_build_test.outputs.digest }}
 
       - name: List built images
-        if: steps.filter.outputs.image == 'true'
         run: docker images
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.image }}
+          path: image.tar
+
+  run:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+
+      - name: Load images
+        run:  |
+          ls -lavh
+          for image in */image.tar; do
+            echo ::group::$(dirname $image)
+            docker load --input $image |
+            awk '{print $NF}' | xargs docker inspect
+            echo ::endgroup::
+          done
+          docker image ls -a
+
+      - name: Install MaPyDe
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade .
+
+      - name: List installed Python packages
+        run: python -m pip list
 
       - name: Prepare Inputs for Generation
         run: |
@@ -152,31 +178,90 @@ jobs:
           "/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root;
            rsync -rav . /data/analysis"
 
-      - name: Build and publish to registry
-        # every PR will trigger a push event on main, so check the push event is actually coming from main
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde'
-        id: docker_build_latest
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: Dockerfiles/${{ matrix.image }}
-          tags: ghcr.io/${{ github.repository }}/${{ matrix.image }}:latest
-          labels: |
-            org.opencontainers.image.source=${{ github.event.repository.html_url }}
-            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
-            org.opencontainers.image.revision=${{ github.sha }}
-          push: true
+  deploy:
+    needs: [changes, build, run]
+    name: Deploy ${{ matrix.image }}
+    if: ${{ needs.changes.outputs.changed == 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.changes.outputs.changed_images) }}
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
-      - name: Build and publish to registry with release tag
-        if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
-        id: docker_build_release
-        uses: docker/build-push-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
         with:
-          context: .
-          file: Dockerfiles/${{ matrix.image }}
-          tags: ${{ steps.prep.outputs.tags }}
-          labels: |
-            org.opencontainers.image.source=${{ github.event.repository.html_url }}
-            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
-            org.opencontainers.image.revision=${{ github.sha }}
-          push: true
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.image }}
+          path: images
+
+      - name: Load images
+        run: |
+          docker load --input images/image.tar
+
+      - name: List images
+        run: |
+          echo ::group::all_images
+          docker images -a
+          echo ::endgroup::
+          echo ::group::${{ matrix.image }}
+          docker images -f 'label=org.opencontainers.image.revision=${{ github.sha }}' --format='{{.Repository}}:{{.Tag}}'
+          echo ::endgroup::
+
+      - name: Publish to registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde'
+        run: |
+            image="ghcr.io/${{github.repository}}/${{ matrix.image }}:latest"
+            echo "Pushing ${image}"
+            docker push $image
+
+      - name: Publish to registry with release tag
+        if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
+        run: |
+            for image in $(docker images -f 'label=org.opencontainers.image.revision=${{ github.sha }}' --format='{{.Repository}}:{{.Tag}}');
+            do
+                echo "Pushing ${image}"
+                docker push $image
+            done
+
+  retag:
+    needs: [changes, build, run]
+    name: Re-tag ${{ matrix.image }}
+    if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.changes.outputs.unchanged_images) }}
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Re-tag on registry with release tag
+        uses: akhilerm/tag-push-action@v2.0.0
+        with:
+          src: ghcr.io/${{github.repository}}/${{ matrix.image }}:latest
+          dst: |
+            ghcr.io/${{github.repository}}/${{ matrix.image }}:${{ github.event.release.tag_name }}
+            ghcr.io/${{github.repository}}/${{ matrix.image }}:latest-stable
