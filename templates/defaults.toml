@@ -72,7 +72,7 @@ name = "EwkCompressed2018"
 
 [sa2json]
 image = "pyplotting:latest"
-output = "SimpleAna_patch.json"
+output = "{{simpleanalysis['name']}}_patch.json"
 
 [pyhf]
 skip = true

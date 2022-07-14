@@ -189,7 +189,7 @@ def run_sa2json(config: dict[str, T.Any]) -> tuple[bytes, bytes]:
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['sa2json']['image']}"
     command = bytes(
-        f"""python /scripts/SAtoJSON.py -i analysis/{config['analysis']['output']} -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']}""",
+        f"""python /scripts/SAtoJSON.py -i {config['simpleanalysis']['name']}.root -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']}""",
         "utf-8",
     )
 
