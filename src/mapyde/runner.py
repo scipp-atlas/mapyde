@@ -53,8 +53,9 @@ def run_delphes(config: Config) -> tuple[bytes, bytes]:
         f"""pwd && ls -lavh && ls -lavh /data && cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
 gunzip hepmc.gz && \
 /bin/ls -ltrh --color && \
-/usr/local/share/delphes/delphes/DelphesHepMC2 /cards/delphes/{config['delphes']['card']} {config['delphes']['output']} hepmc && \
-rsync -rav --exclude hepmc . /data/delphes""",
+mkdir -p {Path(config['delphes']['output']).parent} && \
+/usr/local/share/delphes/delphes/DelphesHepMC2 /cards/delphes/{config['delphes']['card']} {Path(config['delphes']['output'])} hepmc && \
+rsync -rav --exclude hepmc . /data/""",
         "utf-8",
     )
 
@@ -103,7 +104,12 @@ def run_ana(config: Config) -> tuple[bytes, bytes]:
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
-        f"""/scripts/{config['analysis']['script']} --input /data/delphes/{config['delphes']['output']} --output {config['analysis']['output']} --lumi {config['analysis']['lumi']} --XS {xsec} && rsync -rav . /data/analysis""",
+        f"""mkdir -p {Path(config['analysis']['output']).parent} && \
+/scripts/{config['analysis']['script']} --input {Path('/data').joinpath(config['delphes']['output'])} \
+                                        --output {config['analysis']['output']} \
+                                        --lumi {config['analysis']['lumi']} \
+                                        --XS {xsec} && \
+rsync -rav . /data/""",
         "utf-8",
     )
 
@@ -136,7 +142,7 @@ def run_simpleanalysis(config: Config) -> tuple[bytes, bytes]:
 
     image = "gitlab-registry.cern.ch/atlas-phys-susy-wg/simpleanalysis:master"
     command = bytes(
-        f"""simpleAnalysis -a {config['simpleanalysis']['name']} analysis/Delphes2SA.root -n""",
+        f"""simpleAnalysis -a {config['simpleanalysis']['name']} {config['analysis']['output']} -n""",
         "utf-8",
     )
 
@@ -171,7 +177,7 @@ def run_sa2json(config: Config) -> tuple[bytes, bytes]:
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['sa2json']['image']}"
     command = bytes(
-        f"""python /scripts/SAtoJSON.py -i analysis/{config['analysis']['output']} -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']}""",
+        f"""python /scripts/SAtoJSON.py -i {config['analysis']['output']} -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']}""",
         "utf-8",
     )
 
