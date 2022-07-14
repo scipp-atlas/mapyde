@@ -130,6 +130,7 @@ jobs:
             awk '{print $NF}' | xargs docker inspect
             echo ::endgroup::
           done
+          docker image ls -a
 
       - name: Install MaPyDe
         run: |
