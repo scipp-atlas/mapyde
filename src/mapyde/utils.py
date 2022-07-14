@@ -13,7 +13,7 @@ import toml
 from jinja2 import Environment, FileSystemLoader, Template
 
 from mapyde import cards, data, likelihoods, scripts, templates
-from mapyde.typing import Config
+from mapyde.typing import ImmutableConfig, MutableConfig
 
 # importlib.resources.as_file wasn't added until Python 3.9
 # c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
@@ -24,8 +24,8 @@ else:
 
 
 def merge(
-    left: dict[str, T.Any], right: dict[str, T.Any], path: T.Optional[list[str]] = None
-) -> dict[str, T.Any]:
+    left: MutableConfig, right: ImmutableConfig, path: T.Optional[list[str]] = None
+) -> ImmutableConfig:
     """
     merges right dictionary into left dictionary
     """
@@ -42,7 +42,7 @@ def merge(
     return left
 
 
-def render_string(blob: str, variables: T.Optional[Config] = None) -> str:
+def render_string(blob: str, variables: T.Optional[ImmutableConfig] = None) -> str:
     """
     Render a string using various variables set by the mapyde package.
     """
@@ -79,7 +79,7 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
     return toml.load(open(tpl.filename, encoding="utf-8"))
 
 
-def build_config(user: Config) -> T.Any:
+def build_config(user: MutableConfig) -> T.Any:
     """
     Function to build a configuration from a user-provided toml configuration on top of the base/template one.
     """
@@ -101,7 +101,7 @@ def build_config(user: Config) -> T.Any:
     return config
 
 
-def output_path(config: Config) -> Path:
+def output_path(config: ImmutableConfig) -> Path:
     """
     Return the output path from the config.
     """

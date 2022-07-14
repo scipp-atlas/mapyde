@@ -26,4 +26,5 @@ else:
     PathOrStr = T.Union[str, "os.PathLike[str]"]
     PopenBytes = subprocess.Popen
 
-Config = T.Dict[str, T.Any]
+ImmutableConfig = T.Mapping[str, T.Any]
+MutableConfig = T.Dict[str, T.Any]

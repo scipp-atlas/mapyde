@@ -9,10 +9,10 @@ from pathlib import Path
 from mapyde import utils
 from mapyde.backends import madgraph
 from mapyde.container import Container
-from mapyde.typing import Config
+from mapyde.typing import ImmutableConfig
 
 
-def run_madgraph(config: Config) -> tuple[bytes, bytes]:
+def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run madgraph.
     """
@@ -43,7 +43,7 @@ def run_madgraph(config: Config) -> tuple[bytes, bytes]:
     return stdout, stderr
 
 
-def run_delphes(config: Config) -> tuple[bytes, bytes]:
+def run_delphes(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run delphes.
     """
@@ -77,7 +77,7 @@ rsync -rav --exclude hepmc . /data/""",
     return stdout, stderr
 
 
-def run_ana(config: Config) -> tuple[bytes, bytes]:
+def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run analysis.
     """
@@ -135,7 +135,7 @@ rsync -rav . /data/""",
     return stdout, stderr
 
 
-def run_simpleanalysis(config: Config) -> tuple[bytes, bytes]:
+def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run SimpleAnalysis.
     """
@@ -169,7 +169,7 @@ def run_simpleanalysis(config: Config) -> tuple[bytes, bytes]:
     return stdout, stderr
 
 
-def run_sa2json(config: Config) -> tuple[bytes, bytes]:
+def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Convert SA ROOT file to HiFa JSON.
     """
@@ -207,7 +207,7 @@ def run_sa2json(config: Config) -> tuple[bytes, bytes]:
     return stdout, stderr
 
 
-def run_pyhf(config: Config) -> tuple[bytes, bytes]:
+def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run statistical inference via pyhf.
     """

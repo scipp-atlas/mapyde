@@ -9,17 +9,18 @@ import multiprocessing
 import re
 import shutil
 import sys
-import typing as T
 from pathlib import Path
 from string import Template
 
 import in_place
 
+from mapyde.typing import ImmutableConfig
+
 logging.basicConfig()
 log = logging.getLogger()
 
 
-def generate_mg5config(config: dict[str, T.Any]) -> None:
+def generate_mg5config(config: ImmutableConfig) -> None:
     """
     Helper for generating the madgraph configs. Replaces mg5creator.py.
     """
@@ -100,7 +101,7 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
 
     # -- now specific opts.  may want to reverse this order at some point, and do the specific before global.
     # Note: this will only work with options in the run card that contain a "!" in the line, indicating a comment at the end of the line.
-    run_options = config["madgraph"]["run"].get("options", {})
+    run_options = {**config["madgraph"]["run"].get("options", {})}
 
     pattern = re.compile(
         r"^\s*(?P<value>[^\s]+)\s*=\s*(?P<key>[a-z_0-9]+)\s*\!.*$", re.DOTALL
