@@ -1,6 +1,7 @@
 [base]
 path = "{{PWD}}"
 output = "output"
+logs = "logs"
 data_path = "{{MAPYDE_DATA}}"
 cards_path = "{{MAPYDE_CARDS}}"
 scripts_path = "{{MAPYDE_SCRIPTS}}"
