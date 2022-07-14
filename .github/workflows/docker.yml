@@ -87,8 +87,8 @@ jobs:
         id: docker_build_test
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: Dockerfiles/${{ matrix.image }}
+          context: Dockerfiles
+          file: ${{ matrix.image }}
           tags: ${{ steps.prep.outputs.tags }}
           labels: |
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
@@ -186,7 +186,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: ${{ fromJSON(needs.changes.outputs.all_images) }}
+        image: ${{ fromJSON(needs.changes.outputs.changed_images) }}
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -215,20 +215,19 @@ jobs:
 
       - name: Publish to registry
         # every PR will trigger a push event on main if the file has changed, so check the push event is actually coming from main
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde'
+        #if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde'
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: Dockerfiles/${{ matrix.image }}
-          tags: ghcr.io/${{ github.repository }}/${{ matrix.image }}:latest
-          push: true
+          context: Dockerfiles
+          file: ${{ matrix.image }}
+          #tags: ghcr.io/${{ github.repository }}/${{ matrix.image }}:latest
+          #push: true
 
       - name: Publish to registry with release tag
         if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
-        id: docker_build_release
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: Dockerfiles/${{ matrix.image }}
-          tags: ${{ steps.prep.outputs.tags }}
-          push: true
+          context: Dockerfiles
+          file: ${{ matrix.image }}
+          #tags: ${{ steps.prep.outputs.tags }}
+          #push: true
