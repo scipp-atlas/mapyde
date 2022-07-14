@@ -211,25 +211,25 @@ jobs:
           path: images
 
       - name: Load images
-        run:  |
+        run: |
           docker load --input images/image.tar
-          docker image ls -a
+          docker images -a
+          docker images -f 'label=org.opencontainers.image.revision=${{ github.sha }}' --format='{{.Repository}}:{{.Tag}}'
 
       - name: Publish to registry
-        # every PR will trigger a push event on main if the file has changed, so check the push event is actually coming from main
         #if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde'
-        uses: docker/build-push-action@v3
-        with:
-          context: Dockerfiles
-          file: Dockerfiles/${{ matrix.image }}
-          #tags: ghcr.io/${{ github.repository }}/${{ matrix.image }}:latest
-          #push: true
+        run: |
+            for image in $(docker images -f 'label=org.opencontainers.image.revision=${{ github.sha }}' --format='{{.Repository}}:{{.Tag}}');
+            do
+                echo "Pushing ${image}"
+                #docker push $image
+            done
 
       - name: Publish to registry with release tag
-        if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
-        uses: docker/build-push-action@v3
-        with:
-          context: Dockerfiles
-          file: Dockerfiles/${{ matrix.image }}
-          #tags: ${{ steps.prep.outputs.tags }}
-          #push: true
+        #if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
+        run: |
+            for image in $(docker images -f 'label=org.opencontainers.image.revision=${{ github.sha }}' --format='{{.Repository}}:{{.Tag}}');
+            do
+                echo "Pushing ${image}"
+                #docker push $image
+            done
