@@ -58,8 +58,10 @@ jobs:
           pyplotting-cuda: Dockerfiles/pyplotting-cuda
     - id: set
       run: |
-        echo "::set-output name=changes::$(printf ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[] |= split(\"/\")[1]'"
-        echo "::set-output name=files::$(printf ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[1:]'"
+        CHANGES=$(printf ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[1:]')
+        FILES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split(\"/\")[1]')
+        echo "::set-output name=changes::${CHANGES}"
+        echo "::set-output name=files::${FILES}"
 
   build:
     name: Build ${{ matrix.image }}
