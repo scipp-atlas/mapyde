@@ -33,8 +33,6 @@ jobs:
         filters: |
           changed: Dockerfiles/**
     - uses: actions/checkout@v2
-    - id: dockerfiles
-      run: |
     - id: set
       run: |
         ALL_IMAGES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]')
