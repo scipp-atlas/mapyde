@@ -17,25 +17,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # JOB to list all dockerfiles we can build
-  dockerfiles:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v2
-      - id: set-matrix
-        run: |
-          FILES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]')
-          echo "::set-output name=matrix::${FILES}"
-          printf "Setting matrix=${FILES}"
-
-  # JOB to run change detection
   changes:
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.filter.outputs.changed }}
-      images: ${{ steps.set.outputs.images }}
+      all_images: ${{ steps.set.outputs.all_images }}
+      changed_images: ${{ steps.set.outputs.changed_images }}
+      unchanged_images: ${{ steps.set.outputs.unchanged_images }}
     steps:
     # For pull requests it's not necessary to checkout the code
     - uses: dorny/paths-filter@v2
@@ -44,11 +32,22 @@ jobs:
         list-files: json
         filters: |
           changed: Dockerfiles/**
+    - uses: actions/checkout@v2
+    - id: dockerfiles
+      run: |
     - id: set
       run: |
-        IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
-        echo "::set-output name=images::${IMAGES}"
-        printf "Setting images=${IMAGES}"
+        ALL_IMAGES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]')
+        echo "::set-output name=all_files::${IMAGES}"
+        printf "Setting all_files=${IMAGES}"
+
+        CHANGED_IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
+        echo "::set-output name=changed_images::${CHANGED_IMAGES}"
+        printf "Setting changed_images=${CHANGED_IMAGES}"
+
+        UNCHANGED_IMAGES=$(jq -n -c --argjson all_images ${ALL_IMAGES} --argjson changed_images ${CHANGED_IMAGES} '$all_images-$changed_images')
+        echo "::set-output name=unchanged_images::${UNCHANGED_IMAGES}"
+        printf "Setting unchanged_images=${UNCHANGED_IMAGES}"
 
   build:
     name: Build ${{ matrix.image }}
@@ -57,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: ${{ fromJSON(needs.changes.outputs.images) }}
+        image: ${{ fromJSON(needs.changes.outputs.changed_images) }}
     steps:
       - uses: actions/checkout@v3
       - name: Prepare
@@ -184,12 +183,12 @@ jobs:
            rsync -rav . /data/analysis"
 
   deploy:
-    needs: [dockerfiles, changes, build, run]
+    needs: [changes, build, run]
     name: Deploy ${{ matrix.image }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: ${{ fromJSON(needs.dockerfiles.outputs.matrix) }}
+        image: ${{ fromJSON(needs.changes.outputs.all_images) }}
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
