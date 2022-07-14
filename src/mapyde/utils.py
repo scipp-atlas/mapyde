@@ -13,6 +13,7 @@ import toml
 from jinja2 import Environment, FileSystemLoader, Template
 
 from mapyde import cards, data, likelihoods, scripts, templates
+from mapyde.typing import Config
 
 # importlib.resources.as_file wasn't added until Python 3.9
 # c.f. https://docs.python.org/3.9/library/importlib.html#importlib.resources.as_file
@@ -41,7 +42,7 @@ def merge(
     return left
 
 
-def render_string(blob: str, variables: T.Optional[dict[str, T.Any]] = None) -> str:
+def render_string(blob: str, variables: T.Optional[Config] = None) -> str:
     """
     Render a string using various variables set by the mapyde package.
     """
@@ -78,7 +79,7 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
     return toml.load(open(tpl.filename, encoding="utf-8"))
 
 
-def build_config(user: dict[str, T.Any]) -> T.Any:
+def build_config(user: Config) -> T.Any:
     """
     Function to build a configuration from a user-provided toml configuration on top of the base/template one.
     """
@@ -98,3 +99,10 @@ def build_config(user: dict[str, T.Any]) -> T.Any:
     config = toml.loads(render_string(toml.dumps(variables), variables))
 
     return config
+
+
+def output_path(config: Config) -> Path:
+    """
+    Return the output path from the config.
+    """
+    return Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()

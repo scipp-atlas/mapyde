@@ -25,3 +25,5 @@ if T.TYPE_CHECKING:
 else:
     PathOrStr = T.Union[str, "os.PathLike[str]"]
     PopenBytes = subprocess.Popen
+
+Config = T.Dict[str, T.Any]
