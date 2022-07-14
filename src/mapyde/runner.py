@@ -92,7 +92,7 @@ def run_ana(config: Config) -> tuple[bytes, bytes]:
             for line in fpointer.readlines():
                 # TODO: can we flip this logic around to be better?
                 # refactor into a parse_xsec utility or something?
-                if config["madgraph"]["xqcut"] > 0:
+                if config["madgraph"]["run"]["options"]["xqcut"] > 0:
                     if "cross-section :" in line:
                         xsec = float(line.split()[3])  # take the last instance
                 else:
