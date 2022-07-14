@@ -56,8 +56,7 @@ jobs:
           madgraph-2.9.10: Dockerfiles/madgraph-2.9.10
           pyplotting: Dockerfiles/pyplotting
           pyplotting-cuda: Dockerfiles/pyplotting-cuda
-    - uses: actions/checkout@v2
-      id: set
+    - id: set
       run: |
         echo "::set-output name=changes::$(echo ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[] |= split("/")[1]'"
         echo "::set-output name=files::$(echo ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[1:]'"
