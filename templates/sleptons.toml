@@ -1,0 +1,86 @@
+[base]
+path = "{{PWD}}"
+output = "output"
+logs = "logs"
+data_path = "{{MAPYDE_DATA}}"
+cards_path = "{{MAPYDE_CARDS}}"
+scripts_path = "{{MAPYDE_SCRIPTS}}"
+process_path = "{{MAPYDE_CARDS}}/process/"
+param_path = "{{MAPYDE_CARDS}}/param/"
+run_path = "{{MAPYDE_CARDS}}/run/"
+pythia_path = "{{MAPYDE_CARDS}}/pythia/"
+delphes_path = "{{MAPYDE_CARDS}}/delphes/"
+madspin_path = "{{MAPYDE_CARDS}}/madspin/"
+likelihoods_path = "{{MAPYDE_LIKELIHOODS}}"
+
+[madgraph]
+skip = false
+params = "SleptonBino"
+ecms = 13000
+cores = 20
+nevents = 10000
+seed = 0
+version = "madgraph"
+batch = false
+paramcard = "{{madgraph['params']}}.slha"
+
+[madgraph.generator]
+output = "run.mg5"
+
+[madgraph.masses]
+MSLEP = 250
+MN1 = 240
+
+[madgraph.run]
+card = "default_LO.dat"
+
+[madgraph.run.options]
+mmjj = 0
+mmjjmax = -1
+deltaeta = 0
+ktdurham = -1
+xqcut = -1
+ptj = 20
+ptj1min = 100
+
+[madgraph.proc]
+name = "isrslep"
+card = "{{madgraph['proc']['name']}}"
+
+[madspin]
+skip = true
+card = ''
+
+[pythia]
+skip = false
+card = "pythia8_card.dat"
+additional_opts = ""
+
+[delphes]
+skip = false
+additional_opts = ""
+card = "delphes_card_ATLAS_lowptleptons_sleptons.tcl"
+version = "delphes"
+output = "delphes/delphes.root"
+
+[analysis]
+script = "Delphes2SA.py"
+XSoverride = -1
+kfactor = 1.3
+output = "analysis/Delphes2SA.root"
+lumi = 1000
+
+[simpleanalysis]
+skip = false
+additional_opts = ""
+name = "EwkCompressed2018"
+
+[sa2json]
+image = "pyplotting:latest"
+output = "{{simpleanalysis['name']}}_patch.json"
+
+[pyhf]
+skip = true
+likelihood = "Slepton_bkgonly.json"
+image = "pyplotting-cuda:latest"
+gpu-options = ""
