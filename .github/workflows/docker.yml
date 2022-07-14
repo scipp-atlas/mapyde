@@ -32,7 +32,7 @@ jobs:
         list-files: json
         filters: |
           changed: Dockerfiles/**
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - id: set
       run: |
         ALL_IMAGES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]')
@@ -189,6 +189,7 @@ jobs:
       matrix:
         image: ${{ fromJSON(needs.changes.outputs.changed_images) }}
     steps:
+      - uses: actions/checkout@v3
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
