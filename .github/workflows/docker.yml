@@ -28,7 +28,9 @@ jobs:
     - uses: dorny/paths-filter@v2
       id: filter
       with:
+        list-files: json
         filters: |
+          changed: Dockerfiles/**
           delphes: Dockerfiles/delphes
           delphes-snowmass: Dockerfiles/delphes-snowmass
           madgraph: Dockerfiles/madgraph
