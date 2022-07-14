@@ -86,9 +86,9 @@ def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
     if config["analysis"]["XSoverride"] > 0:
         xsec = config["analysis"]["XSoverride"]
     else:
-        with utils.output_path(config).joinpath("docker_mgpy.log").open(
-            encoding="utf-8"
-        ) as fpointer:
+        with utils.output_path(config).joinpath(
+            config["base"]["logs"], "docker_mgpy.log"
+        ).open(encoding="utf-8") as fpointer:
             for line in fpointer.readlines():
                 # TODO: can we flip this logic around to be better?
                 # refactor into a parse_xsec utility or something?
