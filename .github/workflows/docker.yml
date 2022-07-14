@@ -17,6 +17,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # JOB to list all dockerfiles we can build
+  dockerfiles:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: echo "::set-output name=matrix::$(ls Dockerfiles/* | jq -R -s -c 'split("\n")[:-1]')"
+
   # JOB to run change detection
   changes:
     runs-on: ubuntu-latest
@@ -176,12 +186,12 @@ jobs:
            rsync -rav . /data/analysis"
 
   deploy:
-    needs: [changes, build, run]
+    needs: [dockerfiles, changes, build, run]
     name: Deploy ${{ matrix.image }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: ${{ fromJSON(needs.changes.outputs.images) }}
+        image: ${{ fromJSON(needs.dockerfiles.outputs.matrix) }}
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
