@@ -23,6 +23,9 @@ version = "madgraph"
 batch = false
 paramcard = "{{madgraph['params']}}.slha"
 
+[madgraph.generator]
+output = "run.mg5"
+
 [madgraph.masses]
 MN1 = 100
 MC1 = 150

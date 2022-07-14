@@ -20,7 +20,10 @@ def run_madgraph(config: Config) -> tuple[bytes, bytes]:
     madgraph.generate_mg5config(config)
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['madgraph']['version']}"
-    command = b"mg5_aMC /data/run.mg5 && rsync -a PROC_madgraph /data/madgraph\n"
+    command = bytes(
+        f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
+        "utf-8",
+    )
 
     with Container(
         image=image,

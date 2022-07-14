@@ -140,7 +140,7 @@ def generate_mg5config(config: dict[str, T.Any]) -> None:
     shutil.copyfile(proc_card_path, new_proc_card_path)
 
     # Create the madgraph configuration card
-    mgconfig_card_path = output_path.joinpath("run.mg5")
+    mgconfig_card_path = output_path.joinpath(config["madgraph"]["generator"]["output"])
     log.info("MadGraph Config: %s", mgconfig_card_path)
 
     # Figure out the run_mode.  0=single core, 1=cluster, 2=multicore.
