@@ -62,6 +62,7 @@ jobs:
         FILES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
         echo "::set-output name=changes::${CHANGES}"
         echo "::set-output name=files::${FILES}"
+        printf "Setting changes=${CHANGES}, files=${FILES}"
 
   build:
     name: Build ${{ matrix.image }}
