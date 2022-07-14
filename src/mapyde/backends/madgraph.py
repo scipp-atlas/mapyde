@@ -10,9 +10,9 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from string import Template
 
 import in_place
+from jinja2 import StrictUndefined, Template
 
 from mapyde.typing import ImmutableConfig
 
@@ -77,7 +77,9 @@ def generate_mg5config(config: ImmutableConfig) -> None:
     log.info("Param Card: %s", new_param_card_path)
 
     new_param_card_path.write_text(
-        Template(param_card_path.read_text(encoding="utf-8")).substitute(substitution),
+        Template(
+            param_card_path.read_text(encoding="utf-8"), undefined=StrictUndefined
+        ).render(substitution),
         encoding="utf-8",
     )
 
@@ -95,13 +97,21 @@ def generate_mg5config(config: ImmutableConfig) -> None:
 
     # -- first do global opts
     new_run_card_path.write_text(
-        Template(run_card_path.read_text(encoding="utf-8")).substitute(substitution),
+        Template(
+            run_card_path.read_text(encoding="utf-8"), undefined=StrictUndefined
+        ).render(substitution),
         encoding="utf-8",
     )
 
     # -- now specific opts.  may want to reverse this order at some point, and do the specific before global.
     # Note: this will only work with options in the run card that contain a "!" in the line, indicating a comment at the end of the line.
     run_options = {**config["madgraph"]["run"].get("options", {})}
+
+    """
+    env = Environment()
+    parsed_content = env.parse('my text here')
+    tpl_variables = meta.find_undeclared_variables(parsed)
+    """
 
     pattern = re.compile(
         r"^\s*(?P<value>[^\s]+)\s*=\s*(?P<key>[a-z_0-9]+)\s*\!.*$", re.DOTALL
