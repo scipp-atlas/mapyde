@@ -264,3 +264,4 @@ jobs:
           src: ghcr.io/${{github.repository}}/${{ matrix.image }}:latest
           dst: |
             ghcr.io/${{github.repository}}/${{ matrix.image }}:${{ github.event.release.tag_name }}
+            ghcr.io/${{github.repository}}/${{ matrix.image }}:latest-stable
