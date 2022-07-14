@@ -167,6 +167,7 @@ jobs:
 
       - name: Run Madgraph
         run: >-
+          exit 0;
           docker run --rm
           -v $PWD/githubci:/data
           -v $PWD/cards:/cards
@@ -176,6 +177,7 @@ jobs:
 
       - name: Run Delphes
         run: >-
+          exit 0;
           docker run --rm
           -v $PWD/githubci:/data
           -v $PWD/cards:/cards
@@ -188,6 +190,7 @@ jobs:
 
       - name: Run Analysis
         run: >-
+          exit 0;
           docker run --rm
           -v $PWD/githubci:/data
           -v $PWD/cards:/cards
