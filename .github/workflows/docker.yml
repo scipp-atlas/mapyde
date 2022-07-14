@@ -189,7 +189,6 @@ jobs:
       matrix:
         image: ${{ fromJSON(needs.changes.outputs.changed_images) }}
     steps:
-      - uses: actions/checkout@v3
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -213,23 +212,28 @@ jobs:
       - name: Load images
         run: |
           docker load --input images/image.tar
+
+      - name: List images
+        run: |
+          echo ::group::all_images
           docker images -a
+          echo ::endgroup::
+          echo ::group::${{ matrix.image }}
           docker images -f 'label=org.opencontainers.image.revision=${{ github.sha }}' --format='{{.Repository}}:{{.Tag}}'
+          echo ::endgroup::
 
       - name: Publish to registry
-        #if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde'
         run: |
-            for image in $(docker images -f 'label=org.opencontainers.image.revision=${{ github.sha }}' --format='{{.Repository}}:{{.Tag}}');
-            do
-                echo "Pushing ${image}"
-                #docker push $image
-            done
+            image="ghcr.io/${{github.repository}}/${{ matrix.image }}:latest"
+            echo "Pushing ${image}"
+            docker push $image
 
       - name: Publish to registry with release tag
-        #if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
+        if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
         run: |
             for image in $(docker images -f 'label=org.opencontainers.image.revision=${{ github.sha }}' --format='{{.Repository}}:{{.Tag}}');
             do
                 echo "Pushing ${image}"
-                #docker push $image
+                docker push $image
             done
