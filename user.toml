@@ -1,0 +1,11 @@
+[base]
+path = "/data/users/{{USER}}/SUSY"
+output = "mytag"
+template = "{{MAPYDE_TEMPLATES}}/defaults.toml"
+
+[madgraph.proc]
+name = "charginos"
+card = "{{madgraph['proc']['name']}}"
+
+[madgraph.masses]
+MN2 = 500

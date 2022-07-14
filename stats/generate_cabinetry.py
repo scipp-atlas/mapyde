@@ -1,6 +1,8 @@
+from __future__ import annotations
+
+import copy
 import json
 import pathlib
-import copy
 
 SIGNAL_SAMPLE_PREFIX = "VBFSUSY"
 
@@ -78,7 +80,9 @@ for center_of_mass in ["13", "14", "100"]:
                 "Data": False,
             }
         )
-        for path in pathlib.Path("/data/users/mhance/SUSY").glob(f"Vjj*_{center_of_mass}*.root"):
+        for path in pathlib.Path("/data/users/mhance/SUSY").glob(
+            f"Vjj*_{center_of_mass}*.root"
+        ):
             config["Samples"].append(
                 {
                     "Name": path.name.replace(".root", "").split("/")[-1],
@@ -113,7 +117,7 @@ for center_of_mass in ["13", "14", "100"]:
         config["NormFactors"].append(
             {
                 "Name": "mu",
-                "Samples": sig_path.name.replace(".root","").split("/")[-1],
+                "Samples": sig_path.name.replace(".root", "").split("/")[-1],
                 "Nominal": 1,
                 "Bounds": [0, 5],
             }

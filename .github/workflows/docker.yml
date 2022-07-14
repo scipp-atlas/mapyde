@@ -12,6 +12,10 @@ on:
   release:
     types: [published]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   docker:
     name: ${{ matrix.image }}
@@ -34,11 +38,20 @@ jobs:
           - pyplotting
           - pyplotting-cuda
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
+
+      - name: Install MaPyDe
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade .
+
+      - name: List installed Python packages
+        run: python -m pip list
+
       - uses: dorny/paths-filter@v2
         id: filter
         with:
@@ -103,23 +116,14 @@ jobs:
 
       - name: Prepare Inputs for Generation
         run: |
-          python3 -m pip install -r requirements.txt
-          scripts/mg5creator.py -P cards/process/charginos \
-                                -r cards/run/default_LO.dat \
-                                -p cards/param/Higgsino.slha \
-                                -y pythia8_card.dat \
-                                -m MN1 150.0 \
-                                -m MN2 155.0 \
-                                -m MC1 155.0 \
-                                -E 100000 \
-                                -n 1000 \
-                                -c 1 \
-                                -t githubci
+          python3 -m pip install .
+          mapyde config parse ci/charginos.toml
+          mapyde config generate-mg5 ci/charginos.toml
 
       - name: Run Madgraph
         run: >-
           docker run --rm
-          -v $PWD/output/githubci:/data
+          -v $PWD/githubci:/data
           -v $PWD/cards:/cards
           -w /output
           ghcr.io/${{ github.repository }}/madgraph:latest
@@ -128,7 +132,7 @@ jobs:
       - name: Run Delphes
         run: >-
           docker run --rm
-          -v $PWD/output/githubci:/data
+          -v $PWD/githubci:/data
           -v $PWD/cards:/cards
           -w /output
           ghcr.io/${{ github.repository }}/delphes:latest
@@ -140,7 +144,7 @@ jobs:
       - name: Run Analysis
         run: >-
           docker run --rm
-          -v $PWD/output/githubci:/data
+          -v $PWD/githubci:/data
           -v $PWD/cards:/cards
           -v $PWD/scripts:/scripts
           -w /output

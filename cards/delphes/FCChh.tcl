@@ -12,7 +12,7 @@
 #######################################
 
 set ExecutionPath {
-  
+
   ParticlePropagator
   TrackMergerProp
 
@@ -36,7 +36,7 @@ set ExecutionPath {
   Calorimeter
   EFlowMerger
   EFlowFilter
-  
+
   PhotonEfficiency
   PhotonIsolation
 
@@ -259,7 +259,7 @@ module MomentumSmearing ChargedHadronMomentumSmearing {
   set InputArray ChargedHadronTrackingEfficiency/chargedHadrons
   set OutputArray chargedHadrons
 
-  source momentumResolutionVsP.tcl 
+  source momentumResolutionVsP.tcl
 }
 
 
@@ -271,7 +271,7 @@ module MomentumSmearing ElectronMomentumSmearing {
   set InputArray ElectronTrackingEfficiency/electrons
   set OutputArray electrons
 
-  source momentumResolutionVsP.tcl 
+  source momentumResolutionVsP.tcl
 }
 
 
@@ -285,7 +285,7 @@ module MomentumSmearing MuonMomentumSmearing {
 
   # TBC for just putting tracker resolution/ need to add improvement at high pT
 
-  source muonMomentumResolutionVsP.tcl 
+  source muonMomentumResolutionVsP.tcl
 }
 
 ##############
@@ -332,7 +332,7 @@ module SimpleCalorimeter ECal {
    set PhiBins {}
   for {set i -256} {$i <= 256} {incr i} {
     add PhiBins [expr {$i * $pi/256.0}]
-  } 
+  }
 
   # 0.01 unit in eta up to eta = 2.5 (barrel)
   for {set i -249} {$i <= 250} {incr i} {
@@ -414,7 +414,7 @@ module SimpleCalorimeter HCal {
    set PhiBins {}
   for {set i -128} {$i <= 128} {incr i} {
     add PhiBins [expr {$i * $pi/128.0}]
-  } 
+  }
 
   # 0.025 unit in eta up to eta = 2.5 (barrel)
   for {set i -99} {$i <= 100} {incr i} {
@@ -486,7 +486,7 @@ module PdgCodeFilter ElectronFilter {
 module PdgCodeFilter ChargedHadronFilter {
   set InputArray HCal/eflowTracks
   set OutputArray chargedHadrons
-  
+
   add PdgCode {11}
   add PdgCode {-11}
   add PdgCode {13}
@@ -525,7 +525,7 @@ module Merger EFlowMerger {
 module PdgCodeFilter EFlowFilter {
   set InputArray EFlowMerger/eflow
   set OutputArray eflow
-  
+
   add PdgCode {11}
   add PdgCode {-11}
   add PdgCode {13}
@@ -1049,11 +1049,11 @@ module Efficiency PhotonEfficiency {
   (abs(eta) <= 2.5) * (pt > 1.0 && pt < 5.0)  * (0.70) +
   (abs(eta) <= 2.5) * (pt > 5.0 && pt < 10.0) * (0.85) +
   (abs(eta) <= 2.5) * (pt > 10.0)             * (0.95) +
-    
-  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 1.0 && pt < 5.0)  * (0.60) + 
-  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 5.0 && pt < 10.0) * (0.80) + 
-  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 10.0)  * (0.90) +   
-  
+
+  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 1.0 && pt < 5.0)  * (0.60) +
+  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 5.0 && pt < 10.0) * (0.80) +
+  (abs(eta) > 2.5 && abs(eta) <= 4.0) * (pt > 10.0)  * (0.90) +
+
   (abs(eta) > 4.0 && abs(eta) <= 6.0) * (pt > 1.0 && pt < 5.0)  * (0.50) + \
   (abs(eta) > 4.0 && abs(eta) <= 6.0) * (pt > 5.0 && pt < 10.0) * (0.70) + \
   (abs(eta) > 4.0 && abs(eta) <= 6.0) * (pt > 10.0)             * (0.80) + \
@@ -1156,12 +1156,12 @@ module BTagging BTagging {
   add EfficiencyFormula {5} {
 
   (pt <= 10.0)                                                       * (0.00) +
-  (abs(eta) < 2.5)                    * (pt > 10.0 && pt < 500)      * (0.85) + 
-  (abs(eta) < 2.5)                    * (pt > 500.0 && pt < 15000.0) * (0.85)*(1.0 - pt/15000.) + 
-  (abs(eta) < 2.5)                    * (pt > 15000.0)               * (0.000) + 
-  (abs(eta) >= 2.5 && abs(eta) < 4.0) * (pt > 10.0 && pt < 500)      * (0.64) + 
-  (abs(eta) >= 2.5 && abs(eta) < 4.0) * (pt > 500.0 && pt < 15000.0) * (0.64)*(1.0 - pt/15000.) + 
-  (abs(eta) <= 2.5 && abs(eta) < 4.0) * (pt > 15000.0)               * (0.000) + 
+  (abs(eta) < 2.5)                    * (pt > 10.0 && pt < 500)      * (0.85) +
+  (abs(eta) < 2.5)                    * (pt > 500.0 && pt < 15000.0) * (0.85)*(1.0 - pt/15000.) +
+  (abs(eta) < 2.5)                    * (pt > 15000.0)               * (0.000) +
+  (abs(eta) >= 2.5 && abs(eta) < 4.0) * (pt > 10.0 && pt < 500)      * (0.64) +
+  (abs(eta) >= 2.5 && abs(eta) < 4.0) * (pt > 500.0 && pt < 15000.0) * (0.64)*(1.0 - pt/15000.) +
+  (abs(eta) <= 2.5 && abs(eta) < 4.0) * (pt > 15000.0)               * (0.000) +
   (abs(eta) >= 4.0) * (0.00)}
 
 }
@@ -1309,4 +1309,3 @@ module TreeWriter TreeWriter {
   add Branch MissingET/momentum MissingET MissingET
   add Branch ScalarHT/energy ScalarHT ScalarHT
 }
-

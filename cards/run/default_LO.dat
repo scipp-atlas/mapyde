@@ -28,8 +28,8 @@
 # Warning: Do not generate more than 1M events in a single run       *
 # If you want to run Pythia, avoid more than 50k events in a run.    *
 #*********************************************************************
-  ${nevents} = nevents ! Number of unweighted events requested
-  ${iseed}   = iseed   ! rnd seed (0=assigned automatically=default))
+  {{nevents}} = nevents ! Number of unweighted events requested
+  {{iseed}}   = iseed   ! rnd seed (0=assigned automatically=default))
 #*********************************************************************
 # Collider type and energy                                           *
 # lpp: 0=No PDF, 1=proton, -1=antiproton, 2=photon from proton,      *
@@ -37,8 +37,8 @@
 #*********************************************************************
      1        = lpp1    ! beam 1 type
      1        = lpp2    ! beam 2 type
-     ${ecms}  = ebeam1  ! beam 1 total energy in GeV
-     ${ecms}  = ebeam2  ! beam 2 total energy in GeV
+     {{ecms}}  = ebeam1  ! beam 1 total energy in GeV
+     {{ecms}}  = ebeam2  ! beam 2 total energy in GeV
 #*********************************************************************
 # Beam polarization from -100 (left-handed) to 100 (right-handed)    *
 #*********************************************************************
@@ -65,7 +65,7 @@
 # Type and output format
 #*********************************************************************
   False     = gridpack  !True = setting up the grid pack
-  -1.0 = time_of_flight ! threshold (in mm) below which the invariant livetime is not written (-1 means not written)
+  -1.0 = time_of_flight ! threshold (in mm) below which the invariant lifetime is not written (-1 means not written)
   3.0 = lhe_version       ! Change the way clustering information pass to shower.
   True = clusinfo         ! include clustering tag in output
   average =  event_norm       ! average/sum. Normalization of the weight in the LHEF
@@ -264,9 +264,9 @@
 # Turn on either the ktdurham or ptlund cut to activate                *
 # CKKW(L) merging with Pythia8 [arXiv:1410.3012, arXiv:1109.4829]      *
 #***********************************************************************
- -1.0  =  ktdurham    ! 
- 0.4   =  dparameter  ! 
- -1.0  =  ptlund      ! 
+ -1.0  =  ktdurham    !
+ 0.4   =  dparameter  !
+ -1.0  =  ptlund      !
  1, 2, 3, 4, 5, 6, 21  =  pdgs_for_merging_cut ! PDGs for two cuts above
 #*********************************************************************
 # maximal pdg code for quark to be considered as a light jet         *

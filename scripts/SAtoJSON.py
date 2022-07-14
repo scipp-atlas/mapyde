@@ -1,10 +1,12 @@
-import json
-import jsonpatch
-import copy
+from __future__ import annotations
+
 import argparse
-import uproot
+import copy
+import json
+
+import jsonpatch
 import pyhf
-import numpy as np
+import uproot
 
 parser = argparse.ArgumentParser(description="Process some arguments.")
 
@@ -16,80 +18,92 @@ parser.add_argument("-n", "--name", help="name of signal sample")
 parser.add_argument("-l", "--lumi", help="luminosity in pb-1")
 args = parser.parse_args()
 
-print("Using luminosity=%f" % float(args.lumi)) 
+print("Using luminosity=%f" % float(args.lumi))
 
-with open(args.background,'r') as f:
+with open(args.background) as f:
     spec = json.load(f)
     newspec = copy.deepcopy(spec)
     ws = pyhf.Workspace(spec)
 
 rootfile = uproot.open(args.input)
-tree=rootfile["ntuple"]
+tree = rootfile["ntuple"]
 branches = tree.arrays()
 
-# this function converts the name of the SR in the serialized likelihood into
-# the name of the SR in the SimpleAnalysis output
-def JSONtoSA(SRname,background):
-    SRname_split=SRname.split("_")
-    if "CR" in SRname_split[0]: return None
+
+def JSONtoSA(SRname, background):
+    """this function converts the name of the SR in the serialized likelihood into
+    the name of the SR in the SimpleAnalysis output
+    """
+
+    SRname_split = SRname.split("_")
+    if "CR" in SRname_split[0]:
+        return None
 
     if "MonoJet" in background:
-        return SRname.replace("_cuts","")
+        return SRname.replace("_cuts", "")
 
     # otherwise we're in Compressed?
-    
-    SAname="SR"
+
+    SAname = "SR"
     if "MT2" in SRname_split[1]:
-        SAname+="_S_"
+        SAname += "_S_"
         if "hghmet" in SRname_split[2]:
-            SAname+="high_"
+            SAname += "high_"
         elif "lowmet" in SRname_split[2] and "MT2" in SRname_split[1]:
-            SAname+="low_"
-        SAname+=SRname_split[1]
+            SAname += "low_"
+        SAname += SRname_split[1]
     else:
-        SAname+="_E_"
+        SAname += "_E_"
         if "Onelep1track" in SRname_split[2]:
-            SAname+="lT_"
+            SAname += "lT_"
         elif "hghmet" in SRname_split[2]:
-            SAname+="high_"
+            SAname += "high_"
         elif "lowmet" in SRname_split[2] and "low" in SRname_split[4]:
-            SAname+="med_"
+            SAname += "med_"
         elif "lowmet" in SRname_split[2] and "high" in SRname_split[4]:
-            SAname+="low_"
-        SAname+=SRname_split[1]
+            SAname += "low_"
+        SAname += SRname_split[1]
 
     return SAname
+
 
 # loop over all channels in the workspace and update them where appropriate.
 for channel in ws.channels:
 
     c_index = ws.channels.index(channel)
-    SAname=JSONtoSA(channel,args.background)
-    if SAname is None: continue
-    
-    yld=0
-    
+    SAname = JSONtoSA(channel, args.background)
+    if SAname is None:
+        continue
+
+    yld = 0
+
     # only do something if the SA output has a field for this
     # particular signal region.
     if SAname in tree.keys():
 
-        mask=(branches[SAname]>0)
-        if ("Compressed" in args.background) or ("Slepton_bkgonly" in args.background): 
+        mask = branches[SAname] > 0
+        if ("Compressed" in args.background) or ("Slepton_bkgonly" in args.background):
             # in the Compressed SA output, the SR's are not broken down
             # by flavor, while in the serialized likelihood they are.
             # use the fields in the ntuple to do the flavor breakdown here.
 
-            flavname="isee" if "ee" in channel else "ismm"
-            mask=(branches[SAname]>0)&(branches[flavname]>0)
-        
-        yld=sum(branches[SAname][mask])
+            flavname = "isee" if "ee" in channel else "ismm"
+            mask = (branches[SAname] > 0) & (branches[flavname] > 0)
 
-    yld*=float(args.lumi)
+        yld = sum(branches[SAname][mask])
+
+    yld *= float(args.lumi)
     print("%3d  %40s  %40s  %.2e" % (c_index, channel, SAname, yld))
-    
-    newspec['channels'][c_index]['samples'].append({'name': args.name, 'data': [yld], 'modifiers': [{'name': 'mu_SIG', 'type': 'normfactor', 'data': None}]})
+
+    newspec["channels"][c_index]["samples"].append(
+        {
+            "name": args.name,
+            "data": [yld],
+            "modifiers": [{"name": "mu_SIG", "type": "normfactor", "data": None}],
+        }
+    )
 
 patch = jsonpatch.make_patch(spec, newspec)
 
-with open(args.output, 'w') as f:
+with open(args.output, "w") as f:
     json.dump(patch.patch, f, sort_keys=True, indent=4)

@@ -1,0 +1,141 @@
+[build-system]
+requires = ["hatchling>=0.7", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "mapyde"
+dynamic = ["version"]
+authors = [
+    { name = "Giordon Stark", email = "kratsg@gmail.com" },
+]
+maintainers = [
+    { name = "Mike Hance", email = "mhance@ucsc.edu" },
+]
+
+description = "A great package."
+readme = "README.md"
+
+requires-python = ">=3.7"
+
+classifiers = [
+    "License :: OSI Approved :: BSD License",
+    "Topic :: Scientific/Engineering",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Development Status :: 1 - Planning",
+]
+
+dependencies = [
+    "typing_extensions >=3.7; python_version<'3.8'",
+    "typer",
+    "toml",
+    "jinja2",
+    "in_place",
+    "importlib_resources>=1.3.0; python_version<'3.9'",  # for resources in schema
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest >=6",
+]
+dev = [
+    "pytest >=6",
+    "tbump>=6.7.0"
+]
+docs = [
+    "Sphinx>=4.0",
+     "myst_parser>=0.13",
+    "sphinx-book-theme>=0.1.0",
+    "sphinx_copybutton",
+]
+
+[project.urls]
+homepage = "https://github.com/scipp-atlas/mario-mapyde"
+tracker = "https://github.com/scipp-atlas/mario-mapyde/issues"
+source = "https://github.com/scipp-atlas/mario-mapyde"
+
+[project.scripts]
+mapyde = "mapyde.cli:app"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+local_scheme = "no-local-version"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/mapyde/_version.py"
+
+[tool.hatch.build]
+exclude = [
+  "/ci",
+  "/Dockerfiles",
+  "/stats/",
+  "/test/",
+  "/noxfile.py",
+  "/.*",
+  "/*.sh",
+  "/*.toml", # note: does not remove pyproject.toml
+]
+
+[tool.hatch.build.targets.sdist]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"cards" = "share/mapyde/cards"
+"likelihoods" = "share/mapyde/likelihoods"
+"scripts" = "share/mapyde/scripts"
+"templates" = "share/mapyde/templates"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+]
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+xfail_strict = true
+filterwarnings = ["error"]
+testpaths = [
+    "tests",
+]
+
+
+[tool.mypy]
+files = "src"
+python_version = "3.7"
+warn_unused_configs = true
+strict = true
+show_error_codes = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = 'in_place'
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
+
+
+[tool.pylint]
+master.py-version = "3.7"
+master.ignore-paths= ["src/mapyde/_version.py", "src/mapyde/data"]
+reports.output-format = "colorized"
+similarities.ignore-imports = "yes"
+messages_control.disable = [
+  "design",
+  "fixme",
+  "line-too-long",
+  "wrong-import-position",
+]

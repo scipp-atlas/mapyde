@@ -1,5 +1,8 @@
-import cabinetry
+from __future__ import annotations
+
 import sys
+
+import cabinetry
 
 cabinetry_config = cabinetry.configuration.load(sys.argv[1])
 

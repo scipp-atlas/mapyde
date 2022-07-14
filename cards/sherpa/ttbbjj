@@ -2,9 +2,9 @@
 
   ERROR 0.99;
 
-  %scales, tags for scale variations                        
-  FSF:=1.; RSF:=1.; QSF:=1.;                                                                          
-  SCALES LOOSE_METS{FSF*MU_F2}{RSF*MU_R2}{QSF*MU_Q2};       
+  %scales, tags for scale variations
+  FSF:=1.; RSF:=1.; QSF:=1.;
+  SCALES LOOSE_METS{FSF*MU_F2}{RSF*MU_R2}{QSF*MU_Q2};
 
   QCUT:=30.; NJET:=0; LJET:=0;
 
@@ -26,13 +26,13 @@
 (processes){
   Process 93 93 -> 6 -6 5 -5 5 -5 93{NJET}
   CKKW sqr(QCUT/E_CMS)
-  Order (*,0); 
+  Order (*,0);
   Integration_Error 0.1;
   End process;
 
   Process 93 93 -> 6 -6 5 -5 4 -4 93{NJET}
   CKKW sqr(QCUT/E_CMS)
-  Order (*,0); 
+  Order (*,0);
   Integration_Error 0.1;
   End process;
 }(processes)
