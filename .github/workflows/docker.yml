@@ -40,8 +40,9 @@ jobs:
       id: filter
       with:
         list-files: json
+        working-directory: Dockerfiles
         filters: |
-          changed: Dockerfiles/**
+          changed: **
           delphes: Dockerfiles/delphes
           delphes-snowmass: Dockerfiles/delphes-snowmass
           madgraph: Dockerfiles/madgraph
