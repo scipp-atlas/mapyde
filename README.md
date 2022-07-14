@@ -75,6 +75,11 @@ mapyde run --help
 
 ## Configuration Details
 
+There are a lot of different configuration options one can specify. For right
+now, the user is asked to look at [defaults.toml](./templates/defaults.toml),
+run `mapyde config parse user.toml`, open a
+[discussion][github-discussions-link], or look at the source code.
+
 ### MadGraph
 
 Produces a `hepmc` file. You can:
