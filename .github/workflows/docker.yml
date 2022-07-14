@@ -32,8 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       # Expose matched filters as job 'images' output variable
-      images: ${{ steps.filter.outputs.changes.splice(1) }}
-      files: ${{ steps.filter.outputs.changed_files.map(path => path.slice(11, path.length)) }}
+      images: ${{ steps.set.outputs.changes }}
+      files: ${{ steps.set.outputs.files }}
     steps:
     # For pull requests it's not necessary to checkout the code
     - uses: dorny/paths-filter@v2
@@ -56,6 +56,11 @@ jobs:
           madgraph-2.9.10: Dockerfiles/madgraph-2.9.10
           pyplotting: Dockerfiles/pyplotting
           pyplotting-cuda: Dockerfiles/pyplotting-cuda
+    - uses: actions/checkout@v2
+      id: set
+      run: |
+        echo "::set-output name=changes::$(echo ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[] |= split("/")[1]'"
+        echo "::set-output name=files::$(echo ${{ toJSON(steps.filter.outputs.changes) }}  | jq -c '.[1:]'"
 
   build:
     name: Build ${{ matrix.image }}
@@ -69,7 +74,7 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          echo ${{ needs.changes.outputs.files }}
+          echo ${{ fromJSON(needs.changes.outputs.files) }}
           DOCKER_IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
           TAGS="${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
           VERSION=latest
