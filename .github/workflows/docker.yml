@@ -36,16 +36,16 @@ jobs:
     - id: set
       run: |
         ALL_IMAGES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]')
-        echo "::set-output name=all_files::${IMAGES}"
-        printf "Setting all_files=${IMAGES}"
+        echo "::set-output name=all_files::${ALL_IMAGES}"
+        printf "Setting all_files=${ALL_IMAGES}\n"
 
         CHANGED_IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
         echo "::set-output name=changed_images::${CHANGED_IMAGES}"
-        printf "Setting changed_images=${CHANGED_IMAGES}"
+        printf "Setting changed_images=${CHANGED_IMAGES}\n"
 
         UNCHANGED_IMAGES=$(jq -n -c --argjson all_images ${ALL_IMAGES} --argjson changed_images ${CHANGED_IMAGES} '$all_images-$changed_images')
         echo "::set-output name=unchanged_images::${UNCHANGED_IMAGES}"
-        printf "Setting unchanged_images=${UNCHANGED_IMAGES}"
+        printf "Setting unchanged_images=${UNCHANGED_IMAGES}\n"
 
   build:
     name: Build ${{ matrix.image }}
