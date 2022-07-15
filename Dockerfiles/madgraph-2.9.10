@@ -1,4 +1,10 @@
 ARG BUILDER_IMAGE=python:3.8-slim-buster
+ARG LHAPDF_VERSION=6.3.0
+ARG MG_VERSION=2.9.10
+ARG MG_VERSION_=2_9_10
+ARG MG_VERSION_x=2.9.x
+LABEL org.opencontainers.image.version=${MG_VERSION}
+LABEL org.opencontainers.image.ref.name=${MG_VERSION}
 FROM ${BUILDER_IMAGE} as builder
 
 USER root
@@ -27,7 +33,6 @@ RUN apt-get -qq -y update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install LHAPDF
-ARG LHAPDF_VERSION=6.3.0
 RUN mkdir /code && \
     cd /code && \
     wget --no-check-certificate https://lhapdf.hepforge.org/downloads/?f=LHAPDF-${LHAPDF_VERSION}.tar.gz -O LHAPDF-${LHAPDF_VERSION}.tar.gz && \
@@ -44,10 +49,6 @@ RUN mkdir /code && \
     rm -rf /code
 
 # Install MadGraph5_aMC@NLO for Python 3
-ARG MG_VERSION=2.9.10
-ARG MG_VERSION_=2_9_10
-ARG MG_VERSION_x=2.9.x
-
 RUN cd /usr/local && \
     wget --no-check-certificate https://launchpad.net/mg5amcnlo/2.0/${MG_VERSION_x}/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
     tar xzf MG5_aMC_v${MG_VERSION}.tar.gz && \
