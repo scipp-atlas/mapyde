@@ -13,6 +13,10 @@ from mapyde.typing import ImmutableConfig, PathOrStr
 
 
 def mounts(config: ImmutableConfig) -> list[tuple[PathOrStr, PathOrStr]]:
+    """
+    define mount points for all containers
+    """
+
     return [
         (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
         (str(Path(config["base"]["scripts_path"]).resolve()), "/scripts"),
