@@ -58,7 +58,7 @@ jobs:
           printf "Setting unchanged_images=${UNCHANGED_IMAGES}\n"
 
   build:
-    name: Build ${{ matrix.image || 'nothing' }}
+    name: Build ${{ matrix.image }}
     needs: [changes]
     if: ${{ needs.changes.outputs.changed == 'true' }}
     runs-on: ubuntu-latest
@@ -177,7 +177,7 @@ jobs:
   # deploy skipped if build/run skipped
   deploy:
     needs: [changes, build, run]
-    name: Deploy ${{ matrix.image || 'nothing' }}
+    name: Deploy ${{ matrix.image }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -228,7 +228,7 @@ jobs:
   # why such a complicated if statement? see https://github.com/actions/runner/issues/491#issuecomment-850884422
   release:
     needs: [changes, build, run]
-    name: Release ${{ matrix.image || 'nothing' }}
+    name: Release ${{ matrix.image }}
     if: |
       always() &&
       (needs.build.result == 'success' || needs.build.result == 'skipped') &&
