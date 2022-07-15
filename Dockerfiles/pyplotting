@@ -1,5 +1,5 @@
-LABEL org.opencontainers.image.ref.name=latest
 FROM atlasamglab/stats-base:root6.22.02-python3.8
+LABEL org.opencontainers.image.ref.name=latest
 
 USER root
 WORKDIR /home

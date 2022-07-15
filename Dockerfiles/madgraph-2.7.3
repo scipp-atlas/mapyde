@@ -3,9 +3,9 @@ ARG LHAPDF_VERSION=6.3.0
 ARG MG_VERSION=2.7.3.py3
 ARG MG_VERSION_=2_7_3_py3
 ARG MG_VERSION_x=2.7.x
+FROM ${BUILDER_IMAGE} as builder
 LABEL org.opencontainers.image.version=${MG_VERSION}
 LABEL org.opencontainers.image.ref.name=${MG_VERSION}
-FROM ${BUILDER_IMAGE} as builder
 
 USER root
 WORKDIR /usr/local

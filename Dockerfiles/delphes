@@ -1,8 +1,8 @@
 ARG BUILDER_IMAGE=delphes/ubuntu:20.04
 ARG DELPHES_VERSION=3.5.0
+FROM ${BUILDER_IMAGE} as builder
 LABEL org.opencontainers.image.version=${DELPHES_VERSION}
 LABEL org.opencontainers.image.ref.name=latest
-FROM ${BUILDER_IMAGE} as builder
 
 USER root
 WORKDIR /home
