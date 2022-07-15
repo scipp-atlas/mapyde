@@ -129,7 +129,7 @@ jobs:
           ls -lavh
           for image in */image.tar; do
             echo ::group::$(dirname $image)
-            docker load --input $image |
+            test -f "$image" && docker load --input $image |
             awk '{print $NF}' | xargs docker inspect
             echo ::endgroup::
           done
