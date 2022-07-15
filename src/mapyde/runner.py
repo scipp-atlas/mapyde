@@ -9,7 +9,18 @@ from pathlib import Path
 from mapyde import utils
 from mapyde.backends import madgraph
 from mapyde.container import Container
-from mapyde.typing import ImmutableConfig
+from mapyde.typing import ImmutableConfig, PathOrStr
+
+
+def mounts(config: ImmutableConfig) -> list[tuple[PathOrStr, PathOrStr]]:
+    return [
+        (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
+        (str(Path(config["base"]["scripts_path"]).resolve()), "/scripts"),
+        (str(Path(config["base"]["likelihoods_path"]).resolve()), "/likelihoods"),
+        (str(utils.output_path(config)), "/data"),
+    ]
+
+
 
 
 def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
@@ -28,13 +39,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__mgpy",
-        mounts=[
-            (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
-            (
-                str(utils.output_path(config)),
-                "/data",
-            ),
-        ],
+        mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
@@ -62,13 +67,7 @@ rsync -rav --exclude hepmc . /data/""",
     with Container(
         image=image,
         name=f"{config['base']['output']}__delphes",
-        mounts=[
-            (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
-            (
-                str(utils.output_path(config)),
-                "/data",
-            ),
-        ],
+        mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
@@ -116,17 +115,7 @@ rsync -rav . /data/""",
     with Container(
         image=image,
         name=f"{config['base']['output']}__hists",
-        mounts=[
-            (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
-            (
-                str(Path(config["base"]["scripts_path"]).resolve()),
-                "/scripts",
-            ),
-            (
-                str(utils.output_path(config)),
-                "/data",
-            ),
-        ],
+        mounts=mounts(config)
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
@@ -149,17 +138,7 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__simpleanalysis",
-        mounts=[
-            (str(Path(config["base"]["cards_path"]).resolve()), "/cards"),
-            (
-                str(Path(config["base"]["scripts_path"]).resolve()),
-                "/scripts",
-            ),
-            (
-                str(utils.output_path(config)),
-                "/data",
-            ),
-        ],
+        mounts=mounts(config),
         stdout=sys.stdout,
         cwd="/data",
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
@@ -184,20 +163,7 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__SA2json",
-        mounts=[
-            (
-                str(Path(config["base"]["scripts_path"]).resolve()),
-                "/scripts",
-            ),
-            (
-                str(Path(config["base"]["likelihoods_path"]).resolve()),
-                "/likelihoods",
-            ),
-            (
-                str(utils.output_path(config)),
-                "/data",
-            ),
-        ],
+        mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
         cwd="/data",
@@ -222,20 +188,7 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__muscan",
-        mounts=[
-            (
-                str(Path(config["base"]["scripts_path"]).resolve()),
-                "/scripts",
-            ),
-            (
-                str(Path(config["base"]["likelihoods_path"]).resolve()),
-                "/likelihoods",
-            ),
-            (
-                str(utils.output_path(config)),
-                "/data",
-            ),
-        ],
+        mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
         cwd="/data",
