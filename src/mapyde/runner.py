@@ -213,8 +213,15 @@ def run_sherpa(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     image = "sherpamc/sherpa:2.2.7"
     command = bytes(
-        f"""/bin/bash -c "mkdir sherpa && cd sherpa && cp -p /cards/sherpa/{config['sherpa']['proc']} . && ls -ltrh && cat {config['sherpa']['proc']} && mpirun -n {config['sherpa']['cores']} Sherpa -f {config['sherpa']['proc']} -e {config['sherpa']['nevents']} && mv sh\
-erpa.hepmc.hepmc2g sherpa.hepmc.gz && cd ../ && cp -a sherpa/ /data/" """,
+        f"""/bin/bash -c "mkdir sherpa && \
+cd sherpa && \
+cp -p /cards/sherpa/{config['sherpa']['proc']} . && \
+ls -ltrh && \
+cat {config['sherpa']['proc']} && \
+mpirun -n {config['sherpa']['cores']} Sherpa -f {config['sherpa']['proc']} -e {config['sherpa']['nevents']} && \
+mv sherpa.hepmc.hepmc2g sherpa.hepmc.gz && \
+cd ../ && \
+cp -a sherpa/ /data/" """,
         "utf-8",
     )
 
@@ -224,6 +231,31 @@ erpa.hepmc.hepmc2g sherpa.hepmc.gz && cd ../ && cp -a sherpa/ /data/" """,
         mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+    ) as container:
+        stdout, stderr = container.process.communicate(command)
+
+    return stdout, stderr
+
+
+def run_root2hdf5(config: ImmutableConfig) -> tuple[bytes, bytes]:
+    """
+    Transform ROOT file to hdf5 format
+    """
+    assert config
+
+    image = "ghcr.io/scipp-atlas/mario-mapyde/pyplotting:latest"
+    command = bytes(
+        f"""python3 /scripts/root2hdf5.py {config['root2hdf5']['input']}:{config['root2hdf5']['treename']} """,
+        "utf-8",
+    )
+
+    with Container(
+        image=image,
+        name=f"{config['base']['output']}__root2hdf5",
+        mounts=mounts(config),
+        stdout=sys.stdout,
+        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+        cwd="/data",
     ) as container:
         stdout, stderr = container.process.communicate(command)
 

@@ -89,3 +89,7 @@ skip = true
 likelihood = "Higgsino_2L_bkgonly.json"
 image = "pyplotting-cuda:latest"
 gpu-options = ""
+
+[root2hdf5]
+input = "analysis/lowlevelAna.root"
+treename = "allev/lowleveltree"

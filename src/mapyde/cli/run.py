@@ -13,6 +13,7 @@ from mapyde.runner import (
     run_delphes,
     run_madgraph,
     run_pyhf,
+    run_root2hdf5,
     run_sa2json,
     run_sherpa,
     run_simpleanalysis,
@@ -110,3 +111,12 @@ def pyhf(filename: str) -> None:
     """
     config = loadfile(filename)
     run_pyhf(config)
+
+
+@app.command()
+def root2hdf5(filename: str) -> None:
+    """
+    Transform from .root to .hdf5 format.
+    """
+    config = loadfile(filename)
+    run_root2hdf5(config)
