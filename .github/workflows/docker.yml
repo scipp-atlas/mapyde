@@ -309,12 +309,15 @@ jobs:
       - name: Check label
         id: label
         run: |
-          IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
-          VERSION=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version"}}' "${IMAGE}:latest")
-          REFNAME=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.ref.name"}}' "${IMAGE}:latest")
+          # split by delimiter ':' into two variables
+          IFS=: read -r IMAGE_NAME IMAGE_TAG <<< echo "${{ matrix.image }}"
+          echo "Parsed IMAGE_NAME=${IMAGE_NAME}, IMAGE_TAG=${IMAGE_TAG:-latest}"
+          IMAGE="ghcr.io/${{github.repository}}/${IMAGE_NAME}"
+          VERSION=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version"}}' "${IMAGE}:${IMAGE_TAG}")
+          REFNAME=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.ref.name"}}' "${IMAGE}:${IMAGE_TAG}")
 
-          [ "${VERSION}" ] && docker image tag "${IMAGE}:latest" "${IMAGE}:${VERSION}"
-          [ "${REFNAME}" ] && docker image tag "${IMAGE}:latest" "${IMAGE}:${REFNAME}"
+          [ "${VERSION}" ] && [ "${VERSION}" != "${IMAGE_TAG}" ] && docker image tag "${IMAGE}:${IMAGE_TAG}" "${IMAGE}:${VERSION}"
+          [ "${REFNAME}" ] && [ "${REFNAME}" != "${IMAGE_TAG}" ] && docker image tag "${IMAGE}:${IMAGE_TAG}" "${IMAGE}:${REFNAME}"
 
           echo ::set-output name=image::${IMAGE}
           echo ::set-output name=version::${VERSION}
@@ -324,13 +327,17 @@ jobs:
         if: |
           github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde' &&
           steps.label.outputs.version
-        run: docker image push "${IMAGE}:${{ steps.label.outputs.version }}"
+        run:
+          docker image push "${{ steps.label.outputs.image }}:${{
+          steps.label.outputs.version }}"
 
       - name: "Deploy as refname: ${{ steps.label.outputs.refname }}"
         if: |
           github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde' &&
           steps.label.outputs.refname
-        run: docker image push "${IMAGE}:${{ steps.label.outputs.refname }}"
+        run:
+          docker image push "${{ steps.label.outputs.image }}:${{
+          steps.label.outputs.refname }}"
 
   # why such a complicated if statement? see https://github.com/actions/runner/issues/491#issuecomment-850884422
   release:
