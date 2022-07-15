@@ -30,38 +30,53 @@
 #     ✓ build
 #     ✓ run
 #     X deploy
-#     ✓ release latest images as $TAG if org.opencontainers.image.version unset
-#     ✓ release latest images as latest-stable
+#     ✓ release latest images as $RELEASE if org.opencontainers.image.version unset
+#     ✓ release latest images as stable
+#
+# Dockerfile/${IMAGE_NAME}-{SUFFIX}
+# LABEL org.opencontainers.image.version=${VERSION}
+# LABEL org.opencontainers.image.ref.name=${REFNAME}
+#
+# Containers can have a suffix which will be appropriately added to all above tags accordingly if the suffix is not latest.
+# Containers labeled with image.ref.name will have an associated tag on push, but
+# Containers labeled with image.version will not have a mapyde-release associated tag, but will have a "-stable" associated tag.
 #
 # -------------------------------------------------------------------------------------
 #
 # Example of above logic for container registry tags for following containers:
 #
 #   - Dockerfiles/pyplotting
-#     1:LABEL org.opencontainers.image.ref.name=latest
+#     LABEL org.opencontainers.image.ref.name=latest
 #
 #   - Dockerfiles/delphes-snowmass
-#     3:LABEL org.opencontainers.image.version=${DELPHES_VERSION}
+#     LABEL org.opencontainers.image.version=snowmass
 #
 #   - Dockerfiles/delphes
-#     3:LABEL org.opencontainers.image.version=${DELPHES_VERSION}
-#     4:LABEL org.opencontainers.image.ref.name=latest
+#     LABEL org.opencontainers.image.version=3.5.0
+#     LABEL org.opencontainers.image.ref.name=latest
+#
+#   - Dockerfiles/pyplotting-arm
+#     LABEL org.opencontainers.image.ref.name=latest
+#
+#   - Dockerfile/pyplotting-cuda
+#     LABEL org.opencontainers.image.ref.name=latest
+#     LABEL org.opencontainers.image.version=alternate
 #
 # * on a PR:
 #   - changed images: nothing
 #   - unchanged images: nothing
 #
 # * on a push to main:
-#   - changed images: pyplotting:latest, delphes:snowmass, delphes:DELPHES_VERSION, delphes:latest
+#   - changed images: pyplotting:latest, pyplotting:latest-arm, pyplotting:latest-cuda, pyplotting:alternate-cuda, delphes:snowmass, delphes:3.5.0, delphes:latest
 #   X unchanged images
 #
 # * on a tag:
 #   X changed images
 #   X unchanged images
 #
-# * on a published release:
+# * on a published release (x.y.z):
 #   X changed images
-#   - unchanged images: pyplotting:RELEASE_VERSION, pyplotting:latest-stable, delphes:latest-stable
+#   - unchanged images: pyplotting:x.y.z, pyplotting:x.y.z-arm, pyplotting:stable, pyplotting:stable-arm, pyplotting:stable-cuda, delphes:latest-stable
 #
 # =====================================================================================
 name: Docker Images
@@ -92,9 +107,9 @@ jobs:
           for dockerfile in $(find Dockerfiles/ -type f); do
               if grep -q -E 'org\.opencontainers\.image\.(version|ref\.name)' ${dockerfile}
               then
-                if grep -q -E 'org\.opencontainers\.image\.version.*=.*(latest|latest-stable).*$' ${dockerfile}
+                if grep -q -E 'org\.opencontainers\.image\.version.*=.*(latest|latest-stable)$' ${dockerfile}
                 then
-                  echo -e " \033[0;31mX\033[0m    ${dockerfile}: ref.name=latest or ref.name=latest-stable"
+                  echo -e " \033[0;31mX\033[0m    ${dockerfile}: version=latest or version=latest-stable"
                   fail=1
                 else
                   echo -e " \033[0;32m✓\033[0m    ${dockerfile}: ok"
@@ -304,18 +319,44 @@ jobs:
         id: label
         run: |
           # split by delimiter ':' into two variables
-          IFS=: read -r IMAGE_NAME IMAGE_TAG <<< "${{ matrix.image }}"
-          echo "Parsed IMAGE_NAME=${IMAGE_NAME}, IMAGE_TAG=${IMAGE_TAG:=latest}"
+          IFS=: read -r IMAGE_NAME SUFFIX <<< "${{ matrix.image }}"
+          echo "Parsed IMAGE_NAME=${IMAGE_NAME}, SUFFIX=${SUFFIX:=latest}"
           IMAGE="ghcr.io/${{github.repository}}/${IMAGE_NAME}"
-          VERSION=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version"}}' "${IMAGE}:${IMAGE_TAG}")
-          REFNAME=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.ref.name"}}' "${IMAGE}:${IMAGE_TAG}")
+          VERSION=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version"}}' "${IMAGE}:${SUFFIX}")
+          REFNAME=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.ref.name"}}' "${IMAGE}:${SUFFIX}")
 
-          [ "${VERSION}" ] && [ "${VERSION}" != "${IMAGE_TAG}" ] && docker image tag "${IMAGE}:${IMAGE_TAG}" "${IMAGE}:${VERSION}"
-          [ "${REFNAME}" ] && [ "${REFNAME}" != "${IMAGE_TAG}" ] && docker image tag "${IMAGE}:${IMAGE_TAG}" "${IMAGE}:${REFNAME}"
+          LATEST="latest"
+          # if the suffix is not latest, we need to add it to VERSION and REFNAME (if not duplicated)
+          if [ "${SUFFIX}" != "latest" ]
+          then
+              LATEST="latest-${SUFFIX}"
+              if [ "${VERSION}" ] && [ "${VERSION}" != "${SUFFIX}" ]
+              then
+                  VERSION="${VERSION}-${SUFFIX}"
+                  echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${VERSION}"
+                  docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${VERSION}"
+              fi
+
+              if [ "${REFNAME}" ] && [ "${REFNAME}" != "${SUFFIX}" ]
+              then
+                  REFNAME="${REFNAME}-${SUFFIX}"
+                  echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${REFNAME}"
+                  docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${REFNAME}"
+              fi
+          fi
 
           echo ::set-output name=image::${IMAGE}
+          echo ::set-output name=latest::${LATEST}
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=refname::${REFNAME}
+
+      - nsme: "Deploy as latest: ${{ steps.label.outputs.latest }}"
+        if:
+          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+          github.repository == 'scipp-atlas/mario-mapyde' &&
+        run:
+          docker image push "${{ steps.label.outputs.image }}:${
+          steps.label.outputs.suffix }}"
 
       - name: "Deploy as version: ${{ steps.label.outputs.version }}"
         if: |
@@ -355,27 +396,56 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Prepare
+        id: prep
+        run: |
+          echo ::set-output name=dockerfile::$(echo "${{ matrix.image }}" | tr ':' '-')
+
       - name: Check label
         id: label
         run: |
           VERSION_UNSET='false'
-          if grep -q org.opencontainers.image.version Dockerfiles/pyplotting
+          if grep -q org.opencontainers.image.version "${{ steps.prep.outputs.dockerfile }}"
           then
               VERSION_UNSET='true'
           fi
+          echo "Setting version_unset=${VERSION_UNSET}"
           echo ::set-output name=version_unset::${VERSION_UNSET}
 
-      - name: Tag latest as latest-stable
+          # split by delimiter ':' into two variables
+          IFS=: read -r IMAGE_NAME SUFFIX <<< "${{ matrix.image }}"
+          echo "Parsed IMAGE_NAME=${IMAGE_NAME}, SUFFIX=${SUFFIX:=latest}"
+          IMAGE="ghcr.io/${{github.repository}}/${IMAGE_NAME}"
+
+          LATEST="latest"
+          STABLE="stable"
+          TAG=${{ github.event.release.tag_name }}
+          # if the suffix is not latest, we need to add it to VERSION and REFNAME (if not duplicated)
+          if [ "${SUFFIX}" != "latest" ]
+          then
+              LATEST="latest-${SUFFIX}"
+              STABLE="stable-${SUFFIX}"
+              TAG="${TAG}-${SUFFIX}"
+          fi
+
+          echo ::set-output name=image::${IMAGE}
+          echo ::set-output name=latest::${LATEST}
+          echo ::set-output name=stable::${STABLE}
+          echo ::set-output name=tag::${TAG}
+
+      - name: Tag latest as stable
         uses: akhilerm/tag-push-action@v2.0.0
         with:
-          src: ghcr.io/${{github.repository}}/${{ matrix.image }}:latest
+          src:
+            ${{ steps.label.outputs.image }}:${{ steps.label.outputs.latest }}
           dst: |
-            ghcr.io/${{github.repository}}/${{ matrix.image }}:latest-stable
+            ${{ steps.label.outputs.image }}:${{ steps.label.outputs.stable }}
 
       - name: Tag latest as ${{ github.event.release.tag_name }}
         if: ${{ steps.label.outputs.version_unset == 'true' }}
         uses: akhilerm/tag-push-action@v2.0.0
         with:
-          src: ghcr.io/${{github.repository}}/${{ matrix.image }}:latest
+          src:
+            ${{ steps.label.outputs.image }}:${{ steps.label.outputs.latest }}
           dst: |
-            ghcr.io/${{github.repository}}/${{ matrix.image }}:${{ github.event.release.tag_name }}
+            ${{ steps.label.outputs.image }}:${{ steps.label.outputs.tag }}
