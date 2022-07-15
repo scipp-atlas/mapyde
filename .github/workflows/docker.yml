@@ -94,13 +94,13 @@ jobs:
               then
                 if grep -q -E 'org\.opencontainers\.image\.version.*=.*(latest|latest-stable).*$' ${dockerfile}
                 then
-                  echo " \033[0;31mX\033[0m    ${dockerfile}: ref.name=latest or ref.name=latest-stable"
+                  echo -e " \033[0;31mX\033[0m    ${dockerfile}: ref.name=latest or ref.name=latest-stable"
                   fail=1
                 else
-                  echo " \033[0;32mX\033[0m    ${dockerfile}: ok"
+                  echo -e " \033[0;32mX\033[0m    ${dockerfile}: ok"
                 fi
               else
-                echo " \033[0;31mX\033[0m    ${dockerfile}: labels missing"
+                echo -e " \033[0;31mX\033[0m    ${dockerfile}: labels missing"
                 fail=1
               fi
           done
