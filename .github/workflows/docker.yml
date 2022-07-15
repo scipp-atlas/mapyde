@@ -20,10 +20,13 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      changed: ${{ steps.filter.outputs.changed }}
+      #changed: ${{ steps.filter.outputs.changed }}
+      changed: 'true'
       all_images: ${{ steps.set.outputs.all_images }}
-      changed_images: ${{ steps.set.outputs.changed_images }}
-      unchanged_images: ${{ steps.set.outputs.unchanged_images }}
+      #changed_images: ${{ steps.set.outputs.changed_images }}
+      #unchanged_images: ${{ steps.set.outputs.unchanged_images }}
+      changed_images: ${{ steps.set.outputs.unchanged_images }}
+      unchanged_images: ${{ steps.set.outputs.changed_images }}
     steps:
       - uses: actions/checkout@v3
       - uses: dorny/paths-filter@v2
