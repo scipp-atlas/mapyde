@@ -223,8 +223,9 @@ jobs:
             IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
             SHORT_SHA="sha-${GITHUB_SHA::8}"
             echo "Pushing ${IMAGE}:latest, ${IMAGE}:${SHORT_SHA}"
-            docker push "${IMAGE}:latest"
-            docker push "${IMAGE}:${SHORT_SHA}"
+            docker image push "${IMAGE}:latest"
+            docker image tag "${IMAGE}:latest" "${IMAGE}:${SHORT_SHA}"
+            docker image push "${IMAGE}:${SHORT_SHA}"
 
   # why such a complicated if statement? see https://github.com/actions/runner/issues/491#issuecomment-850884422
   release:
