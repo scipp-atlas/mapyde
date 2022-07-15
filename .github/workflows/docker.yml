@@ -25,27 +25,26 @@ jobs:
       changed_images: ${{ steps.set.outputs.changed_images }}
       unchanged_images: ${{ steps.set.outputs.unchanged_images }}
     steps:
-    # For pull requests it's not necessary to checkout the code
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        list-files: json
-        filters: |
-          changed: Dockerfiles/**
-    - uses: actions/checkout@v3
-    - id: set
-      run: |
-        ALL_IMAGES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]')
-        echo "::set-output name=all_images::${ALL_IMAGES}"
-        printf "Setting all_images=${ALL_IMAGES}\n"
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          list-files: json
+          filters: |
+            changed: Dockerfiles/**
+      - id: set
+        run: |
+          ALL_IMAGES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]')
+          echo "::set-output name=all_images::${ALL_IMAGES}"
+          printf "Setting all_images=${ALL_IMAGES}\n"
 
-        CHANGED_IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
-        echo "::set-output name=changed_images::${CHANGED_IMAGES}"
-        printf "Setting changed_images=${CHANGED_IMAGES}\n"
+          CHANGED_IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
+          echo "::set-output name=changed_images::${CHANGED_IMAGES}"
+          printf "Setting changed_images=${CHANGED_IMAGES}\n"
 
-        UNCHANGED_IMAGES=$(jq -n -c --argjson all_images ${ALL_IMAGES} --argjson changed_images ${CHANGED_IMAGES} '$all_images-$changed_images')
-        echo "::set-output name=unchanged_images::${UNCHANGED_IMAGES}"
-        printf "Setting unchanged_images=${UNCHANGED_IMAGES}\n"
+          UNCHANGED_IMAGES=$(jq -n -c --argjson all_images ${ALL_IMAGES} --argjson changed_images ${CHANGED_IMAGES} '$all_images-$changed_images')
+          echo "::set-output name=unchanged_images::${UNCHANGED_IMAGES}"
+          printf "Setting unchanged_images=${UNCHANGED_IMAGES}\n"
 
   build:
     name: Build ${{ matrix.image }}
