@@ -21,8 +21,6 @@ def mounts(config: ImmutableConfig) -> list[tuple[PathOrStr, PathOrStr]]:
     ]
 
 
-
-
 def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run madgraph.
@@ -115,7 +113,7 @@ rsync -rav . /data/""",
     with Container(
         image=image,
         name=f"{config['base']['output']}__hists",
-        mounts=mounts(config)
+        mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
@@ -200,8 +198,8 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
 
 def run_sherpa(config: ImmutableConfig) -> tuple[bytes, bytes]:
-    """                                                                                                                                                                                                                                                                       
-    Run sherpa.                                                                                                                                                                                                                                                               
+    """
+    Run sherpa.
     """
 
     output_path = (
@@ -226,6 +224,3 @@ erpa.hepmc.hepmc2g sherpa.hepmc.gz && cd ../ && cp -a sherpa/ /data/" """,
         stdout, stderr = container.process.communicate(command)
 
     return stdout, stderr
-
-
-

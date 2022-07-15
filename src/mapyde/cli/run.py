@@ -12,9 +12,9 @@ from mapyde.runner import (
     run_ana,
     run_delphes,
     run_madgraph,
-    run_sherpa,
     run_pyhf,
     run_sa2json,
+    run_sherpa,
     run_simpleanalysis,
 )
 from mapyde.utils import build_config, load_config
@@ -58,8 +58,8 @@ def madgraph(filename: str) -> None:
 
 @app.command()
 def sherpa(filename: str) -> None:
-    """                                                                                                                                                                                                                                                                       
-    Run Sherpa.                                                                                                                                                                                                                                                               
+    """
+    Run Sherpa.
     """
     config = loadfile(filename)
     stdout, stderr = run_sherpa(config)
