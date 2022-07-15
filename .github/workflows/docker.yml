@@ -1,11 +1,22 @@
+# the logic of the file is a bit convoluted so I'll describe what should happen
+# * on a PR:
+#     - build any changed images and then run them; do not deploy or re-tag
+# * on a push to main:
+#     - build any changed images and then run them; deploy as latest (no need
+#     to re-tag as latest)
+# * on a tag:
+#     - should not be any changed images, so no building or running or
+#     deploying; no re-tagging done
+# * on a published release:
+#     - should not be any changed images, so no building or running or
+#     deploying; only re-tag latest to latest-stable and tag with release
+#     tag_name
 name: Docker Images
 
 on:
   push:
     branches:
     - main
-    tags:
-    - v*
   pull_request:
     branches:
     - main
@@ -59,21 +70,6 @@ jobs:
       - name: Prepare
         id: prep
         run: |
-          DOCKER_IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
-          TAGS="${DOCKER_IMAGE}:latest,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
-          VERSION=latest
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/}
-          elif [[ $GITHUB_REF == refs/pull/* ]]; then
-            VERSION=pr-${{ github.event.number }}
-          fi
-          TAGS="$TAGS,${DOCKER_IMAGE}:${VERSION}"
-          # Releases also have GITHUB_REFs that are tags, so reuse VERSION
-          if [ "${{ github.event_name }}" = "release" ]; then
-            TAGS="$TAGS,${DOCKER_IMAGE}:latest-stable"
-          fi
-          echo ::set-output name=version::${VERSION}
-          echo ::set-output name=tags::${TAGS}
           echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
       - name: Set up QEMU
@@ -87,7 +83,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: Dockerfiles
-          tags: ${{ steps.prep.outputs.tags }}
+          tags: ghcr.io/${{github.repository}}/${{ matrix.image }}:latest
           file: Dockerfiles/${{ matrix.image }}
           labels: |
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
@@ -107,12 +103,9 @@ jobs:
           name: ${{ matrix.image }}
           path: image.tar
 
-  # why such a complicated if statement? see https://github.com/actions/runner/issues/491#issuecomment-850884422
+  # run is skipped if build is skipped (no changed images)
   run:
     needs: [build]
-    if: |
-      always() &&
-      (needs.build.result == 'success' || needs.build.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -181,14 +174,10 @@ jobs:
           "/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root;
            rsync -rav . /data/analysis"
 
-  # why such a complicated if statement? see https://github.com/actions/runner/issues/491#issuecomment-850884422
+  # deploy skipped if build/run skipped
   deploy:
     needs: [changes, build, run]
     name: Deploy ${{ matrix.image }}
-    if: |
-      always() &&
-      (needs.build.result == 'success' || needs.build.result == 'skipped') &&
-      ${{ needs.changes.outputs.changed == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -230,23 +219,21 @@ jobs:
       - name: Publish to registry
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde'
         run: |
-            image="ghcr.io/${{github.repository}}/${{ matrix.image }}:latest"
-            echo "Pushing ${image}"
-            docker push $image
+            IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
+            SHORT_SHA="sha-${GITHUB_SHA::8}"
+            echo "Pushing ${IMAGE}:latest, ${IMAGE}:${SHORT_SHA}"
+            docker push "${IMAGE}:latest"
+            docker push "${IMAGE}:${SHORT_SHA}"
 
-      - name: Publish to registry with release tag
-        if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
-        run: |
-            for image in $(docker images -f 'label=org.opencontainers.image.revision=${{ github.sha }}' --format='{{.Repository}}:{{.Tag}}');
-            do
-                echo "Pushing ${image}"
-                docker push $image
-            done
-
-  retag:
+  # why such a complicated if statement? see https://github.com/actions/runner/issues/491#issuecomment-850884422
+  release:
     needs: [changes, build, run]
     name: Re-tag ${{ matrix.image }}
-    if: github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
+    if: |
+      always() &&
+      (needs.build.result == 'success' || needs.build.result == 'skipped') &&
+      (needs.run.result == 'success' || needs.run.result == 'skipped') &&
+      github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
     runs-on: ubuntu-latest
     strategy:
       matrix:
