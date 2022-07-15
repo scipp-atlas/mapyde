@@ -2,7 +2,7 @@
 # happen.  Dockerfiles are expected to be labeled based on how they should be
 # released/tagged. See example below to decide how to define your dockerfile.
 # Note: one must define version and/or ref.name (enforced by 'check' job.)
-# prettier-ignore-start
+#
 # * on a PR:
 #   - changed images
 #     ✓ build
@@ -64,16 +64,15 @@
 #   - unchanged images: pyplotting:RELEASE_VERSION, pyplotting:latest-stable
 #
 # =====================================================================================
-# prettier-ignore-end
 name: Docker Images
 
 on:
   push:
     branches:
-    - main
+      - main
   pull_request:
     branches:
-    - main
+      - main
   release:
     types: [published]
 
@@ -201,7 +200,7 @@ jobs:
         uses: actions/download-artifact@v2
 
       - name: Load images
-        run:  |
+        run: |
           ls -lavh
           for image in */image.tar; do
             echo ::group::$(dirname $image)
@@ -226,6 +225,7 @@ jobs:
           mapyde config generate-mg5 ci/charginos.toml
 
       - name: Run Madgraph
+        # prettier-ignore
         run: >-
           docker run --rm
           -v $PWD/githubci:/data
@@ -235,6 +235,7 @@ jobs:
           "mg5_aMC /data/run.mg5; rsync -rav PROC_madgraph /data/madgraph"
 
       - name: Run Delphes
+        # prettier-ignore
         run: >-
           docker run --rm
           -v $PWD/githubci:/data
@@ -245,8 +246,8 @@ jobs:
            /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/delphes_card_ATLAS.tcl delphes.root hepmc;
            rsync -rav --exclude hepmc . /data/delphes'
 
-
       - name: Run Analysis
+        # prettier-ignore
         run: >-
           docker run --rm
           -v $PWD/githubci:/data
@@ -302,16 +303,16 @@ jobs:
       - name: Check label
         id: label
         run: |
-            IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
-            VERSION=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version"}}' "${IMAGE}:latest")
-            REFNAME=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.ref.name"}}' "${IMAGE}:latest")
+          IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
+          VERSION=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version"}}' "${IMAGE}:latest")
+          REFNAME=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.ref.name"}}' "${IMAGE}:latest")
 
-            [ "${VERSION}" ] && docker image tag "${IMAGE}:latest" "${IMAGE}:${VERSION}"
-            [ "${REFNAME}" ] && docker image tag "${IMAGE}:latest" "${IMAGE}:${REFNAME}"
+          [ "${VERSION}" ] && docker image tag "${IMAGE}:latest" "${IMAGE}:${VERSION}"
+          [ "${REFNAME}" ] && docker image tag "${IMAGE}:latest" "${IMAGE}:${REFNAME}"
 
-            echo ::set-output name=image::${IMAGE}
-            echo ::set-output name=version::${VERSION}
-            echo ::set-output name=refname::${REFNAME}
+          echo ::set-output name=image::${IMAGE}
+          echo ::set-output name=version::${VERSION}
+          echo ::set-output name=refname::${REFNAME}
 
       - name: "Deploy as version: ${{ steps.label.outputs.version }}"
         if: |
@@ -356,12 +357,12 @@ jobs:
       - name: Check label
         id: label
         run: |
-            VERSION_UNSET='false'
-            if grep -q org.opencontainers.image.version Dockerfiles/pyplotting
-            then
-                VERSION_UNSET='true'
-            fi
-            echo ::set-output name=version_unset::${VERSION_UNSET}
+          VERSION_UNSET='false'
+          if grep -q org.opencontainers.image.version Dockerfiles/pyplotting
+          then
+              VERSION_UNSET='true'
+          fi
+          echo ::set-output name=version_unset::${VERSION_UNSET}
 
       - name: Tag latest as latest-stable
         uses: akhilerm/tag-push-action@v2.0.0
