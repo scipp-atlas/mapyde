@@ -1,4 +1,4 @@
-# mario-mapyde v0.2.1
+# mario-mapyde v0.2.2
 
 [![Actions Status][actions-badge]][actions-link]
 [![Documentation Status][rtd-badge]][rtd-link]
