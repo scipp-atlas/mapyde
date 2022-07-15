@@ -350,7 +350,7 @@ jobs:
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=refname::${REFNAME}
 
-      - nsme: "Deploy as latest: ${{ steps.label.outputs.latest }}"
+      - name: "Deploy as latest: ${{ steps.label.outputs.latest }}"
         if:
           github.event_name == 'push' && github.ref == 'refs/heads/main' &&
           github.repository == 'scipp-atlas/mario-mapyde' &&
