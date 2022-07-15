@@ -351,18 +351,18 @@ jobs:
           echo ::set-output name=refname::${REFNAME}
 
       - name: "Deploy as latest: ${{ steps.label.outputs.latest }}"
-        if:
+        if: |
           github.event_name == 'push' && github.ref == 'refs/heads/main' &&
           github.repository == 'scipp-atlas/mario-mapyde' &&
-        run:
-          docker image push "${{ steps.label.outputs.image }}:${
+        run: |
+          docker image push "${{ steps.label.outputs.image }}:${{
           steps.label.outputs.suffix }}"
 
       - name: "Deploy as version: ${{ steps.label.outputs.version }}"
         if: |
           github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde' &&
           steps.label.outputs.version
-        run:
+        run: |
           docker image push "${{ steps.label.outputs.image }}:${{
           steps.label.outputs.version }}"
 
@@ -370,7 +370,7 @@ jobs:
         if: |
           github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde' &&
           steps.label.outputs.refname
-        run:
+        run: |
           docker image push "${{ steps.label.outputs.image }}:${{
           steps.label.outputs.refname }}"
 
@@ -436,7 +436,7 @@ jobs:
       - name: Tag latest as stable
         uses: akhilerm/tag-push-action@v2.0.0
         with:
-          src:
+          src: |
             ${{ steps.label.outputs.image }}:${{ steps.label.outputs.latest }}
           dst: |
             ${{ steps.label.outputs.image }}:${{ steps.label.outputs.stable }}
@@ -445,7 +445,7 @@ jobs:
         if: ${{ steps.label.outputs.version_unset == 'true' }}
         uses: akhilerm/tag-push-action@v2.0.0
         with:
-          src:
+          src: |
             ${{ steps.label.outputs.image }}:${{ steps.label.outputs.latest }}
           dst: |
             ${{ steps.label.outputs.image }}:${{ steps.label.outputs.tag }}
