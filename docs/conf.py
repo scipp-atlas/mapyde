@@ -11,7 +11,7 @@ from __future__ import annotations
 
 # -- Project information -----------------------------------------------------
 
-project = "mario-mapyde"
+project = "mapyde"
 copyright = "2022, Mike Hance"
 author = "Giordon Stark"
 
