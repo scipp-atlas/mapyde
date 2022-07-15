@@ -107,8 +107,12 @@ jobs:
           name: ${{ matrix.image }}
           path: image.tar
 
+  # why such a complicated if statement? see https://github.com/actions/runner/issues/491#issuecomment-850884422
   run:
     needs: [build]
+    if: |
+      always() &&
+      (needs.build.result == 'success' || needs.build.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -177,10 +181,14 @@ jobs:
           "/scripts/SimpleAna.py --input /data/delphes/delphes.root --output histograms.root;
            rsync -rav . /data/analysis"
 
+  # why such a complicated if statement? see https://github.com/actions/runner/issues/491#issuecomment-850884422
   deploy:
     needs: [changes, build, run]
     name: Deploy ${{ matrix.image }}
-    if: ${{ needs.changes.outputs.changed == 'true' }}
+    if: |
+      always() &&
+      (needs.build.result == 'success' || needs.build.result == 'skipped') &&
+      ${{ needs.changes.outputs.changed == 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
