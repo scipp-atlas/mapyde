@@ -1,5 +1,11 @@
 # mario-mapyde v0.2.2
 
+MaPyDe stands for MadGraph-Pythia-Delphes which is a utility that allows one to
+run all of the various HEP toolings or chain them together and perform a quick
+analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
+
+---
+
 [![Actions Status][actions-badge]][actions-link]
 [![Documentation Status][rtd-badge]][rtd-link]
 

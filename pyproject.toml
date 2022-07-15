@@ -13,7 +13,7 @@ maintainers = [
     { name = "Mike Hance", email = "mhance@ucsc.edu" },
 ]
 
-description = "A great package."
+description = "Generation, simulation, analysis, and statistical inference in one go."
 readme = "README.md"
 
 requires-python = ">=3.7"
