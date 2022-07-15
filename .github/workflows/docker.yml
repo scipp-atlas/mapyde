@@ -61,7 +61,7 @@
 #
 # * on a published release:
 #   X changed images
-#   - unchanged images: pyplotting:RELEASE_VERSION, pyplotting:latest-stable
+#   - unchanged images: pyplotting:RELEASE_VERSION, pyplotting:latest-stable, delphes:latest-stable
 #
 # =====================================================================================
 name: Docker Images
