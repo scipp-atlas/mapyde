@@ -53,7 +53,7 @@ card = ''
 
 [sherpa]
 proc="tt"
-nevents = 1
+nevents = 2
 cores = 1
 
 [pythia]
