@@ -311,7 +311,7 @@ jobs:
         run: |
           # split by delimiter ':' into two variables
           IFS=: read -r IMAGE_NAME IMAGE_TAG <<< "${{ matrix.image }}"
-          echo "Parsed IMAGE_NAME=${IMAGE_NAME}, IMAGE_TAG=${IMAGE_TAG:-latest}"
+          echo "Parsed IMAGE_NAME=${IMAGE_NAME}, IMAGE_TAG=${IMAGE_TAG:=latest}"
           IMAGE="ghcr.io/${{github.repository}}/${IMAGE_NAME}"
           VERSION=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version"}}' "${IMAGE}:${IMAGE_TAG}")
           REFNAME=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.ref.name"}}' "${IMAGE}:${IMAGE_TAG}")
