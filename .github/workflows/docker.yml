@@ -58,7 +58,7 @@ jobs:
           printf "Setting unchanged_images=${UNCHANGED_IMAGES}\n"
 
   build:
-    name: Build ${{ matrix.image }}
+    name: Build ${{ matrix.image || 'nothing' }}
     needs: [changes]
     if: ${{ needs.changes.outputs.changed == 'true' }}
     runs-on: ubuntu-latest
@@ -177,7 +177,7 @@ jobs:
   # deploy skipped if build/run skipped
   deploy:
     needs: [changes, build, run]
-    name: Deploy ${{ matrix.image }}
+    name: Deploy ${{ matrix.image || 'nothing' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -228,7 +228,7 @@ jobs:
   # why such a complicated if statement? see https://github.com/actions/runner/issues/491#issuecomment-850884422
   release:
     needs: [changes, build, run]
-    name: Re-tag ${{ matrix.image }}
+    name: Release ${{ matrix.image || 'nothing' }}
     if: |
       always() &&
       (needs.build.result == 'success' || needs.build.result == 'skipped') &&
@@ -252,7 +252,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Re-tag on registry with release tag
+      - name: Update registry with release tag
         uses: akhilerm/tag-push-action@v2.0.0
         with:
           src: ghcr.io/${{github.repository}}/${{ matrix.image }}:latest
