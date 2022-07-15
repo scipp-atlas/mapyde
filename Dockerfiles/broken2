@@ -1,2 +1,0 @@
-LABEL org.opencontainers.image.version=latest
-FROM hello-world
