@@ -51,6 +51,11 @@ card = "{{madgraph['proc']['name']}}"
 skip = true
 card = ''
 
+[sherpa]
+proc="tt"
+nevents = 1
+cores = 1
+
 [pythia]
 skip = false
 card = "pythia8_card.dat"

@@ -197,3 +197,35 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
         stdout, stderr = container.process.communicate(command)
 
     return stdout, stderr
+
+
+def run_sherpa(config: ImmutableConfig) -> tuple[bytes, bytes]:
+    """                                                                                                                                                                                                                                                                       
+    Run sherpa.                                                                                                                                                                                                                                                               
+    """
+
+    output_path = (
+        Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
+    )
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    image = "sherpamc/sherpa:2.2.7"
+    command = bytes(
+        f"""/bin/bash -c "mkdir sherpa && cd sherpa && cp -p /cards/sherpa/{config['sherpa']['proc']} . && ls -ltrh && cat {config['sherpa']['proc']} && mpirun -n {config['sherpa']['cores']} Sherpa -f {config['sherpa']['proc']} -e {config['sherpa']['nevents']} && mv sh\
+erpa.hepmc.hepmc2g sherpa.hepmc.gz && cd ../ && cp -a sherpa/ /data/" """,
+        "utf-8",
+    )
+
+    with Container(
+        image=image,
+        name=f"{config['base']['output']}__sherpa",
+        mounts=mounts(config),
+        stdout=sys.stdout,
+        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+    ) as container:
+        stdout, stderr = container.process.communicate(command)
+
+    return stdout, stderr
+
+
+
