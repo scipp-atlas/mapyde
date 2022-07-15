@@ -1,7 +1,7 @@
 ARG BUILDER_IMAGE=python:2.7-slim-buster
+FROM ${BUILDER_IMAGE} as builder
 ARG LHAPDF_VERSION=6.3.0
 ARG MG_VERSION=2.5.5
-FROM ${BUILDER_IMAGE} as builder
 LABEL org.opencontainers.image.version=${MG_VERSION}
 LABEL org.opencontainers.image.ref.name=${MG_VERSION}
 
