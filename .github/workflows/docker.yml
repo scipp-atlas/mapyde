@@ -31,7 +31,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      changed: 'true' #${{ steps.filter.outputs.changed }}
+      changed: ${{ steps.filter.outputs.changed }}
       all_images: ${{ steps.set.outputs.all_images }}
       changed_images: ${{ steps.set.outputs.changed_images }}
       unchanged_images: ${{ steps.set.outputs.unchanged_images }}
@@ -50,7 +50,6 @@ jobs:
           printf "Setting all_images=${ALL_IMAGES}\n"
 
           CHANGED_IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
-          CHANGED_IMAGES='["delphes"]'
           echo "::set-output name=changed_images::${CHANGED_IMAGES}"
           printf "Setting changed_images=${CHANGED_IMAGES}\n"
 
