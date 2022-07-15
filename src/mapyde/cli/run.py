@@ -14,6 +14,7 @@ from mapyde.runner import (
     run_madgraph,
     run_pyhf,
     run_sa2json,
+    run_sherpa,
     run_simpleanalysis,
 )
 from mapyde.utils import build_config, load_config
@@ -51,6 +52,17 @@ def madgraph(filename: str) -> None:
     """
     config = loadfile(filename)
     stdout, stderr = run_madgraph(config)
+    typer.echo(stdout)
+    typer.secho(stderr, fg=typer.colors.RED)
+
+
+@app.command()
+def sherpa(filename: str) -> None:
+    """
+    Run Sherpa.
+    """
+    config = loadfile(filename)
+    stdout, stderr = run_sherpa(config)
     typer.echo(stdout)
     typer.secho(stderr, fg=typer.colors.RED)
 

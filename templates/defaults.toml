@@ -56,6 +56,11 @@ skip = false
 card = "pythia8_card.dat"
 additional_opts = ""
 
+[sherpa]
+proc="tt"
+nevents = 1
+cores = 1
+
 [delphes]
 skip = false
 additional_opts = ""
