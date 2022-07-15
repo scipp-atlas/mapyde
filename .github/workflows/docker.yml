@@ -97,7 +97,7 @@ jobs:
                   echo -e " \033[0;31mX\033[0m    ${dockerfile}: ref.name=latest or ref.name=latest-stable"
                   fail=1
                 else
-                  echo -e " \033[0;32mX\033[0m    ${dockerfile}: ok"
+                  echo -e " \033[0;32m✓\033[0m    ${dockerfile}: ok"
                 fi
               else
                 echo -e " \033[0;31mX\033[0m    ${dockerfile}: labels missing"
