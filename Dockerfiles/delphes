@@ -1,12 +1,14 @@
 ARG BUILDER_IMAGE=delphes/ubuntu:20.04
 FROM ${BUILDER_IMAGE} as builder
+ARG DELPHES_VERSION=3.5.0
+LABEL org.opencontainers.image.version=${DELPHES_VERSION}
+LABEL org.opencontainers.image.ref.name=latest
 
 USER root
 WORKDIR /home
 
 SHELL [ "/bin/bash", "-c" ]
 
-ARG DELPHES_VERSION=3.5.0
 RUN mkdir -p /usr/local/share/delphes && \
     cd /usr/local/share/delphes && \
     wget http://cp3.irmp.ucl.ac.be/downloads/Delphes-${DELPHES_VERSION}.tar.gz && \

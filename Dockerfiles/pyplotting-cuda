@@ -1,4 +1,5 @@
 FROM nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04 as base
+LABEL org.opencontainers.image.ref.name=latest
 
 
 FROM base as builder

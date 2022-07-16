@@ -1,25 +1,94 @@
-# the logic of the file is a bit convoluted so I'll describe what should happen
+# The logic of the file is a bit convoluted so I'll describe what should
+# happen.  Dockerfiles are expected to be labeled based on how they should be
+# released/tagged. See example below to decide how to define your dockerfile.
+# Note: one must define version and/or ref.name (enforced by 'check' job.)
+#
 # * on a PR:
-#     - build any changed images and then run them; do not deploy or re-tag
+#   - changed images
+#     ✓ build
+#     ✓ run
+#     X deploy
+#     X release (re-tag)
+#   X unchanged images
+#
 # * on a push to main:
-#     - build any changed images and then run them; deploy as latest (no need
-#     to re-tag as latest)
+#   - changed images
+#     ✓ build
+#     ✓ run
+#     ✓ deploy image to org.opencontainers.image.version if set (e.g., version "x.y.z")
+#     ✓ deploy image to org.opencontainers.image.ref.name if set (e.g., "latest")
+#     X release (re-tag)
+#   X unchanged images
+#
 # * on a tag:
-#     - should not be any changed images, so no building or running or
-#     deploying; no re-tagging done
+#   X changed images
+#   X unchanged images
+#
 # * on a published release:
-#     - should not be any changed images, so no building or running or
-#     deploying; only re-tag latest to latest-stable and tag with release
-#     tag_name
+#   X changed images
+#   - unchanged images
+#     ✓ build
+#     ✓ run
+#     X deploy
+#     ✓ release latest images as $RELEASE if org.opencontainers.image.version unset
+#     ✓ release latest images as stable
+#
+# Dockerfile/${IMAGE_NAME}-{SUFFIX}
+# LABEL org.opencontainers.image.version=${VERSION}
+# LABEL org.opencontainers.image.ref.name=${REFNAME}
+#
+# Containers can have a suffix which will be appropriately added to all above tags accordingly if the suffix is not latest.
+# Containers labeled with image.ref.name will have an associated tag on push, but
+# Containers labeled with image.version will not have a mapyde-release associated tag, but will have a "-stable" associated tag.
+#
+# -------------------------------------------------------------------------------------
+#
+# Example of above logic for container registry tags for following containers:
+#
+#   - Dockerfiles/pyplotting
+#     LABEL org.opencontainers.image.ref.name=latest
+#
+#   - Dockerfiles/delphes-snowmass
+#     LABEL org.opencontainers.image.version=snowmass
+#     LABEL org.opencontainers.image.ref.name=snowmass
+#
+#   - Dockerfiles/delphes
+#     LABEL org.opencontainers.image.version=3.5.0
+#     LABEL org.opencontainers.image.ref.name=latest
+#
+#   - Dockerfiles/pyplotting-arm
+#     LABEL org.opencontainers.image.ref.name=latest
+#
+#   - Dockerfile/pyplotting-cuda
+#     LABEL org.opencontainers.image.ref.name=latest
+#     LABEL org.opencontainers.image.version=alternate
+#
+# * on a PR:
+#   - changed images: nothing
+#   - unchanged images: nothing
+#
+# * on a push to main:
+#   - changed images: pyplotting:latest, pyplotting:latest-arm, pyplotting:latest-cuda, pyplotting:alternate-cuda, delphes:snowmass, delphes:3.5.0, delphes:latest, delphes:latest-snowmass
+#   X unchanged images
+#
+# * on a tag:
+#   X changed images
+#   X unchanged images
+#
+# * on a published release (x.y.z):
+#   X changed images
+#   - unchanged images: pyplotting:x.y.z, pyplotting:x.y.z-arm, pyplotting:stable, pyplotting:stable-arm, pyplotting:stable-cuda, delphes:latest-stable
+#
+# =====================================================================================
 name: Docker Images
 
 on:
   push:
     branches:
-    - main
+      - main
   pull_request:
     branches:
-    - main
+      - main
   release:
     types: [published]
 
@@ -28,7 +97,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check:
+    name: Check Dockerfiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Verify labels
+        run: |
+          fail=0
+          for dockerfile in $(find Dockerfiles/ -type f); do
+              if grep -q -E 'org\.opencontainers\.image\.(version|ref\.name)' ${dockerfile}
+              then
+                if grep -q -E 'org\.opencontainers\.image\.version.*=.*(latest|latest-stable)$' ${dockerfile}
+                then
+                  echo -e " \033[0;31mX\033[0m    ${dockerfile}: version=latest or version=latest-stable"
+                  fail=1
+                else
+                  echo -e " \033[0;32m✓\033[0m    ${dockerfile}: ok"
+                fi
+              else
+                echo -e " \033[0;31mX\033[0m    ${dockerfile}: labels missing"
+                fail=1
+              fi
+          done
+          if [[ $fail == 1 ]]; then
+              exit 1
+          fi
+
   changes:
+    needs: [check]
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.filter.outputs.changed }}
@@ -45,11 +142,12 @@ jobs:
             changed: Dockerfiles/**
       - id: set
         run: |
-          ALL_IMAGES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]')
+          ALL_IMAGES=$(find Dockerfiles/ -type f | xargs -n1 basename | jq -R -s -c 'split("\n")[:-1]' | tr '-' ':')
           echo "::set-output name=all_images::${ALL_IMAGES}"
           printf "Setting all_images=${ALL_IMAGES}\n"
 
-          CHANGED_IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]')
+          CHANGED_IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]' | tr '-' ':')
+          CHANGED_IMAGES='["delphes","delphes:snowmass","madgraph","madgraph:2.3.3","madgraph:2.4.3","madgraph:2.5.5","madgraph:2.6.7","madgraph:2.7.3","madgraph:2.9.10","madgraph:2.9.3","madgraph:2.9.9","pyplotting","pyplotting:cuda"]'
           echo "::set-output name=changed_images::${CHANGED_IMAGES}"
           printf "Setting changed_images=${CHANGED_IMAGES}\n"
 
@@ -71,6 +169,7 @@ jobs:
         id: prep
         run: |
           echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          echo ::set-output name=dockerfile::$(echo "${{ matrix.image }}" | tr ':' '-')
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -83,8 +182,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: Dockerfiles
-          tags: ghcr.io/${{github.repository}}/${{ matrix.image }}:latest
-          file: Dockerfiles/${{ matrix.image }}
+          tags: ghcr.io/${{github.repository}}/${{ matrix.image }}
+          file: Dockerfiles/${{ steps.prep.outputs.dockerfile }}
           labels: |
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
@@ -100,7 +199,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.image }}
+          name: ${{ steps.prep.outputs.dockerfile }}
           path: image.tar
 
   # run is skipped if build is skipped (no changed images)
@@ -118,7 +217,7 @@ jobs:
         uses: actions/download-artifact@v2
 
       - name: Load images
-        run:  |
+        run: |
           ls -lavh
           for image in */image.tar; do
             echo ::group::$(dirname $image)
@@ -143,6 +242,7 @@ jobs:
           mapyde config generate-mg5 ci/charginos.toml
 
       - name: Run Madgraph
+        # prettier-ignore
         run: >-
           docker run --rm
           -v $PWD/githubci:/data
@@ -152,6 +252,7 @@ jobs:
           "mg5_aMC /data/run.mg5; rsync -rav PROC_madgraph /data/madgraph"
 
       - name: Run Delphes
+        # prettier-ignore
         run: >-
           docker run --rm
           -v $PWD/githubci:/data
@@ -162,8 +263,8 @@ jobs:
            /usr/local/share/delphes/delphes/DelphesHepMC /cards/delphes/delphes_card_ATLAS.tcl delphes.root hepmc;
            rsync -rav --exclude hepmc . /data/delphes'
 
-
       - name: Run Analysis
+        # prettier-ignore
         run: >-
           docker run --rm
           -v $PWD/githubci:/data
@@ -183,11 +284,10 @@ jobs:
       matrix:
         image: ${{ fromJSON(needs.changes.outputs.changed_images) }}
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Prepare
+        id: prep
+        run: |
+          echo ::set-output name=dockerfile::$(echo "${{ matrix.image }}" | tr ':' '-')
 
       - name: Login to GitHub Container Registry
         if: github.event_name != 'pull_request'
@@ -200,7 +300,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ matrix.image }}
+          name: ${{ steps.prep.outputs.dockerfile }}
           path: images
 
       - name: Load images
@@ -216,15 +316,88 @@ jobs:
           docker images -f 'label=org.opencontainers.image.revision=${{ github.sha }}' --format='{{.Repository}}:{{.Tag}}'
           echo ::endgroup::
 
-      - name: Publish to registry
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde'
+      - name: Check label
+        id: label
         run: |
-            IMAGE="ghcr.io/${{github.repository}}/${{ matrix.image }}"
-            SHORT_SHA="sha-${GITHUB_SHA::8}"
-            echo "Pushing ${IMAGE}:latest, ${IMAGE}:${SHORT_SHA}"
-            docker image push "${IMAGE}:latest"
-            docker image tag "${IMAGE}:latest" "${IMAGE}:${SHORT_SHA}"
-            docker image push "${IMAGE}:${SHORT_SHA}"
+          # split by delimiter ':' into two variables
+          IFS=: read -r IMAGE_NAME SUFFIX <<< "${{ matrix.image }}"
+          echo "Parsed IMAGE_NAME=${IMAGE_NAME}, SUFFIX=${SUFFIX:=latest}"
+          IMAGE="ghcr.io/${{github.repository}}/${IMAGE_NAME}"
+          VERSION=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version"}}' "${IMAGE}:${SUFFIX}")
+          REFNAME=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.ref.name"}}' "${IMAGE}:${SUFFIX}")
+
+          LATEST="latest"
+          # if the suffix is not latest, we need to add it to VERSION and REFNAME (if not duplicated)
+          if [ "${SUFFIX}" != "latest" ]
+          then
+              LATEST="latest-${SUFFIX}"
+              if [ "${VERSION}" ] && [ "${VERSION}" != "${SUFFIX}" ]
+              then
+                  VERSION="${VERSION}-${SUFFIX}"
+              fi
+
+              if [ "${REFNAME}" ] && [ "${REFNAME}" != "${SUFFIX}" ]
+              then
+                  REFNAME="${REFNAME}-${SUFFIX}"
+              fi
+          fi
+
+          if [ "${REFNAME}" == "${VERSION}" ]
+          then
+              echo "REFNAME and VERSION are the same. Setting VERSION=''"
+              VERSION=''
+          fi
+          if [ "${LATEST}" == "${REFNAME}" ]
+          then
+              echo "LATEST and REFNAME are the same. Setting REFNAME=''"
+              REFNAME=''
+          fi
+          if [ "${LATEST}" == "${VERSION}" ]
+          then
+              echo "LATEST and VERSION are the same. Setting VERSION=''"
+              VERSION=''
+          fi
+
+          [ "${VERSION}" ] && [ "${SUFFIX}" != "${VERSION}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${VERSION}"
+          [ "${VERSION}" ] && [ "${SUFFIX}" != "${VERSION}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${VERSION}"
+          [ "${REFNAME}" ] && [ "${SUFFIX}" != "${REFNAME}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${REFNAME}"
+          [ "${REFNAME}" ] && [ "${SUFFIX}" != "${REFNAME}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${REFNAME}"
+          [ "${SUFFIX}" != "${LATEST}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${LATEST}"
+          [ "${SUFFIX}" != "${LATEST}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${LATEST}"
+
+          echo "Setting image=${IMAGE}"
+          echo "Setting latest=${LATEST}"
+          echo "Setting version=${VERSION}"
+          echo "Setting refname=${REFNAME}"
+
+          echo ::set-output name=image::${IMAGE}
+          echo ::set-output name=latest::${LATEST}
+          echo ::set-output name=version::${VERSION}
+          echo ::set-output name=refname::${REFNAME}
+
+      - name: "Deploy as latest: ${{ steps.label.outputs.latest }}"
+        if: |
+          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+          github.repository == 'scipp-atlas/mario-mapyde'
+        run: |
+          docker image push "${{ steps.label.outputs.image }}:${{
+          steps.label.outputs.latest }}"
+
+      - name: "Deploy as version: ${{ steps.label.outputs.version }}"
+        if: |
+          github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde' &&
+          steps.label.outputs.version
+        run: |
+          docker image push "${{ steps.label.outputs.image }}:${{
+          steps.label.outputs.version }}"
+
+      - name: "Deploy as refname: ${{ steps.label.outputs.refname }}"
+        if: |
+          github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde' &&
+          steps.label.outputs.refname
+        run: |
+          docker image push "${{ steps.label.outputs.image }}:${{
+          steps.label.outputs.refname }}"
 
   # why such a complicated if statement? see https://github.com/actions/runner/issues/491#issuecomment-850884422
   release:
@@ -240,12 +413,7 @@ jobs:
       matrix:
         image: ${{ fromJSON(needs.changes.outputs.unchanged_images) }}
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
+      - uses: actions/checkout@v3
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -253,10 +421,61 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update registry with release tag
+      - name: Prepare
+        id: prep
+        run: |
+          echo ::set-output name=dockerfile::$(echo "${{ matrix.image }}" | tr ':' '-')
+
+      - name: Check label
+        id: label
+        run: |
+          VERSION_UNSET='false'
+          if grep -q org.opencontainers.image.version "${{ steps.prep.outputs.dockerfile }}"
+          then
+              VERSION_UNSET='true'
+          fi
+          echo "Setting version_unset=${VERSION_UNSET}"
+          echo ::set-output name=version_unset::${VERSION_UNSET}
+
+          # split by delimiter ':' into two variables
+          IFS=: read -r IMAGE_NAME SUFFIX <<< "${{ matrix.image }}"
+          echo "Parsed IMAGE_NAME=${IMAGE_NAME}, SUFFIX=${SUFFIX:=latest}"
+          IMAGE="ghcr.io/${{github.repository}}/${IMAGE_NAME}"
+
+          LATEST="latest"
+          STABLE="stable"
+          TAG=${{ github.event.release.tag_name }}
+          # if the suffix is not latest, we need to add it to VERSION and REFNAME (if not duplicated)
+          if [ "${SUFFIX}" != "latest" ]
+          then
+              LATEST="latest-${SUFFIX}"
+              STABLE="stable-${SUFFIX}"
+              TAG="${TAG}-${SUFFIX}"
+          fi
+
+          echo "Setting image=${IMAGE}"
+          echo "Setting latest=${LATEST}"
+          echo "Setting stable=${STABLE}"
+          echo "Setting tag=${TAG}"
+
+          echo ::set-output name=image::${IMAGE}
+          echo ::set-output name=latest::${LATEST}
+          echo ::set-output name=stable::${STABLE}
+          echo ::set-output name=tag::${TAG}
+
+      - name: Tag latest as stable
         uses: akhilerm/tag-push-action@v2.0.0
         with:
-          src: ghcr.io/${{github.repository}}/${{ matrix.image }}:latest
+          src: |
+            ${{ steps.label.outputs.image }}:${{ steps.label.outputs.latest }}
           dst: |
-            ghcr.io/${{github.repository}}/${{ matrix.image }}:${{ github.event.release.tag_name }}
-            ghcr.io/${{github.repository}}/${{ matrix.image }}:latest-stable
+            ${{ steps.label.outputs.image }}:${{ steps.label.outputs.stable }}
+
+      - name: Tag latest as ${{ github.event.release.tag_name }}
+        if: ${{ steps.label.outputs.version_unset == 'true' }}
+        uses: akhilerm/tag-push-action@v2.0.0
+        with:
+          src: |
+            ${{ steps.label.outputs.image }}:${{ steps.label.outputs.latest }}
+          dst: |
+            ${{ steps.label.outputs.image }}:${{ steps.label.outputs.tag }}
