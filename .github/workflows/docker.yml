@@ -333,17 +333,39 @@ jobs:
               if [ "${VERSION}" ] && [ "${VERSION}" != "${SUFFIX}" ]
               then
                   VERSION="${VERSION}-${SUFFIX}"
-                  echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${VERSION}"
-                  docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${VERSION}"
               fi
 
               if [ "${REFNAME}" ] && [ "${REFNAME}" != "${SUFFIX}" ]
               then
                   REFNAME="${REFNAME}-${SUFFIX}"
-                  echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${REFNAME}"
-                  docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${REFNAME}"
               fi
           fi
+
+          if [ "${REFNAME}" == "${VERSION}" ]
+          then
+              echo "REFNAME and VERSION are the same. Setting VERSION=''"
+              VERSION=''
+          fi
+          if [ "${LATEST}" == "${REFNAME}" ]
+          then
+              echo "LATEST and REFNAME are the same. Setting REFNAME=''"
+              REFNAME=''
+          fi
+          if [ "${LATEST}" == "${VERSION}" ]
+          then
+              echo "LATEST and VERSION are the same. Setting VERSION=''"
+              VERSION=''
+          fi
+
+          [ "${VERSION}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${VERSION}"
+          [ "${VERSION}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${VERSION}"
+          [ "${REFNAME}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${REFNAME}"
+          [ "${REFNAME}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${REFNAME}"
+
+          echo "Setting image=${IMAGE}"
+          echo "Setting latest=${LATEST}"
+          echo "Setting version=${VERSION}"
+          echo "Setting refname=${REFNAME}"
 
           echo ::set-output name=image::${IMAGE}
           echo ::set-output name=latest::${LATEST}
@@ -427,6 +449,11 @@ jobs:
               STABLE="stable-${SUFFIX}"
               TAG="${TAG}-${SUFFIX}"
           fi
+
+          echo "Setting image=${IMAGE}"
+          echo "Setting latest=${LATEST}"
+          echo "Setting stable=${STABLE}"
+          echo "Setting tag=${TAG}"
 
           echo ::set-output name=image::${IMAGE}
           echo ::set-output name=latest::${LATEST}
