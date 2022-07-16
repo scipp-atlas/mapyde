@@ -50,6 +50,7 @@
 #
 #   - Dockerfiles/delphes-snowmass
 #     LABEL org.opencontainers.image.version=snowmass
+#     LABEL org.opencontainers.image.ref.name=snowmass
 #
 #   - Dockerfiles/delphes
 #     LABEL org.opencontainers.image.version=3.5.0
@@ -67,7 +68,7 @@
 #   - unchanged images: nothing
 #
 # * on a push to main:
-#   - changed images: pyplotting:latest, pyplotting:latest-arm, pyplotting:latest-cuda, pyplotting:alternate-cuda, delphes:snowmass, delphes:3.5.0, delphes:latest
+#   - changed images: pyplotting:latest, pyplotting:latest-arm, pyplotting:latest-cuda, pyplotting:alternate-cuda, delphes:snowmass, delphes:3.5.0, delphes:latest, delphes:latest-snowmass
 #   X unchanged images
 #
 # * on a tag:
@@ -357,10 +358,10 @@ jobs:
               VERSION=''
           fi
 
-          [ "${VERSION}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${VERSION}"
-          [ "${VERSION}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${VERSION}"
-          [ "${REFNAME}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${REFNAME}"
-          [ "${REFNAME}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${REFNAME}"
+          [ "${VERSION}" ] && [ "${SUFFIX}" != "${VERSION}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${VERSION}"
+          [ "${VERSION}" ] && [ "${SUFFIX}" != "${VERSION}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${VERSION}"
+          [ "${REFNAME}" ] && [ "${SUFFIX}" != "${REFNAME}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${REFNAME}"
+          [ "${REFNAME}" ] && [ "${SUFFIX}" != "${REFNAME}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${REFNAME}"
           [ "${SUFFIX}" != "${LATEST}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${LATEST}"
           [ "${SUFFIX}" != "${LATEST}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${LATEST}"
 
