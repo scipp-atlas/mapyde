@@ -361,6 +361,8 @@ jobs:
           [ "${VERSION}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${VERSION}"
           [ "${REFNAME}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${REFNAME}"
           [ "${REFNAME}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${REFNAME}"
+          [ "${SUFFIX}" != "${LATEST}" ] && docker image tag "${IMAGE}:${SUFFIX}" "${IMAGE}:${LATEST}"
+          [ "${SUFFIX}" != "${LATEST}" ] && echo "Tagging ${IMAGE}:${SUFFIX} as ${IMAGE}:${LATEST}"
 
           echo "Setting image=${IMAGE}"
           echo "Setting latest=${LATEST}"
