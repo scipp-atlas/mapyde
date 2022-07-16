@@ -147,7 +147,6 @@ jobs:
           printf "Setting all_images=${ALL_IMAGES}\n"
 
           CHANGED_IMAGES=$(printf ${{ toJSON(steps.filter.outputs.changed_files) }}  | jq -c '.[] |= split("/")[1]' | tr '-' ':')
-          CHANGED_IMAGES='["delphes","delphes:snowmass","madgraph","madgraph:2.3.3","madgraph:2.4.3","madgraph:2.5.5","madgraph:2.6.7","madgraph:2.7.3","madgraph:2.9.10","madgraph:2.9.3","madgraph:2.9.9","pyplotting","pyplotting:cuda"]'
           echo "::set-output name=changed_images::${CHANGED_IMAGES}"
           printf "Setting changed_images=${CHANGED_IMAGES}\n"
 
