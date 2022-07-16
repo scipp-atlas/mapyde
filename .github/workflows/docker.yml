@@ -429,7 +429,7 @@ jobs:
         id: label
         run: |
           VERSION_UNSET='false'
-          if grep -q org.opencontainers.image.version "${{ steps.prep.outputs.dockerfile }}"
+          if grep -q -E 'org\.opencontainers\.image\.version' Dockerfiles/"${{ steps.prep.outputs.dockerfile }}"
           then
               VERSION_UNSET='true'
           fi
