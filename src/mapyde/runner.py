@@ -29,7 +29,46 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     Run madgraph.
     """
-    # ./test/wrapper_mgpy.py config_file
+
+    # in some cases we'll need to run MG once to get a XS, e.g. without decays, and then run again with the "real" proc card.
+    if (
+        "run_without_decays" in config["madgraph"]
+        and config["madgraph"]["run_without_decays"]
+    ):
+
+        # modify config to run without decays and store in a separate area
+        origcard = config["madgraph"]["proc"]["card"]
+        origout = config["base"]["output"]
+        origpythia = config["pythia"]["skip"]
+
+        config["madgraph"]["proc"]["card"] = (
+            config["madgraph"]["proc"]["card"] + "nodecays"
+        )
+        config["base"]["output"] = config["base"]["output"] + "nodecays"
+        config["pythia"]["skip"] = True
+
+        madgraph.generate_mg5config(config)
+
+        image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['madgraph']['version']}"
+        command = bytes(
+            f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
+            "utf-8",
+        )
+
+        with Container(
+            image=image,
+            name=f"{config['base']['output']}__mgpy",
+            mounts=mounts(config),
+            stdout=sys.stdout,
+            output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+        ) as container:
+            stdout, stderr = container.process.communicate(command)
+
+        # change config options back
+        config["madgraph"]["proc"]["card"] = origcard
+        config["base"]["output"] = origout
+        config["pythia"]["skip"] = origpythia
+
     madgraph.generate_mg5config(config)
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['madgraph']['version']}"
@@ -87,18 +126,51 @@ def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
     if config["analysis"]["XSoverride"] > 0:
         xsec = config["analysis"]["XSoverride"]
     else:
-        with utils.output_path(config).joinpath(
-            config["base"]["logs"], "docker_mgpy.log"
-        ).open(encoding="utf-8") as fpointer:
-            for line in fpointer.readlines():
-                # TODO: can we flip this logic around to be better?
-                # refactor into a parse_xsec utility or something?
-                if config["madgraph"]["run"]["options"]["xqcut"] > 0:
-                    if "cross-section :" in line:
-                        xsec = float(line.split()[3])  # take the last instance
-                else:
-                    if "Cross-section :" in line:
-                        xsec = float(line.split()[2])  # take the last instance
+        if (
+            "run_without_decays" in config["madgraph"]
+            and config["madgraph"]["run_without_decays"]
+        ):
+            # modify config to access XS from run without decays
+            origcard = config["madgraph"]["proc"]["card"]
+            origout = config["base"]["output"]
+
+            config["madgraph"]["proc"]["card"] = (
+                config["madgraph"]["proc"]["card"] + "nodecays"
+            )
+            config["base"]["output"] = config["base"]["output"] + "nodecays"
+
+            with utils.output_path(config).joinpath(
+                config["base"]["logs"], "docker_mgpy.log"
+            ).open(encoding="utf-8") as fpointer:
+                for line in fpointer.readlines():
+                    # TODO: can we flip this logic around to be better?
+                    # refactor into a parse_xsec utility or something?
+                    if config["madgraph"]["run"]["options"]["xqcut"] > 0:
+                        if "cross-section :" in line:
+                            xsec = float(line.split()[3])  # take the last instance
+                    else:
+                        if "Cross-section :" in line:
+                            xsec = float(line.split()[2])  # take the last instance
+
+            if "branchingratio" in config["analysis"]:
+                xsec *= config["analysis"]["branchingratio"]
+
+            # change config options back
+            config["madgraph"]["proc"]["card"] = origcard
+            config["base"]["output"] = origout
+        else:
+            with utils.output_path(config).joinpath(
+                config["base"]["logs"], "docker_mgpy.log"
+            ).open(encoding="utf-8") as fpointer:
+                for line in fpointer.readlines():
+                    # TODO: can we flip this logic around to be better?
+                    # refactor into a parse_xsec utility or something?
+                    if config["madgraph"]["run"]["options"]["xqcut"] > 0:
+                        if "cross-section :" in line:
+                            xsec = float(line.split()[3])  # take the last instance
+                    else:
+                        if "Cross-section :" in line:
+                            xsec = float(line.split()[2])  # take the last instance
 
     if config["analysis"]["kfactor"] > 0:
         xsec *= config["analysis"]["kfactor"]
