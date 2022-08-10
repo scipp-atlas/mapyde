@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 
 import jsonpatch
-import matplotlib.pyplot as plt
 import numpy as np
 import pyhf
 from pyhf.contrib.viz import brazil
+
+os.environ["MPLCONFIGDIR"] = os.getcwd() + "/configs/"
+import matplotlib.pyplot as plt  # noqa: E402
 
 parser = argparse.ArgumentParser(description="Process some arguments.")
 parser.add_argument("-s", "--signal", help="name of analysis")
