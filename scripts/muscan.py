@@ -35,10 +35,13 @@ parser.add_argument(
     default="scipy",
     help="choose optimizer.  'scipy', 'minuit' ....",
 )
+parser.add_argument(
+    "-l",
+    "--likelihood",
+    default=None,
+    help="pass in full likelihood, with both signal and background included.",
+)
 args = parser.parse_args()
-
-ana = args.signal.replace("_patch.json", "")
-tag = args.tag
 
 tolerance = 1e-2  # 0.01 works most of the time, monojet uses 0.001
 
@@ -52,12 +55,25 @@ else:
     # useful when running on a machine with a GPU
     pyhf.set_backend("jax", optimizer)
 
-with open(args.background) as f:
-    bgonly = json.load(f)
-with open(args.signal) as f:
-    signal = json.load(f)
 
-spec = jsonpatch.apply_patch(bgonly, signal)
+# We can either pass in a full likelihood with signal+background already there, or pass in
+# a background likelihood and a signal patch file.  If we do use a signal patch file, then
+# write the full likelihood out to a file for reference later.
+spec = None
+if args.likelihood is None:
+    with open(args.background) as f:
+        bgonly = json.load(f)
+    with open(args.signal) as f:
+        signal = json.load(f)
+
+    spec = jsonpatch.apply_patch(bgonly, signal)
+    ana = args.signal.replace("_patch.json", "")
+    with open(ana + ".json", "w") as f:
+        f.write(json.dumps(spec, indent=4, sort_keys=True))
+
+else:
+    spec = json.load(open(args.likelihood))
+    ana = args.likelihood.replace(".json", "")
 
 ws = pyhf.Workspace(spec)
 pdf = ws.model()
@@ -98,4 +114,4 @@ print("      +2 sigma: %5.3f" % exp_limits[4])
 print("making plot")
 fig, ax = plt.subplots()
 brazil.plot_results(ax, poi_values, results)
-fig.savefig(f"muscan_{tag}__{ana}.pdf")
+fig.savefig(f"muscan_{args.tag}__{ana}.pdf")
