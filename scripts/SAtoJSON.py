@@ -16,6 +16,12 @@ parser.add_argument("-b", "--background", help="path to JSON background-only fil
 parser.add_argument("-o", "--output", help="path to JSON output")
 parser.add_argument("-n", "--name", help="name of signal sample")
 parser.add_argument("-l", "--lumi", help="luminosity in pb-1")
+parser.add_argument(
+    "-c",
+    "--compressed",
+    action="store_true",
+    help="special selection for compressed searches",
+)
 args = parser.parse_args()
 
 print("Using luminosity=%f" % float(args.lumi))
@@ -82,7 +88,7 @@ for channel in ws.channels:
     if SAname in tree.keys():
 
         mask = branches[SAname] > 0
-        if ("Compressed" in args.background) or ("Slepton_bkgonly" in args.background):
+        if args.compressed:
             # in the Compressed SA output, the SR's are not broken down
             # by flavor, while in the serialized likelihood they are.
             # use the fields in the ntuple to do the flavor breakdown here.
