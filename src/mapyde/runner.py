@@ -3,7 +3,9 @@ File containing functionality for running the various steps in the workflow.
 """
 from __future__ import annotations
 
+import json
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from mapyde import utils
@@ -23,6 +25,20 @@ def mounts(config: ImmutableConfig) -> list[tuple[PathOrStr, PathOrStr]]:
         (str(Path(config["base"]["likelihoods_path"]).resolve()), "/likelihoods"),
         (str(utils.output_path(config)), "/data"),
     ]
+
+
+def dumpconfig(config: ImmutableConfig) -> None:
+    now = datetime.now()
+    with open(
+        utils.output_path(config).joinpath(
+            f"configs/config_{now.year}{now.month}{now.day}{now.hour}{now.minute}{now.second}.json"
+        ),
+        "w",
+        encoding="utf-8",
+    ) as f:
+        json.dump(config, f, ensure_ascii=False, indent=4)
+
+    return
 
 
 def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
@@ -96,11 +112,15 @@ def run_delphes(config: ImmutableConfig) -> tuple[bytes, bytes]:
     # ./test/wrapper_delphes.py config_file
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
-        f"""pwd && ls -lavh && ls -lavh /data && cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
+        f"""pwd && ls -lavh && ls -lavh /data && \
+cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
 gunzip hepmc.gz && \
+cp /cards/delphes/{config['delphes']['card']} . && \
 /bin/ls -ltrh --color && \
 mkdir -p {Path(config['delphes']['output']).parent} && \
-/usr/local/share/delphes/delphes/DelphesHepMC2 /cards/delphes/{config['delphes']['card']} {Path(config['delphes']['output'])} hepmc && \
+set -x && \
+/usr/local/share/delphes/delphes/DelphesHepMC2 {config['delphes']['card']} {Path(config['delphes']['output'])} hepmc && \
+set +x && \
 rsync -rav --exclude hepmc . /data/""",
         "utf-8",
     )
@@ -258,6 +278,8 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
         f"""time python3.8 /scripts/muscan.py -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']}""",
         "utf-8",
     )
+
+    dumpconfig(config)
 
     with Container(
         image=image,
