@@ -61,7 +61,7 @@ additional_opts = ""
 [delphes]
 skip = false
 additional_opts = ""
-card = "delphes_card_ATLAS_lowptleptons.tcl"
+card = "delphes_card_ATLAS_lowptleptons_sleptons.tcl"
 version = "delphes"
 output = "delphes/delphes.root"
 
