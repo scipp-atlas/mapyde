@@ -28,6 +28,14 @@ def mounts(config: ImmutableConfig) -> list[tuple[PathOrStr, PathOrStr]]:
 
 
 def dumpconfig(config: ImmutableConfig) -> None:
+    output_path = (
+        Path(config["base"]["path"])
+        .joinpath(config["base"]["output"])
+        .joinpath("configs")
+        .resolve()
+    )
+    output_path.mkdir(parents=True, exist_ok=True)
+
     now = datetime.now()
     with open(
         utils.output_path(config).joinpath(
