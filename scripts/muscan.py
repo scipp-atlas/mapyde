@@ -116,5 +116,5 @@ print("      +2 sigma: %5.3f" % exp_limits[4])
 
 print("making plot")
 fig, ax = plt.subplots()
-brazil.plot_results(ax, poi_values, results)
+brazil.plot_results(poi_values, results, ax=ax)
 fig.savefig(f"muscan_{args.tag}__{ana}.pdf")
