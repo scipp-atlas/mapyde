@@ -50,8 +50,6 @@ def dumpconfig(config: ImmutableConfig) -> None:
     ) as outfile:
         json.dump(config, outfile, ensure_ascii=False, indent=4)
 
-    return None
-
 
 def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
