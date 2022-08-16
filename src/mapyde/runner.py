@@ -28,6 +28,10 @@ def mounts(config: ImmutableConfig) -> list[tuple[PathOrStr, PathOrStr]]:
 
 
 def dumpconfig(config: ImmutableConfig) -> None:
+    """
+    Dump configuration files used to do stuff, useful for debugging config issues after the fact
+    """
+
     output_path = (
         Path(config["base"]["path"])
         .joinpath(config["base"]["output"])
@@ -43,10 +47,10 @@ def dumpconfig(config: ImmutableConfig) -> None:
         ),
         "w",
         encoding="utf-8",
-    ) as f:
-        json.dump(config, f, ensure_ascii=False, indent=4)
+    ) as outfile:
+        json.dump(config, outfile, ensure_ascii=False, indent=4)
 
-    return
+    return None
 
 
 def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
