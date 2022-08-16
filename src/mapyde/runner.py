@@ -66,9 +66,9 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         origpythia = config["pythia"]["skip"]
 
         config["madgraph"]["proc"]["card"] = (
-            config["madgraph"]["proc"]["card"] + "nodecays"
+            config["madgraph"]["proc"]["card"] + "_nodecays"
         )
-        config["base"]["output"] = config["base"]["output"] + "nodecays"
+        config["base"]["output"] = config["base"]["output"] + "_nodecays"
         config["pythia"]["skip"] = True
 
         madgraph.generate_mg5config(config)
@@ -121,6 +121,7 @@ def run_delphes(config: ImmutableConfig) -> tuple[bytes, bytes]:
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
         f"""pwd && ls -lavh && ls -lavh /data && \
+find /data/ -name "*hepmc.gz" && \
 cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
 gunzip hepmc.gz && \
 cp /cards/delphes/{config['delphes']['card']} . && \
@@ -163,9 +164,9 @@ def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
             origout = config["base"]["output"]
 
             config["madgraph"]["proc"]["card"] = (
-                config["madgraph"]["proc"]["card"] + "nodecays"
+                config["madgraph"]["proc"]["card"] + "_nodecays"
             )
-            config["base"]["output"] = config["base"]["output"] + "nodecays"
+            config["base"]["output"] = config["base"]["output"] + "_nodecays"
 
             with utils.output_path(config).joinpath(
                 config["base"]["logs"], "docker_mgpy.log"
@@ -186,6 +187,32 @@ def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
             # change config options back
             config["madgraph"]["proc"]["card"] = origcard
             config["base"]["output"] = origout
+        elif (
+            config["madspin"]["skip"] is False
+            and "branchingratio" in config["analysis"]
+            and config["analysis"]["branchingratio"] > 0
+        ):
+            # we've run madspin AND set a non-zero BR in the configuration, so we're going
+            # to take the cross section from before madspin runs.
+            with utils.output_path(config).joinpath(
+                config["base"]["logs"], "docker_mgpy.log"
+            ).open(encoding="utf-8") as fpointer:
+                for line in fpointer.readlines():
+                    # TODO: can we flip this logic around to be better?
+                    # refactor into a parse_xsec utility or something?
+                    #
+                    # also combine with logic below.
+                    if config["madgraph"]["run"]["options"]["xqcut"] > 0:
+                        if "cross-section :" in line:
+                            xsec = float(line.split()[3])  # take the last instance
+                            break
+                    else:
+                        if "Cross-section :" in line:
+                            xsec = float(line.split()[2])  # take the first instance
+                            break
+
+            xsec *= config["analysis"]["branchingratio"]
+
         else:
             with utils.output_path(config).joinpath(
                 config["base"]["logs"], "docker_mgpy.log"
@@ -256,9 +283,13 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     assert config
 
+    inputstr = ""
+    for i in config["sa2json"]["inputs"].split():
+        inputstr += f" -i {i} "
+
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['sa2json']['image']}"
     command = bytes(
-        f"""python /scripts/SAtoJSON.py -i {config['simpleanalysis']['name']}.root -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']} {config['sa2json']['options']}""",
+        f"""python /scripts/SAtoJSON.py {inputstr} -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']} {config['sa2json']['options']}""",
         "utf-8",
     )
 

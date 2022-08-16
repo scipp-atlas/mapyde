@@ -11,7 +11,12 @@ import uproot
 parser = argparse.ArgumentParser(description="Process some arguments.")
 
 # Cards for the MadGraph run
-parser.add_argument("-i", "--input", help="path to SA output")
+parser.add_argument(
+    "-i",
+    "--input",
+    action="append",
+    help="path to SA output.  can be used multiple times if merging files.",
+)
 parser.add_argument("-b", "--background", help="path to JSON background-only file")
 parser.add_argument("-o", "--output", help="path to JSON output")
 parser.add_argument("-n", "--name", help="name of signal sample")
@@ -25,15 +30,6 @@ parser.add_argument(
 args = parser.parse_args()
 
 print("Using luminosity=%f" % float(args.lumi))
-
-with open(args.background) as f:
-    spec = json.load(f)
-    newspec = copy.deepcopy(spec)
-    ws = pyhf.Workspace(spec)
-
-rootfile = uproot.open(args.input)
-tree = rootfile["ntuple"]
-branches = tree.arrays()
 
 
 def JSONtoSA(SRname, background):
@@ -73,6 +69,15 @@ def JSONtoSA(SRname, background):
     return SAname
 
 
+with open(args.background) as f:
+    spec = json.load(f)
+    newspec = copy.deepcopy(spec)
+    ws = pyhf.Workspace(spec)
+
+rootfiles = [uproot.open(i) for i in args.input]
+trees = [r["ntuple"] for r in rootfiles]
+branchsets = [t.arrays() for t in trees]
+
 # loop over all channels in the workspace and update them where appropriate.
 for channel in ws.channels:
 
@@ -85,18 +90,18 @@ for channel in ws.channels:
 
     # only do something if the SA output has a field for this
     # particular signal region.
-    if SAname in tree.keys():
+    for tree, branches in zip(trees, branchsets):
+        if SAname in tree.keys():
+            mask = branches[SAname] > 0
+            if args.compressed:
+                # in the Compressed SA output, the SR's are not broken down
+                # by flavor, while in the serialized likelihood they are.
+                # use the fields in the ntuple to do the flavor breakdown here.
 
-        mask = branches[SAname] > 0
-        if args.compressed:
-            # in the Compressed SA output, the SR's are not broken down
-            # by flavor, while in the serialized likelihood they are.
-            # use the fields in the ntuple to do the flavor breakdown here.
+                flavname = "isee" if "ee" in channel else "ismm"
+                mask = (branches[SAname] > 0) & (branches[flavname] > 0)
 
-            flavname = "isee" if "ee" in channel else "ismm"
-            mask = (branches[SAname] > 0) & (branches[flavname] > 0)
-
-        yld = sum(branches[SAname][mask])
+            yld += sum(branches[SAname][mask])
 
     yld *= float(args.lumi)
     print("%3d  %40s  %40s  %.2e" % (c_index, channel, SAname, yld))
