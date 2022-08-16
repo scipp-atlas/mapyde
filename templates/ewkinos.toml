@@ -79,6 +79,7 @@ additional_opts = ""
 name = "EwkCompressed2018"
 
 [sa2json]
+inputs = "{{simpleanalysis['name']}}.root"
 image = "pyplotting:latest"
 output = "{{simpleanalysis['name']}}_patch.json"
 options = "-c"

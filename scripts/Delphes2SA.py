@@ -171,9 +171,11 @@ for entry in range(0, numberOfEntries):
     sumweights += float(branchEvent.At(0).Weight)
 
 # will normalize everything to 1 pb-1
+print(f"Using cross section {args.XS}")
 weightscale = float(args.XS) / sumweights
 
 # Loop over all events
+print(f"Looping over {numberOfEntries} events")
 for entry in range(0, numberOfEntries):
     for vec in outVectors:
         vec.clear()
@@ -235,5 +237,7 @@ for entry in range(0, numberOfEntries):
             fatjets.Add(jet, jetID)
 
     outTree.Fill()
+
+print(f"wrote {outTree.GetEntriesFast()} entries to the tree.")
 outFH.Write()
 outFH.Close()

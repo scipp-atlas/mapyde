@@ -71,6 +71,7 @@ output = "analysis/Delphes2SA.root"
 lumi = 1000
 
 [simpleanalysis]
+inputs = "{{simpleanalysis['name']}}.root"
 skip = false
 additional_opts = ""
 name = "EwkCompressed2018"

@@ -166,7 +166,7 @@ def generate_mg5config(config: ImmutableConfig) -> None:
     if not config["madspin"]["skip"]:
         # Copy the madspin card
         madspin_card_path = (
-            Path(config["base"]["madspin_card"])
+            Path(config["base"]["madspin_path"])
             .joinpath(config["madspin"]["card"])
             .resolve()
         )
