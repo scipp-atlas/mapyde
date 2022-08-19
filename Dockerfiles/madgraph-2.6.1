@@ -49,7 +49,7 @@ RUN mkdir /code && \
 
 # Install MadGraph5_aMC@NLO
 RUN cd /usr/local && \
-    wget --no-check-certificate https://launchpad.net/mg5amcnlo/2.0/${MG_VERSION_x}/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
+    wget --no-check-certificate https://madgraph.physics.illinois.edu/Downloads/MG5_aMC_v${MG_VERSION}.tar.gz && \
     tar xzf MG5_aMC_v${MG_VERSION}.tar.gz && \
     rm MG5_aMC_v${MG_VERSION}.tar.gz
 
