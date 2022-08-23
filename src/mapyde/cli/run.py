@@ -43,7 +43,8 @@ def run_all(filename: str) -> None:
     run_ana(config)
     run_simpleanalysis(config)
     run_sa2json(config)
-    run_pyhf(config)
+    if not config["pyhf"]["skip"]:
+        run_pyhf(config)
 
 
 @app.command()
