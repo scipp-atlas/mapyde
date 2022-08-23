@@ -189,7 +189,6 @@ for entry in range(0, numberOfEntries):
     mcWeights.Add(branchEvent.At(0).Weight * weightscale)
     # FIXME: add PDF info etc. if available
 
-    # remove muons from MET
     metvec = ROOT.TLorentzVector()
     metvec.SetPtEtaPhiM(branchMET.At(0).MET, 0, branchMET.At(0).Phi, 0)
 
@@ -203,6 +202,13 @@ for entry in range(0, numberOfEntries):
         muonvec.SetPtEtaPhiM(
             branchMuon.At(idx).PT, branchMuon.At(idx).Eta, branchMuon.At(idx).Phi, 0.1
         )
+        # remove muons from MET.  MET is only built from calorimeter info in Delphes,
+        # so events with muons will have the muon showing up as MET, which artificially
+        # increases the MET.
+        #
+        # see https://arxiv.org/abs/0903.2225 for an explicit statement, and
+        # http://arxiv.org/abs/1307.6346 for a more recent reference that doesn't contradict this.
+        #
         metvec = metvec - muonvec
 
     for idx in range(branchPhoton.GetEntries()):
