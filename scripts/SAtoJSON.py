@@ -30,6 +30,8 @@ parser.add_argument(
 args = parser.parse_args()
 
 print("Using luminosity=%f" % float(args.lumi))
+if args.compressed:
+    print("Applying ee/mm masks to SA output as needed")
 
 
 def JSONtoSA(SRname, background):
@@ -101,6 +103,9 @@ for channel in ws.channels:
                 flavname = "isee" if "ee" in channel else "ismm"
                 mask = (branches[SAname] > 0) & (branches[flavname] > 0)
 
+            # print(SAname)
+            # print(len(branches[SAname][mask]))
+            # print(branches[SAname][mask])
             yld += sum(branches[SAname][mask])
 
     yld *= float(args.lumi)
