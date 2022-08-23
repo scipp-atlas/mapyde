@@ -176,19 +176,24 @@ def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
                 for line in fpointer.readlines():
                     # TODO: can we flip this logic around to be better?
                     # refactor into a parse_xsec utility or something?
-                    if config["madgraph"]["run"]["options"]["xqcut"] > 0:
-                        if "cross-section :" in line:
-                            xsec = float(line.split()[3])  # take the last instance
-                    else:
-                        if "Cross-section :" in line:
-                            xsec = float(line.split()[2])  # take the last instance
-
-            if "branchingratio" in config["analysis"]:
-                xsec *= config["analysis"]["branchingratio"]
+                    if "Cross-section :" in line:
+                        xsec = float(line.split()[2])  # take the last instance
 
             # change config options back
             config["madgraph"]["proc"]["card"] = origcard
             config["base"]["output"] = origout
+
+            # if we're doing MLM matching and not trusting the final XS output by Pythia, then
+            # fix the XS from before decays to account for matching efficiency
+            if config["madgraph"]["run"]["options"]["xqcut"] > 0:
+                with utils.output_path(config).joinpath(
+                    config["base"]["logs"], "docker_mgpy.log"
+                ).open(encoding="utf-8") as fpointer:
+                    for line in fpointer.readlines():
+                        if "Nb of events after merging" in line:
+                            xsec *= (
+                                float(line.split()[6]) / config["madgraph"]["nevents"]
+                            )  # take the last instance
         elif (
             config["madspin"]["skip"] is False
             and "branchingratio" in config["analysis"]
@@ -202,19 +207,21 @@ def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
                 for line in fpointer.readlines():
                     # TODO: can we flip this logic around to be better?
                     # refactor into a parse_xsec utility or something?
-                    #
-                    # also combine with logic below.
-                    if config["madgraph"]["run"]["options"]["xqcut"] > 0:
-                        if "cross-section :" in line:
-                            xsec = float(line.split()[3])  # take the last instance
-                            break
-                    else:
-                        if "Cross-section :" in line:
-                            xsec = float(line.split()[2])  # take the first instance
-                            break
+                    if "Cross-section :" in line:
+                        xsec = float(line.split()[2])  # take the first instance
+                        break
 
-            xsec *= config["analysis"]["branchingratio"]
-
+            # if we're doing MLM matching and not trusting the final XS output by Pythia, then
+            # fix the XS from before decays to account for matching efficiency
+            if config["madgraph"]["run"]["options"]["xqcut"] > 0:
+                with utils.output_path(config).joinpath(
+                    config["base"]["logs"], "docker_mgpy.log"
+                ).open(encoding="utf-8") as fpointer:
+                    for line in fpointer.readlines():
+                        if "Nb of events after merging" in line:
+                            xsec *= (
+                                float(line.split()[6]) / config["madgraph"]["nevents"]
+                            )  # take the last instance
         else:
             with utils.output_path(config).joinpath(
                 config["base"]["logs"], "docker_mgpy.log"
@@ -223,11 +230,14 @@ def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
                     # TODO: can we flip this logic around to be better?
                     # refactor into a parse_xsec utility or something?
                     if config["madgraph"]["run"]["options"]["xqcut"] > 0:
-                        if "cross-section :" in line:
+                        if "Matched cross-section :" in line:
                             xsec = float(line.split()[3])  # take the last instance
                     else:
                         if "Cross-section :" in line:
                             xsec = float(line.split()[2])  # take the last instance
+
+        if "branchingratio" in config["analysis"]:
+            xsec *= config["analysis"]["branchingratio"]
 
     if config["analysis"]["kfactor"] > 0:
         xsec *= config["analysis"]["kfactor"]
