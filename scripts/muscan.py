@@ -44,6 +44,7 @@ parser.add_argument(
     default=None,
     help="pass in full likelihood, with both signal and background included.",
 )
+parser.add_argument("-p", "--plot", action="store_true", help="make a plot of the CLs")
 args = parser.parse_args()
 
 tolerance = 1e-2  # 0.01 works most of the time, monojet uses 0.001
@@ -114,7 +115,8 @@ print("      +1 sigma: %5.3f" % exp_limits[3])
 print("      -2 sigma: %5.3f" % exp_limits[0])
 print("      +2 sigma: %5.3f" % exp_limits[4])
 
-print("making plot")
-fig, ax = plt.subplots()
-brazil.plot_results(poi_values, results, ax=ax)
-fig.savefig(f"muscan_{args.tag}__{ana}.pdf")
+if args.plot:
+    print("making plot")
+    fig, ax = plt.subplots()
+    brazil.plot_results(poi_values, results, ax=ax)
+    fig.savefig(f"muscan_{args.tag}__{ana}.pdf")
