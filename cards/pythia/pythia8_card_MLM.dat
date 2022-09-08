@@ -36,14 +36,14 @@ HEPMCoutput:file         = auto
 ! --------------------------------------------------------------------
 ! If equal to -1.0, MadGraph5_aMC@NLO will set it automatically based
 ! on the parameter 'xqcut' of the run_card.dat
-JetMatching:qCut         = 40
+JetMatching:qCut         = -1
 ! Use default kt-MLM to match parton level jets to those produced by the
 ! shower. But the other Shower-kt scheme is available too with this option.
 JetMatching:doShowerKt   = off
 ! A value of -1 means that it is automatically guessed by MadGraph.
 ! It is however always safer to explicitly set it.
 JetMatching:exclusive    = 0
-JetMatching:nJetMax      = -1
+JetMatching:nJetMax      = 1
 !
 ! --------------------------------------------------------------------
 ! Parameters relevant only when performing CKKW-L merging, which can
@@ -83,3 +83,8 @@ SysCalc:qCutList = 50.0,60.0
 ! often irrelevant for phenomenology and very slow. You can turn this
 ! feature off by uncommenting the line below if so desired.
 !partonlevel:mpi = off
+!
+! Some other options that exist in some ATLAS run cards
+!1000024:spinType = 1
+!1000023:spinType = 1
+!1000022:spinType = 1
