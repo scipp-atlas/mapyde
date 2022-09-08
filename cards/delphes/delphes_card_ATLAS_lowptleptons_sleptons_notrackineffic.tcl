@@ -105,15 +105,14 @@ module Efficiency ElectronTrackingEfficiency {
   # set EfficiencyFormula {efficiency formula as a function of eta and pt}
 
   # tracking efficiency formula for electrons
-  #set EfficiencyFormula {                                                    (pt <= 0.1)   * (0.00) +
-  #                                         (abs(eta) <= 1.5) * (pt > 0.1   && pt <= 1.0)   * (0.73) +
-  #                                         (abs(eta) <= 1.5) * (pt > 1.0   && pt <= 1.0e2) * (0.95) +
-  #                                         (abs(eta) <= 1.5) * (pt > 1.0e2)                * (0.99) +
-  #                       (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 0.1   && pt <= 1.0)   * (0.50) +
-  #                       (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0   && pt <= 1.0e2) * (0.83) +
-  #                       (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0e2)                * (0.90) +
-  #                       (abs(eta) > 2.5)                                                  * (0.00)}
-  set EfficiencyFormula {1}
+  set EfficiencyFormula {                                                    (pt <= 0.1)   * (0.00) +
+                                           (abs(eta) <= 1.5) * (pt > 0.1   && pt <= 1.0)   * (0.73) +
+                                           (abs(eta) <= 1.5) * (pt > 1.0   && pt <= 1.0e2) * (0.95) +
+                                           (abs(eta) <= 1.5) * (pt > 1.0e2)                * (0.99) +
+                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 0.1   && pt <= 1.0)   * (0.50) +
+                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0   && pt <= 1.0e2) * (0.83) +
+                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0e2)                * (0.90) +
+                         (abs(eta) > 2.5)                                                  * (0.00)}
 }
 
 ##########################
@@ -127,13 +126,12 @@ module Efficiency MuonTrackingEfficiency {
   # set EfficiencyFormula {efficiency formula as a function of eta and pt}
 
   # tracking efficiency formula for muons
-  #set EfficiencyFormula {                                                    (pt <= 0.1)   * (0.00) +
-  #                                         (abs(eta) <= 1.5) * (pt > 0.1   && pt <= 1.0)   * (0.75) +
-  #                                         (abs(eta) <= 1.5) * (pt > 1.0)                  * (0.99) +
-  #                       (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 0.1   && pt <= 1.0)   * (0.70) +
-  #                       (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0)                  * (0.98) +
-  #                       (abs(eta) > 2.5)                                                  * (0.00)}
-  set EfficiencyFormula {1}
+  set EfficiencyFormula {                                                    (pt <= 0.1)   * (0.00) +
+                                           (abs(eta) <= 1.5) * (pt > 0.1   && pt <= 1.0)   * (0.75) +
+                                           (abs(eta) <= 1.5) * (pt > 1.0)                  * (0.99) +
+                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 0.1   && pt <= 1.0)   * (0.70) +
+                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0)                  * (0.98) +
+                         (abs(eta) > 2.5)                                                  * (0.00)}
 }
 
 ########################################
@@ -609,9 +607,11 @@ module PdgCodeFilter NeutrinoFilter {
   add PdgCode {12}
   add PdgCode {14}
   add PdgCode {16}
+  add PdgCode {1000022}
   add PdgCode {-12}
   add PdgCode {-14}
   add PdgCode {-16}
+  add PdgCode {-1000022}
 
 }
 
@@ -706,12 +706,15 @@ module BTagging BTagging {
 
   # default efficiency formula (misidentification rate)
   add EfficiencyFormula {0} {0.002+7.3e-06*pt}
+  #add EfficiencyFormula {0} {0.002}
 
   # efficiency formula for c-jets (misidentification rate)
   add EfficiencyFormula {4} {0.20*tanh(0.02*pt)*(1/(1+0.0034*pt))}
+  #add EfficiencyFormula {4} {0.20}
 
   # efficiency formula for b-jets
   add EfficiencyFormula {5} {0.80*tanh(0.003*pt)*(30/(1+0.086*pt))}
+  #add EfficiencyFormula {5} {0.70}
 }
 
 #############

@@ -540,7 +540,7 @@ module Efficiency MuonEfficiency {
     # 	                   (abs(eta) <= 2.7) * (pt < 50)  * (pt >= 30)  * (0.90) +
     # 	                   (abs(eta) <= 2.7) * (pt >= 50)               * (0.93) +
     #                        (abs(eta) > 2.7)                             * (0.00)}
-  set EfficiencyFormula {                    (pt <  3.0)              * (0.00) +
+  set EfficiencyFormula {                    (pt < 3.0)               * (0.00) +
     	                 (abs(eta) <= 2.7) * (pt < 3.5) * (pt >= 3.0) * (0.65) +
     	                 (abs(eta) <= 2.7) * (pt < 4.5) * (pt >= 3.5) * (0.72) +
     	                 (abs(eta) <= 2.7) * (pt < 7.0) * (pt >= 4.5) * (0.75) +
@@ -607,9 +607,11 @@ module PdgCodeFilter NeutrinoFilter {
   add PdgCode {12}
   add PdgCode {14}
   add PdgCode {16}
+  add PdgCode {1000022}
   add PdgCode {-12}
   add PdgCode {-14}
   add PdgCode {-16}
+  add PdgCode {-1000022}
 
 }
 
