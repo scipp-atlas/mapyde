@@ -270,7 +270,7 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
     Run SimpleAnalysis.
     """
 
-    image = "gitlab-registry.cern.ch/atlas-phys-susy-wg/simpleanalysis:master"
+    image = "gitlab-registry.cern.ch/atlas-sa/simple-analysis:master"
     command = bytes(
         f"""simpleAnalysis -a {config['simpleanalysis']['name']} {config['analysis']['output']} -n""",
         "utf-8",

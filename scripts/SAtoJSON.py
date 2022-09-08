@@ -103,12 +103,6 @@ for channel in ws.channels:
                 flavname = "isee" if "ee" in channel else "ismm"
                 mask = (branches[SAname] > 0) & (branches[flavname] > 0)
 
-                if "_S_" in SAname and "low_" in SAname:
-                    mask = mask & (branches["met_Et"] > 150)
-
-            # print(SAname)
-            # print(len(branches[SAname][mask]))
-            # print(branches[SAname][mask])
             yld += sum(branches[SAname][mask])
 
     yld *= float(args.lumi)
