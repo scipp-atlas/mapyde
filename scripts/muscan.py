@@ -11,8 +11,6 @@ import numpy as np
 
 os.environ["MPLCONFIGDIR"] = os.getcwd() + "/configs/"
 import matplotlib.pyplot as plt  # noqa: E402
-import pyhf  # noqa: E402
-from pyhf.contrib.viz import brazil  # noqa: E402
 
 parser = argparse.ArgumentParser(description="Process some arguments.")
 parser.add_argument("-s", "--signal", help="name of analysis")
@@ -29,7 +27,7 @@ parser.add_argument(
 parser.add_argument(
     "-B",
     "--backend",
-    default="numpy",
+    default="jax",
     help="choose backend for pyhf.  Jax will be used if running with a GPU.",
 )
 parser.add_argument(
@@ -47,15 +45,20 @@ parser.add_argument(
 parser.add_argument("-p", "--plot", action="store_true", help="make a plot of the CLs")
 args = parser.parse_args()
 
+if args.cpu and args.backend == "jax":
+    os.environ["JAX_PLATFORM_NAME"] = "cpu"
+
+import pyhf  # noqa: E402
+from pyhf.contrib.viz import brazil  # noqa: E402
+
 tolerance = 1e-2  # 0.01 works most of the time, monojet uses 0.001
 
 optimizer = args.optimizer
 if optimizer == "minuit":
     optimizer = pyhf.optimize.minuit_optimizer(tolerance=tolerance)
 
-if args.cpu:
-    pyhf.set_backend(args.backend, optimizer)
-else:
+pyhf.set_backend(args.backend, optimizer)
+if not args.cpu:
     # useful when running on a machine with a GPU
     pyhf.set_backend("jax", optimizer)
 
