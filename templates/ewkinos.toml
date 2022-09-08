@@ -18,7 +18,7 @@ skip = false
 params = "Higgsino"
 ecms = 13000
 cores = 1
-nevents = 10000
+nevents = 50000
 seed = 0
 version = "madgraph-2.7.3"
 batch = false
@@ -41,9 +41,12 @@ mmjj = 0
 mmjjmax = -1
 deltaeta = 0
 ktdurham = -1
-xqcut = -1
 ptj = 20
 ptj1min = 50
+ickkw = 0
+auto_ptj_mjj = "False"
+xqcut = -1
+
 
 [madgraph.proc]
 name = "isr2L"
@@ -68,7 +71,7 @@ output = "delphes/delphes.root"
 [analysis]
 script = "Delphes2SA.py"
 XSoverride = -1
-kfactor = 1.3
+kfactor = 1.21
 branchingratio = 0.10
 output = "analysis/Delphes2SA.root"
 lumi = 139000
