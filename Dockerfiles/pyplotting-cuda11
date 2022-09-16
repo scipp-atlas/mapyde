@@ -12,6 +12,7 @@ RUN apt-get update -y && \
     apt-get -y autoclean && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt-get/lists/*
+
 RUN python3.8 -m pip install --upgrade pip && \
     python3.8 -m pip install --upgrade --no-cache-dir pip && \
     python3.8 -m pip install --no-cache-dir 'jsonschema<4.15.0' && \
