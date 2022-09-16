@@ -332,6 +332,10 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     dumpconfig(config)
 
+    addl_opts = None
+    if "-c" not in config["pyhf"]["gpu-options"]:
+        addl_opts = ["--gpus", "all"]
+
     with Container(
         image=image,
         name=f"{config['base']['output']}__muscan",
@@ -339,7 +343,7 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
         cwd="/data",
-        additional_options=["--gpus", "all"],
+        additional_options=addl_opts,
     ) as container:
         stdout, stderr = container.process.communicate(command)
 
