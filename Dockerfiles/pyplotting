@@ -14,7 +14,7 @@ RUN apt-get -qq -y update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install --no-cache-dir -U pip wheel setuptools && \
-    python3 -m pip install --no-cache-dir -U pandas matplotlib numpy uproot hist pyhf jsonpatch awkward cabinetry h5py
+    python3 -m pip install --no-cache-dir -U pandas matplotlib numpy uproot hist pyhf jsonpatch awkward cabinetry h5py jax
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
 CMD [ "/bin/bash" ]
