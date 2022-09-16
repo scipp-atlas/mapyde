@@ -90,5 +90,5 @@ options = "-c"
 [pyhf]
 skip = false
 likelihood = "Higgsino_2L_bkgonly.json"
-image = "pyplotting-cuda:latest-cuda"
+image = "pyplotting:latest"
 gpu-options = "-c -B jax"

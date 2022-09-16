@@ -84,5 +84,5 @@ options = "-c"
 [pyhf]
 skip = false
 likelihood = "Slepton_bkgonly.json"
-image = "pyplotting:latest-cuda"
+image = "pyplotting:latest"
 gpu-options = "-c -B jax"
