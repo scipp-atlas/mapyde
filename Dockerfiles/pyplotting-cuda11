@@ -13,6 +13,11 @@ RUN apt-get update -y && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt-get/lists/*
 
+# try this if still running out of space in github
+#RUN rm -rf /usr/share/dotnet && \
+#    rm -rf /opt/ghc && \
+#    rm -rf "$AGENT_TOOLSDIRECTORY"
+
 RUN python3.8 -m pip install --upgrade pip && \
     python3.8 -m pip install --upgrade --no-cache-dir pip && \
     python3.8 -m pip install --no-cache-dir 'jsonschema<4.15.0' && \
