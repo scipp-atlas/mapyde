@@ -14,9 +14,8 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt-get/lists/* && \
     rm -rf /usr/share/dotnet && \
     rm -rf /opt/ghc && \
-    rm -rf "$AGENT_TOOLSDIRECTORY"
-
-RUN python3.8 -m pip install --upgrade pip && \
+    rm -rf "$AGENT_TOOLSDIRECTORY" && \
+    python3.8 -m pip install --upgrade pip && \
     python3.8 -m pip install --upgrade --no-cache-dir pip && \
     python3.8 -m pip install --no-cache-dir 'jsonschema<4.15.0' && \
     python3.8 -m pip install --no-cache-dir tensorflow torch && \
