@@ -1,20 +1,18 @@
-FROM nvidia/cuda:11.2.0-cudnn8-runtime-ubuntu18.04 as base
+FROM nvidia/cuda:11.2.0-cudnn8-devel-ubuntu18.04 as base
 LABEL org.opencontainers.image.ref.name=latest
-
 
 FROM base as builder
 RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y \
     python3 \
-    python3-pip && \
+    python3-pip \
+    wget && \
     apt-get install -y python3.8 && \
     apt-get -y autoclean && \
     apt-get -y autoremove && \
-    rm -rf /var/lib/apt-get/lists/*
-
-# try this if still running out of space in github
-RUN rm -rf /usr/share/dotnet && \
+    rm -rf /var/lib/apt-get/lists/* && \
+    rm -rf /usr/share/dotnet && \
     rm -rf /opt/ghc && \
     rm -rf "$AGENT_TOOLSDIRECTORY"
 
@@ -22,10 +20,9 @@ RUN python3.8 -m pip install --upgrade pip && \
     python3.8 -m pip install --upgrade --no-cache-dir pip && \
     python3.8 -m pip install --no-cache-dir 'jsonschema<4.15.0' && \
     python3.8 -m pip install --no-cache-dir tensorflow torch && \
-    python3.8 -m pip install --no-cache-dir pandas matplotlib numpy uproot hist pyhf jsonpatch awkward cabinetry
-
-RUN python3.8 -m pip install --no-cache-dir jax jaxlib && \
-    python3.8 -m pip install --upgrade "jax[cuda11_cudnn82]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
+    python3.8 -m pip install --no-cache-dir pandas matplotlib numpy uproot hist pyhf jsonpatch awkward cabinetry && \
+    python3.8 -m pip install --no-cache-dir jax jaxlib && \
+    python3.8 -m pip install --upgrade --no-cache-dir "jax[cuda11_cudnn82]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
     python3.8 -m pip list
 
 FROM base
