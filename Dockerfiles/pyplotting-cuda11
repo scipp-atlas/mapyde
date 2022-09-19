@@ -1,7 +1,7 @@
 FROM nvidia/cuda:11.2.0-cudnn8-devel-ubuntu18.04 as base
 LABEL org.opencontainers.image.ref.name=latest
 
-FROM base as builder
+FROM base
 RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y \
@@ -25,16 +25,9 @@ RUN python3.8 -m pip install --upgrade pip && \
     python3.8 -m pip install --upgrade --no-cache-dir "jax[cuda11_cudnn82]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
     python3.8 -m pip list
 
-FROM base
 # Use C.UTF-8 locale to avoid issues with ASCII encoding
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-COPY --from=builder /lib/x86_64-linux-gnu /lib/x86_64-linux-gnu
-COPY --from=builder /usr/local /usr/local
-COPY --from=builder /usr/bin/python3.8 /usr/bin/python3.8
-COPY --from=builder /usr/local/bin/pip3.8 /usr/local/bin/pip3.8
-COPY --from=builder /usr/lib/python3.8 /usr/lib/python3.8
-COPY --from=builder /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
 CMD [ "/bin/bash" ]
