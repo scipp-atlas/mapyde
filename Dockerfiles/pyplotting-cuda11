@@ -28,7 +28,6 @@ RUN python3.8 -m pip install --no-cache-dir jax jaxlib && \
     python3.8 -m pip install --upgrade "jax[cuda11_cudnn82]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
     python3.8 -m pip list
 
-FROM base
 # Use C.UTF-8 locale to avoid issues with ASCII encoding
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
