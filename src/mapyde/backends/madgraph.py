@@ -54,35 +54,33 @@ def generate_mg5config(config: ImmutableConfig) -> None:
             .resolve()
         )
         new_pythia_card_path = output_path.joinpath("pythia_card.dat")
-        new_pythia_card = open(new_pythia_card_path, "w")
 
-        # now handle specific pythia options.  can be refactored later to be more elegant.
-        # really only turning MPI on/off at the moment
-        for line in open(pythia_card_path):
-            if "partonlevel:mpi" in line and "mpi" in config["pythia"]:
-                # configure MPI on/off
-                if config["pythia"]["mpi"] == "on":
-                    new_pythia_card.write("partonlevel:mpi = on")
-                elif config["pythia"]["mpi"] == "off":
-                    new_pythia_card.write("partonlevel:mpi = off")
-                else:
-                    log.error(
-                        "partonlevel:mpi can only be 'on' or 'off', not %s",
-                        config["pythia"]["mpi"],
-                    )
-                    sys.exit(1)
-            else:
-                new_pythia_card.write(line)
+        with open(new_pythia_card_path, "w", encoding="utf-8") as new_pythia_card:
+            with open(pythia_card_path, encoding="utf-8") as pc:
+                for line in pc:
+                    # now handle specific pythia options.  can be refactored later to be more elegant.
+                    # really only turning MPI on/off at the moment
+                    if "partonlevel:mpi" in line and "mpi" in config["pythia"]:
+                        if config["pythia"]["mpi"] == "on":
+                            new_pythia_card.write("partonlevel:mpi = on")
+                        elif config["pythia"]["mpi"] == "off":
+                            new_pythia_card.write("partonlevel:mpi = off")
+                        else:
+                            log.error(
+                                "partonlevel:mpi can only be 'on' or 'off', not %s",
+                                config["pythia"]["mpi"],
+                            )
+                            sys.exit(1)
+                    else:
+                        new_pythia_card.write(line)
 
-        if "additional_opts" in config["pythia"]:
-            new_pythia_card.write("\n")
-            new_pythia_card.write(config["pythia"]["additional_opts"])
+            if "additional_opts" in config["pythia"]:
+                new_pythia_card.write("\n")
+                new_pythia_card.write(config["pythia"]["additional_opts"])
 
-        new_pythia_card.close()
-
-        log.info("Pythia Card: %s", new_pythia_card_path)
-        pythia_onoff = "Pythia8"
-        pythia_config_path = f"/data/{new_pythia_card_path.name}"
+            log.info("Pythia Card: %s", new_pythia_card_path)
+            pythia_onoff = "Pythia8"
+            pythia_config_path = f"/data/{new_pythia_card_path.name}"
 
     substitution = dict(
         ecms=float(config["madgraph"]["ecms"]) / 2,
