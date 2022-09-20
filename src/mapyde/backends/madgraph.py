@@ -56,8 +56,8 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         new_pythia_card_path = output_path.joinpath("pythia_card.dat")
 
         with open(new_pythia_card_path, "w", encoding="utf-8") as new_pythia_card:
-            with open(pythia_card_path, encoding="utf-8") as pc:
-                for line in pc:
+            with open(pythia_card_path, encoding="utf-8") as pcard:
+                for line in pcard:
                     # now handle specific pythia options.  can be refactored later to be more elegant.
                     # really only turning MPI on/off at the moment
                     if "partonlevel:mpi" in line and "mpi" in config["pythia"]:
