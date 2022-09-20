@@ -43,13 +43,46 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         log.error("%s does not exist.", _pythia_card_path)
         sys.exit(1)
 
-    pythia_config_path = f"/cards/pythia/{config['pythia']['card']}"
-
     # Controls whether to run Pythia8 or not
-    pythia_onoff = "Pythia8"
-    if config["pythia"]["skip"]:
-        pythia_onoff = "OFF"
-        pythia_config_path = ""
+    pythia_config_path = ""
+    pythia_onoff = "OFF"
+    if not config["pythia"]["skip"]:
+        # Copy the pythia card
+        pythia_card_path = (
+            Path(config["base"]["pythia_path"])
+            .joinpath(config["pythia"]["card"])
+            .resolve()
+        )
+        new_pythia_card_path = output_path.joinpath("pythia_card.dat")
+        new_pythia_card = open(new_pythia_card_path, "w")
+
+        # now handle specific pythia options.  can be refactored later to be more elegant.
+        # really only turning MPI on/off at the moment
+        for line in open(pythia_card_path):
+            if "partonlevel:mpi" in line and "mpi" in config["pythia"]:
+                # configure MPI on/off
+                if config["pythia"]["mpi"] == "on":
+                    new_pythia_card.write("partonlevel:mpi = on")
+                elif config["pythia"]["mpi"] == "off":
+                    new_pythia_card.write("partonlevel:mpi = off")
+                else:
+                    log.error(
+                        "partonlevel:mpi can only be 'on' or 'off', not %s",
+                        config["pythia"]["mpi"],
+                    )
+                    sys.exit(1)
+            else:
+                new_pythia_card.write(line)
+
+        if "additional_opts" in config["pythia"]:
+            new_pythia_card.write("\n")
+            new_pythia_card.write(config["pythia"]["additional_opts"])
+
+        new_pythia_card.close()
+
+        log.info("Pythia Card: %s", new_pythia_card_path)
+        pythia_onoff = "Pythia8"
+        pythia_config_path = f"/data/{new_pythia_card_path.name}"
 
     substitution = dict(
         ecms=float(config["madgraph"]["ecms"]) / 2,
