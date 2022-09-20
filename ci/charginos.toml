@@ -13,3 +13,6 @@ name = "charginos"
 MN1 = 150.0
 MN2 = 155.0
 MC1 = 155.0
+
+[pythia]
+mpi="off"
