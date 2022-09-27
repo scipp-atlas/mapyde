@@ -55,6 +55,7 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         )
         new_pythia_card_path = output_path.joinpath("pythia_card.dat")
 
+        # block below replaces a straightforward copy of pythia card to run area
         with open(new_pythia_card_path, "w", encoding="utf-8") as new_pythia_card:
             with open(pythia_card_path, encoding="utf-8") as pcard:
                 for line in pcard:
@@ -78,9 +79,9 @@ def generate_mg5config(config: ImmutableConfig) -> None:
                 new_pythia_card.write("\n")
                 new_pythia_card.write(config["pythia"]["additional_opts"])
 
-            log.info("Pythia Card: %s", new_pythia_card_path)
-            pythia_onoff = "Pythia8"
-            pythia_config_path = f"/data/{new_pythia_card_path.name}"
+        log.info("Pythia Card: %s", new_pythia_card_path)
+        pythia_onoff = "Pythia8"
+        pythia_config_path = f"/data/{new_pythia_card_path.name}"
 
     substitution = dict(
         ecms=float(config["madgraph"]["ecms"]) / 2,
@@ -202,8 +203,22 @@ def generate_mg5config(config: ImmutableConfig) -> None:
             .resolve()
         )
         new_madspin_card_path = output_path.joinpath("madspin_card.dat")
+
+        # block below replaces a straightforward copy of madspin card to run area,
+        # but allows us to modify the card according to config options
+        with open(new_madspin_card_path, "w", encoding="utf-8") as new_madspin_card:
+            with open(madspin_card_path, encoding="utf-8") as pcard:
+                for line in pcard:
+                    # now handle specific madspin options.  can be refactored later
+                    # to be more elegant. really only changing the spinmode at the moment
+                    if "set spinmode" in line and "spinmode" in config["madspin"]:
+                        new_madspin_card.write(
+                            "set spinmode %s \n" % config["madspin"]["spinmode"]
+                        )
+                    else:
+                        new_madspin_card.write(line)
+
         log.info("MadSpin Card: %s", new_madspin_card_path)
-        shutil.copyfile(madspin_card_path, new_madspin_card_path)
         madspin_onoff = "ON"
         madspin_config_path = f"/data/{new_madspin_card_path.name}"
 
