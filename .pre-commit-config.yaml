@@ -32,7 +32,7 @@ repos:
       - id: rst-inline-touching-normal
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.0.0-alpha.1"
+    rev: "v3.0.0-alpha.2"
     hooks:
       - id: prettier
         types_or: [yaml, markdown, html, css, scss, javascript, json]
@@ -51,7 +51,7 @@ repos:
         args: ["-a", "from __future__ import annotations"] # Python 3.7+
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.0.0
+    rev: v3.1.0
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
@@ -90,7 +90,7 @@ repos:
           ["types-Jinja2", "types-toml", "typer", "importlib_resources"]
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.1
+    rev: v2.2.2
     hooks:
       - id: codespell
         exclude: cards
