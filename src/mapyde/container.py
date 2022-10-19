@@ -89,7 +89,10 @@ class Container:
                 check=True,
             )
 
-            subprocess.run(["mkdir", *[host for _, host in self.mounts]], check=True)
+            subprocess.run(
+                ["mkdir", *[f"{self.name}.sif/{host}" for _, host in self.mounts]],
+                check=True,
+            )
         else:
             self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
 
