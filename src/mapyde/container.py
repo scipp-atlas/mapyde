@@ -63,16 +63,6 @@ class Container:
         self.output = output
         self.additional_options = additional_options or []
 
-    @property
-    def entrypoint(self) -> list[str]:
-        """
-        The entrypoint for the given engine.
-        """
-        if self.engine in ["apptainer", "singularity"]:
-            return [self.engine, "oci"]
-
-        return [self.engine]
-
     def __enter__(self) -> Container:
 
         if self.engine in ["singularity", "apptainer"]:
@@ -185,11 +175,13 @@ class Container:
 
         assert isinstance(self.name, str)
 
-        subprocess.run(
-            [*self.entrypoint, "rm", "--force", "-v", self.name],
-            stdout=subprocess.DEVNULL,
-            check=False,
-        )
+        # singularity and apptainer do not have daemons
+        if self.engine not in ["singularity", "apptainer"]:
+            subprocess.run(
+                [self.engine, "rm", "--force", "-v", self.name],
+                stdout=subprocess.DEVNULL,
+                check=False,
+            )
 
         self.name = None
 
