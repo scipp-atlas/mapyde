@@ -276,7 +276,7 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     image = "gitlab-registry.cern.ch/atlas-sa/simple-analysis:master"
     command = bytes(
-        f"""simpleAnalysis -a {config['simpleanalysis']['name']} {config['analysis']['output']} -n""",
+        f"""/opt/SimpleAnalysis/ci/entrypoint.sh simpleAnalysis -a {config['simpleanalysis']['name']} {config['analysis']['output']} -n""",
         "utf-8",
     )
 
