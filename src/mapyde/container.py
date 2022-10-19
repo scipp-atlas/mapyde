@@ -44,6 +44,11 @@ class Container:
         if not image:
             raise ValueError("Must specify an image to run.")
 
+        try:
+            subprocess.run(["command", "-v", engine], check=True)
+        except subprocess.CalledProcessError as err:
+            raise OSError(f"{engine} does not exist on your system.") from err
+
         self.image = image
         self.user = user or os.geteuid()
         self.group = group or os.getegid()
