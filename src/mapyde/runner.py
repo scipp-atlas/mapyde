@@ -89,7 +89,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
             stdout=sys.stdout,
             output=(utils.output_path(config).joinpath(config["base"]["logs"])),
         ) as container:
-            stdout, stderr = container.process.communicate(command)
+            stdout, stderr = container.call(command)
 
         # change config options back
         config["madgraph"]["proc"]["card"] = origcard
@@ -112,7 +112,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -146,7 +146,7 @@ rsync -rav --exclude hepmc . /data/""",
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -264,7 +264,7 @@ rsync -rav . /data/""",
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -289,7 +289,7 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
         cwd="/data",
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -319,7 +319,7 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
         cwd="/data",
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -352,7 +352,7 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
         cwd="/data",
         additional_options=addl_opts,
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -389,7 +389,7 @@ cp -a sherpa/ /data/" """,
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -415,6 +415,6 @@ def run_root2hdf5(config: ImmutableConfig) -> tuple[bytes, bytes]:
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
         cwd="/data",
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
