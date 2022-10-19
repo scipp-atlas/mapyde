@@ -76,6 +76,7 @@ class Container:
                 [
                     self.engine,
                     "build",
+                    "--force",
                     f"{self.name}.sif",
                     f"docker://{self.image}",
                 ],
@@ -107,6 +108,7 @@ class Container:
                     *[f"--bind={local}:{host}" for local, host in self.mounts],
                     f"--pwd={self.cwd}",
                     "--no-home",
+                    "--writable-tmpfs",
                     *self.additional_options,
                     f"{self.name}.sif",
                 ],
