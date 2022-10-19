@@ -214,7 +214,7 @@ class Container:
 
         command = bytes(
             f"""{chdir}
-                env {env_assignments} {args!r}
+                env {env_assignments} {args.decode()}
                 """,
             "utf-8",
         )
