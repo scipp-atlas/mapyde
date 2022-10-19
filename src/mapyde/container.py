@@ -191,6 +191,11 @@ class Container:
         cwd: PathOrStr | None = None,
         env: dict[str, str] | None = None,
     ) -> tuple[bytes, bytes]:
+        """
+        Execute the provided command in the container. A smarter version of Container.process.communicate(args).
+
+        Optionally change the current working directory (cwd) and set some environment variables.
+        """
         if cwd is None:
             cwd = self.cwd
 
