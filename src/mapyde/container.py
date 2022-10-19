@@ -77,7 +77,7 @@ class Container:
                     self.engine,
                     "build",
                     f"{self.name}.sif",
-                    self.image,
+                    f"docker://{self.image}",
                 ],
                 check=True,
             )
@@ -94,7 +94,7 @@ class Container:
                     *[f"--volume={local}:{host}" for local, host in self.mounts],
                     f"--workdir={self.cwd}",
                     *self.additional_options,
-                    f"docker://{self.image}",
+                    self.image,
                 ],
                 check=True,
             )
