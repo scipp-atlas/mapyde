@@ -11,6 +11,7 @@ from pathlib import Path
 from types import TracebackType
 
 from mapyde.typing import Literal, PathOrStr, PopenBytes
+from mapyde.utils import slugify
 
 ContainerEngine = Literal[
     "docker", "singularity", "apptainer"
@@ -67,34 +68,63 @@ class Container:
         return [self.engine]
 
     def __enter__(self) -> Container:
-        self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
 
-        subprocess.run(
-            [
-                *self.entrypoint,
-                "create",
-                f"--name={self.name}",
-                "--interactive",
-                f"--user={self.user}:{self.group}",
-                *[f"--volume={local}:{host}" for local, host in self.mounts],
-                f"--workdir={self.cwd}",
-                *self.additional_options,
-                self.image,
-            ],
-            check=True,
-        )
+        if self.engine in ["singularity", "apptainer"]:
+            self.name = self.name or slugify(self.image)
 
-        self.process = subprocess.Popen(
-            [
-                *self.entrypoint,
-                "start",
-                "--attach",
-                "--interactive",
-                self.name,
-            ],
-            stdin=self.stdin_config,
-            stdout=self.stdout_config,
-        )
+            subprocess.run(
+                [
+                    self.engine,
+                    "build",
+                    f"{self.name}.sif",
+                    self.image,
+                ],
+                check=True,
+            )
+        else:
+            self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
+
+            subprocess.run(
+                [
+                    self.engine,
+                    "create",
+                    f"--name={self.name}",
+                    "--interactive",
+                    f"--user={self.user}:{self.group}",
+                    *[f"--volume={local}:{host}" for local, host in self.mounts],
+                    f"--workdir={self.cwd}",
+                    *self.additional_options,
+                    self.image,
+                ],
+                check=True,
+            )
+
+        if self.engine in ["singularity", "apptainer"]:
+            self.process = subprocess.Popen(
+                [
+                    self.engine,
+                    "shell",
+                    *[f"--bind={local}:{host}" for local, host in self.mounts],
+                    f"--pwd={self.cwd}",
+                    "--no-home",
+                    *self.additional_options,
+                    self.name,
+                ],
+                stdin=self.stdin_config,
+                stdout=self.stdout_config,
+            )
+        else:
+            self.process = subprocess.Popen(
+                [
+                    self.engine,
+                    "start",
+                    "--attach",
+                    "--interactive",
+                    self.name,
+                ],
+                stdin=self.stdin_config,
+                stdout=self.stdout_config,
+            )
 
         assert self.process.stdin
         self.stdin = self.process.stdin
