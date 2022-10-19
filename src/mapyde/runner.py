@@ -84,6 +84,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         with Container(
             image=image,
             name=f"{config['base']['output']}__mgpy",
+            engine=config["base"].get("engine", "docker"),
             mounts=mounts(config),
             stdout=sys.stdout,
             output=(utils.output_path(config).joinpath(config["base"]["logs"])),
@@ -106,6 +107,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__mgpy",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
@@ -139,6 +141,7 @@ rsync -rav --exclude hepmc . /data/""",
     with Container(
         image=image,
         name=f"{config['base']['output']}__delphes",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
@@ -256,6 +259,7 @@ rsync -rav . /data/""",
     with Container(
         image=image,
         name=f"{config['base']['output']}__hists",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
@@ -279,6 +283,7 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__simpleanalysis",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
         cwd="/data",
@@ -308,6 +313,7 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__SA2json",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
@@ -339,6 +345,7 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__muscan",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
@@ -377,6 +384,7 @@ cp -a sherpa/ /data/" """,
     with Container(
         image=image,
         name=f"{config['base']['output']}__sherpa",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
@@ -401,6 +409,7 @@ def run_root2hdf5(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__root2hdf5",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
         output=(utils.output_path(config).joinpath(config["base"]["logs"])),
