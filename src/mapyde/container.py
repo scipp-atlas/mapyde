@@ -82,11 +82,14 @@ class Container:
                     self.engine,
                     "build",
                     "--force",
+                    "--sandbox",
                     f"{self.name}.sif",
                     f"docker://{self.image}",
                 ],
                 check=True,
             )
+
+            subprocess.run(["mkdir", *[host for _, host in self.mounts]], check=True)
         else:
             self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
 
@@ -113,7 +116,7 @@ class Container:
                     *[f"--bind={local}:{host}" for local, host in self.mounts],
                     f"--pwd={self.cwd}",
                     "--no-home",
-                    "--writable-tmpfs",
+                    "--writable",
                     *self.additional_options,
                     f"{self.name}.sif",
                 ],
