@@ -127,6 +127,9 @@ class Container:
                 stdin=self.stdin_config,
                 stdout=self.stdout_config,
             )
+            if self.cwd == "/tmp":
+                self.process.communicate(bytes("cd $(mktemp -d)", "utf-8"))
+
         else:
             self.process = subprocess.Popen(
                 [
