@@ -124,10 +124,10 @@ def run_delphes(config: ImmutableConfig) -> tuple[bytes, bytes]:
     # ./test/wrapper_delphes.py config_file
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
-        f"""pwd && ls -lavh && ls -lavh /data && \
+        f"""cd $(mktemp -d) && pwd && ls -lavh && ls -lavh /data && \
 find /data/ -name "*hepmc.gz" && \
 cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
-gunzip hepmc.gz && \
+gunzip -f hepmc.gz && \
 cp /cards/delphes/{config['delphes']['card']} . && \
 /bin/ls -ltrh --color && \
 mkdir -p {Path(config['delphes']['output']).parent} && \
