@@ -119,6 +119,7 @@ class Container:
                     *[f"--bind={local}:{host}" for local, host in self.mounts],
                     f"--pwd={self.cwd}",
                     "--no-home",
+                    "--cleanenv",
                     "--writable",
                     *self.additional_options,
                     f"{self.name}.sif",
