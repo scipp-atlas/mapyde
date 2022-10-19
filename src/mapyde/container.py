@@ -94,7 +94,7 @@ class Container:
                     *[f"--volume={local}:{host}" for local, host in self.mounts],
                     f"--workdir={self.cwd}",
                     *self.additional_options,
-                    self.image,
+                    f"docker://{self.image}",
                 ],
                 check=True,
             )
@@ -108,7 +108,7 @@ class Container:
                     f"--pwd={self.cwd}",
                     "--no-home",
                     *self.additional_options,
-                    self.name,
+                    f"{self.name}.sif",
                 ],
                 stdin=self.stdin_config,
                 stdout=self.stdout_config,
