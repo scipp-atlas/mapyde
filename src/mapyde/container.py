@@ -4,6 +4,7 @@ Core Container functionality for managing OCI images.
 from __future__ import annotations
 
 import os
+import shlex
 import subprocess
 import typing as T
 import uuid
@@ -191,3 +192,31 @@ class Container:
         )
 
         self.name = None
+
+    def call(
+        self,
+        args: bytes,
+        cwd: PathOrStr | None = None,
+        env: dict[str, str] | None = None,
+    ) -> tuple[bytes, bytes]:
+        if cwd is None:
+            cwd = self.cwd
+
+        chdir = ""
+        if cwd:
+            chdir = "cd $(mktemp -d)" if cwd == "/tmp" else f"cd {cwd}"
+
+        env_assignments = (
+            " ".join(f"{shlex.quote(k)}={shlex.quote(v)}" for k, v in env.items())
+            if env is not None
+            else ""
+        )
+
+        command = bytes(
+            f"""{chdir}
+                env {env_assignments} {args!r}
+                """,
+            "utf-8",
+        )
+
+        return self.process.communicate(command)
