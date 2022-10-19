@@ -204,6 +204,8 @@ class Container:
 
         chdir = ""
         if cwd:
+            # singularity/apptainer mount host $TMPDIR into /tmp which might be
+            # unexpectedly full of files so make an empty temporary directory
             chdir = "cd $(mktemp -d)" if cwd == "/tmp" else f"cd {cwd}"
 
         env_assignments = (
