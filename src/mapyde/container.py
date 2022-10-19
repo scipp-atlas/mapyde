@@ -12,7 +12,9 @@ from types import TracebackType
 
 from mapyde.typing import Literal, PathOrStr, PopenBytes
 
-ContainerEngine = Literal["docker"]  # add support for podman later
+ContainerEngine = Literal[
+    "docker", "singularity", "apptainer"
+]  # add support for podman later
 
 
 class Container:
@@ -54,12 +56,22 @@ class Container:
         self.output = output
         self.additional_options = additional_options or []
 
+    @property
+    def entrypoint(self) -> list[str]:
+        """
+        The entrypoint for the given engine.
+        """
+        if self.engine in ["apptainer", "singularity"]:
+            return [self.engine, "oci"]
+
+        return [self.engine]
+
     def __enter__(self) -> Container:
         self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
 
         subprocess.run(
             [
-                self.engine,
+                *self.entrypoint,
                 "create",
                 f"--name={self.name}",
                 "--interactive",
@@ -74,7 +86,7 @@ class Container:
 
         self.process = subprocess.Popen(
             [
-                self.engine,
+                *self.entrypoint,
                 "start",
                 "--attach",
                 "--interactive",
@@ -128,7 +140,7 @@ class Container:
         assert isinstance(self.name, str)
 
         subprocess.run(
-            [self.engine, "rm", "--force", "-v", self.name],
+            [*self.entrypoint, "rm", "--force", "-v", self.name],
             stdout=subprocess.DEVNULL,
             check=False,
         )
