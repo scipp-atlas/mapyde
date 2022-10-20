@@ -1,4 +1,5 @@
 [base]
+engine = "docker"
 path = "{{PWD}}"
 output = "output"
 logs = "logs"
@@ -89,8 +90,8 @@ options = ""
 [pyhf]
 skip = true
 likelihood = "Higgsino_2L_bkgonly.json"
-image = "pyplotting-cuda:latest"
-gpu-options = ""
+image = "pyplotting:latest"
+gpu-options = "-c"
 
 [root2hdf5]
 input = "analysis/lowlevelAna.root"

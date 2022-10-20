@@ -84,11 +84,13 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         with Container(
             image=image,
             name=f"{config['base']['output']}__mgpy",
+            engine=config["base"].get("engine", "docker"),
             mounts=mounts(config),
             stdout=sys.stdout,
-            output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+            output_path=utils.output_path(config),
+            logs_path=config["base"]["logs"],
         ) as container:
-            stdout, stderr = container.process.communicate(command)
+            stdout, stderr = container.call(command)
 
         # change config options back
         config["madgraph"]["proc"]["card"] = origcard
@@ -106,11 +108,13 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__mgpy",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
-        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+        output_path=utils.output_path(config),
+        logs_path=config["base"]["logs"],
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -123,9 +127,9 @@ def run_delphes(config: ImmutableConfig) -> tuple[bytes, bytes]:
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
         f"""pwd && ls -lavh && ls -lavh /data && \
-find /data/ -name "*hepmc.gz" && \
-cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
-gunzip hepmc.gz && \
+find /data/madgraph -name "*hepmc.gz" && \
+cp $(find /data/madgraph -name "*hepmc.gz") hepmc.gz && \
+gunzip -f hepmc.gz && \
 cp /cards/delphes/{config['delphes']['card']} . && \
 /bin/ls -ltrh --color && \
 mkdir -p {Path(config['delphes']['output']).parent} && \
@@ -139,11 +143,13 @@ rsync -rav --exclude hepmc . /data/""",
     with Container(
         image=image,
         name=f"{config['base']['output']}__delphes",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
-        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+        output_path=utils.output_path(config),
+        logs_path=config["base"]["logs"],
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -256,11 +262,13 @@ rsync -rav . /data/""",
     with Container(
         image=image,
         name=f"{config['base']['output']}__hists",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
-        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+        output_path=utils.output_path(config),
+        logs_path=config["base"]["logs"],
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -272,19 +280,21 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     image = "gitlab-registry.cern.ch/atlas-sa/simple-analysis:master"
     command = bytes(
-        f"""simpleAnalysis -a {config['simpleanalysis']['name']} {config['analysis']['output']} -n""",
+        f"""/opt/SimpleAnalysis/ci/entrypoint.sh simpleAnalysis -a {config['simpleanalysis']['name']} {config['analysis']['output']} -n""",
         "utf-8",
     )
 
     with Container(
         image=image,
         name=f"{config['base']['output']}__simpleanalysis",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
         cwd="/data",
-        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+        output_path=utils.output_path(config),
+        logs_path=config["base"]["logs"],
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -308,12 +318,14 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__SA2json",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
-        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+        output_path=utils.output_path(config),
+        logs_path=config["base"]["logs"],
         cwd="/data",
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -326,7 +338,7 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['pyhf']['image']}"
     command = bytes(
-        f"""time python3.8 /scripts/muscan.py -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']}""",
+        f"""python3.8 /scripts/muscan.py -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']}""",
         "utf-8",
     )
 
@@ -339,13 +351,15 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__muscan",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
-        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+        output_path=utils.output_path(config),
+        logs_path=config["base"]["logs"],
         cwd="/data",
         additional_options=addl_opts,
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -377,11 +391,13 @@ cp -a sherpa/ /data/" """,
     with Container(
         image=image,
         name=f"{config['base']['output']}__sherpa",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
-        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+        output_path=utils.output_path(config),
+        logs_path=config["base"]["logs"],
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
 
@@ -401,11 +417,13 @@ def run_root2hdf5(config: ImmutableConfig) -> tuple[bytes, bytes]:
     with Container(
         image=image,
         name=f"{config['base']['output']}__root2hdf5",
+        engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
-        output=(utils.output_path(config).joinpath(config["base"]["logs"])),
+        output_path=utils.output_path(config),
+        logs_path=config["base"]["logs"],
         cwd="/data",
     ) as container:
-        stdout, stderr = container.process.communicate(command)
+        stdout, stderr = container.call(command)
 
     return stdout, stderr
