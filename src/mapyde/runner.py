@@ -128,7 +128,7 @@ def run_delphes(config: ImmutableConfig) -> tuple[bytes, bytes]:
     command = bytes(
         f"""pwd && ls -lavh && ls -lavh /data && \
 find /data/madgraph -name "*hepmc.gz" && \
-cp $(find /data/ -name "*hepmc.gz") hepmc.gz && \
+cp $(find /data/madgraph -name "*hepmc.gz") hepmc.gz && \
 gunzip -f hepmc.gz && \
 cp /cards/delphes/{config['delphes']['card']} . && \
 /bin/ls -ltrh --color && \
