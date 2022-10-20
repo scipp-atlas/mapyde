@@ -69,6 +69,11 @@ class Container:
         self.additional_options = additional_options or []
 
         self.output_path.mkdir(parents=True, exist_ok=True)
+        for host, container in self.mounts:
+            if not Path(container).is_absolute():
+                raise ValueError(
+                    f"The mount {host}:{container} does not point to an absolute path in the container."
+                )
 
     def __enter__(self) -> Container:
 
@@ -89,10 +94,16 @@ class Container:
                     check=True,
                 )
             else:
-                log.warning(f"{sif_path} already exists. Re-using it.")
+                log.warning("%s already exists. Re-using it.", sif_path)
 
             subprocess.run(
-                ["mkdir", *[sif_path.joinpath(host) for _, host in self.mounts]],
+                [
+                    "mkdir",
+                    *[
+                        sif_path.joinpath(Path(container).relative_to("/"))
+                        for _, container in self.mounts
+                    ],
+                ],
                 check=True,
             )
 
@@ -100,7 +111,7 @@ class Container:
                 [
                     self.engine,
                     "shell",
-                    *[f"--bind={local}:{host}" for local, host in self.mounts],
+                    *[f"--bind={host}:{container}" for host, container in self.mounts],
                     f"--pwd={self.cwd}",
                     "--no-home",
                     "--cleanenv",
@@ -122,7 +133,10 @@ class Container:
                     f"--name={self.name}",
                     "--interactive",
                     f"--user={self.user}:{self.group}",
-                    *[f"--volume={local}:{host}" for local, host in self.mounts],
+                    *[
+                        f"--volume={host}:{container}"
+                        for host, container in self.mounts
+                    ],
                     f"--workdir={self.cwd}",
                     *self.additional_options,
                     self.image,
