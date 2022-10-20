@@ -93,19 +93,20 @@ class Container:
                     ],
                     check=True,
                 )
+
+                subprocess.run(
+                    [
+                        "mkdir",
+                        *[
+                            sif_path.joinpath(Path(container).relative_to("/"))
+                            for _, container in self.mounts
+                        ],
+                    ],
+                    check=True,
+                )
+
             else:
                 log.warning("%s already exists. Re-using it.", sif_path)
-
-            subprocess.run(
-                [
-                    "mkdir",
-                    *[
-                        sif_path.joinpath(Path(container).relative_to("/"))
-                        for _, container in self.mounts
-                    ],
-                ],
-                check=True,
-            )
 
             self.process = subprocess.Popen(
                 [
