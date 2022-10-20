@@ -50,7 +50,7 @@ class Container:
             raise ValueError("Must specify an image to run.")
 
         try:
-            subprocess.run(["hash", engine], check=True)
+            subprocess.run(["bash", "-c", f"'hash {engine}'"], check=True)
         except subprocess.CalledProcessError as err:
             raise OSError(f"{engine} does not exist on your system.") from err
 
