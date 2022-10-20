@@ -3,6 +3,7 @@ Core Container functionality for managing OCI images.
 """
 from __future__ import annotations
 
+import logging
 import os
 import shlex
 import subprocess
@@ -17,6 +18,8 @@ from mapyde.utils import slugify
 ContainerEngine = Literal[
     "docker", "singularity", "apptainer"
 ]  # add support for podman later
+
+log = logging.getLogger(__name__)
 
 
 class Container:
@@ -39,7 +42,8 @@ class Container:
         engine: ContainerEngine = "docker",
         name: T.Optional[str] = None,
         stdout: T.Optional[T.Union[T.IO[bytes], T.IO[str]]] = None,
-        output: T.Optional[Path] = None,
+        output_path: T.Optional[Path] = None,
+        logs_path: T.Optional[PathOrStr] = None,
         additional_options: T.Optional[list[str]] = None,
     ):
         if not image:
@@ -60,30 +64,54 @@ class Container:
         self.stdin_config = subprocess.PIPE
         self.stdout_config = stdout or subprocess.PIPE
         self.stderr_config = subprocess.STDOUT
-        self.output = output
+        self.output_path = (output_path or Path()).resolve()
+        self.logs_path = logs_path
         self.additional_options = additional_options or []
+
+        self.output_path.mkdir(parents=True, exist_ok=True)
 
     def __enter__(self) -> Container:
 
         if self.engine in ["singularity", "apptainer"]:
             self.name = self.name or slugify(self.image)
 
+            sif_path = self.output_path.joinpath(f"{self.name}.sif")
+            if not sif_path.exists():
+                subprocess.run(
+                    [
+                        self.engine,
+                        "build",
+                        "--force",
+                        "--sandbox",
+                        sif_path,
+                        f"docker://{self.image}",
+                    ],
+                    check=True,
+                )
+            else:
+                log.warning(f"{sif_path} already exists. Re-using it.")
+
             subprocess.run(
-                [
-                    self.engine,
-                    "build",
-                    "--force",
-                    "--sandbox",
-                    f"{self.name}.sif",
-                    f"docker://{self.image}",
-                ],
+                ["mkdir", *[sif_path.joinpath(host) for _, host in self.mounts]],
                 check=True,
             )
 
-            subprocess.run(
-                ["mkdir", *[f"{self.name}.sif/{host}" for _, host in self.mounts]],
-                check=True,
+            self.process = subprocess.Popen(
+                [
+                    self.engine,
+                    "shell",
+                    *[f"--bind={local}:{host}" for local, host in self.mounts],
+                    f"--pwd={self.cwd}",
+                    "--no-home",
+                    "--cleanenv",
+                    "--writable",
+                    *self.additional_options,
+                    sif_path,
+                ],
+                stdin=self.stdin_config,
+                stdout=self.stdout_config,
             )
+
         else:
             self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
 
@@ -102,24 +130,6 @@ class Container:
                 check=True,
             )
 
-        if self.engine in ["singularity", "apptainer"]:
-            self.process = subprocess.Popen(
-                [
-                    self.engine,
-                    "shell",
-                    *[f"--bind={local}:{host}" for local, host in self.mounts],
-                    f"--pwd={self.cwd}",
-                    "--no-home",
-                    "--cleanenv",
-                    "--writable",
-                    *self.additional_options,
-                    f"{self.name}.sif",
-                ],
-                stdin=self.stdin_config,
-                stdout=self.stdout_config,
-            )
-
-        else:
             self.process = subprocess.Popen(
                 [
                     self.engine,
@@ -145,14 +155,13 @@ class Container:
         exc_tb: T.Optional[TracebackType],
     ) -> None:
 
-        if self.output:
+        if self.logs_path:
             # dump log files
             assert self.name
             logfiletag = self.name[self.name.rfind("__") + 2 :]
-            self.output.mkdir(parents=True, exist_ok=True)
-            with self.output.joinpath(f"docker_{logfiletag}.log").open(
-                "w", encoding="utf-8"
-            ) as logfile:
+            with self.output_path.joinpath(self.logs_path).joinpath(
+                f"docker_{logfiletag}.log"
+            ).open("w", encoding="utf-8") as logfile:
                 subprocess.run(
                     [
                         self.engine,
