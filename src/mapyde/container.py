@@ -178,7 +178,7 @@ class Container:
             output = self.output_path.joinpath(self.logs_path).joinpath(
                 f"docker_{logfiletag}.log"
             )
-            output.mkdir(parents=True, exist_ok=True)
+            output.parent.mkdir(parents=True, exist_ok=True)
             with output.open("w", encoding="utf-8") as logfile:
                 subprocess.run(
                     [
