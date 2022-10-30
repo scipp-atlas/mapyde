@@ -5,8 +5,10 @@ Utilities for managing configuration.
 from __future__ import annotations
 
 import os
+import re
 import sys
 import typing as T
+import unicodedata
 from pathlib import Path
 
 import toml
@@ -106,3 +108,24 @@ def output_path(config: ImmutableConfig) -> Path:
     Return the output path from the config.
     """
     return Path(config["base"]["path"]).joinpath(config["base"]["output"]).resolve()
+
+
+def slugify(value: str, allow_unicode: bool = False) -> str:
+    """
+    Taken from https://github.com/django/django/blob/master/django/utils/text.py
+    Convert to ASCII if 'allow_unicode' is False. Convert spaces or repeated
+    dashes to single dashes. Remove characters that aren't alphanumerics,
+    underscores, or hyphens. Convert to lowercase. Also strip leading and
+    trailing whitespace, dashes, and underscores.
+    """
+    value = str(value)
+    if allow_unicode:
+        value = unicodedata.normalize("NFKC", value)
+    else:
+        value = (
+            unicodedata.normalize("NFKD", value)
+            .encode("ascii", "ignore")
+            .decode("ascii")
+        )
+    value = re.sub(r"[^\w\s-]", "", value.lower())
+    return re.sub(r"[-\s]+", "-", value).strip("-_")
