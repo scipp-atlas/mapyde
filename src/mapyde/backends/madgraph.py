@@ -213,7 +213,7 @@ def generate_mg5config(config: ImmutableConfig) -> None:
                     # to be more elegant. really only changing the spinmode at the moment
                     if "set spinmode" in line and "spinmode" in config["madspin"]:
                         new_madspin_card.write(
-                            "set spinmode %s \n" % config["madspin"]["spinmode"]
+                            f"set spinmode {config['madspin']['spinmode']} \n"
                         )
                     else:
                         new_madspin_card.write(line)
