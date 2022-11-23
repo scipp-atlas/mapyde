@@ -280,7 +280,11 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     image = "gitlab-registry.cern.ch/atlas-sa/simple-analysis:master"
     command = bytes(
-        f"""/opt/SimpleAnalysis/ci/entrypoint.sh simpleAnalysis -a {config['simpleanalysis']['name']} {config['analysis']['output']} -n""",
+        f"""mkdir -p tmp_SA && cd tmp_SA && \
+/opt/SimpleAnalysis/ci/entrypoint.sh simpleAnalysis -a {config['simpleanalysis']['name']} ../{config['analysis']['output']} -n && \
+mv {config['simpleanalysis']['name']}.root ../{config['simpleanalysis']['name']}{config['simpleanalysis']['outputtag']}.root && \
+mv {config['simpleanalysis']['name']}.txt ../{config['simpleanalysis']['name']}{config['simpleanalysis']['outputtag']}.txt && \
+cd ../ && rm -rf tmp_SA""",
         "utf-8",
     )
     if (
@@ -288,12 +292,15 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
         and "hepmc" in config["simpleanalysis"]["input"]
     ):
         command = bytes(
-            f"""pwd && ls -lavh && ls -lavh /data && \
+            f"""mkdir -p tmp_SA && cd tmp_SA && \
 find /data -name "*hepmc.gz" && \
 cp $(find /data/madgraph -name "*hepmc.gz") hepmc.gz && \
 gunzip -f hepmc.gz && \
 /opt/SimpleAnalysis/ci/entrypoint.sh simpleAnalysis -a {config['simpleanalysis']['name']} {config['simpleanalysis']['input']} -n && \
-rm hepmc""",
+mv {config['simpleanalysis']['name']}.root ../{config['simpleanalysis']['name']}{config['simpleanalysis']['outputtag']}.root && \
+mv {config['simpleanalysis']['name']}.txt ../{config['simpleanalysis']['name']}{config['simpleanalysis']['outputtag']}.txt && \
+rm hepmc && \
+cd ../ && rm -rf tmp_SA""",
             "utf-8",
         )
 
@@ -322,9 +329,15 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     for i in config["sa2json"]["inputs"].split():
         inputstr += f" -i {i} "
 
+    scalefactorstring = ""
+    if "hepmc" in config["simpleanalysis"]["input"]:
+        # scale weights up by kfactor*br and down by number of generated events
+        scalefactor = config["analysis"]["kfactor"] / config["madgraph"]["nevents"]
+        scalefactorstring = f"--scale {scalefactor}"
+
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['sa2json']['image']}"
     command = bytes(
-        f"""python /scripts/SAtoJSON.py {inputstr} -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']} {config['sa2json']['options']}""",
+        f"""python /scripts/SAtoJSON.py {inputstr} -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']} {config['sa2json']['options']} {scalefactorstring}""",
         "utf-8",
     )
 

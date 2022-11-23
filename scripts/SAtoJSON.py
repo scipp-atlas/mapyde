@@ -21,6 +21,7 @@ parser.add_argument("-b", "--background", help="path to JSON background-only fil
 parser.add_argument("-o", "--output", help="path to JSON output")
 parser.add_argument("-n", "--name", help="name of signal sample")
 parser.add_argument("-l", "--lumi", help="luminosity in pb-1")
+parser.add_argument("-s", "--scale", help="scale weights by factor")
 parser.add_argument(
     "-c",
     "--compressed",
@@ -105,7 +106,7 @@ for channel in ws.channels:
 
             yld += sum(branches[SAname][mask])
 
-    yld *= float(args.lumi)
+    yld *= float(args.lumi) * float(args.scale)
     print("%3d  %40s  %40s  %.2e" % (c_index, channel, SAname, yld))
 
     newspec["channels"][c_index]["samples"].append(
