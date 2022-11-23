@@ -134,7 +134,7 @@ cp /cards/delphes/{config['delphes']['card']} . && \
 /bin/ls -ltrh --color && \
 mkdir -p {Path(config['delphes']['output']).parent} && \
 set -x && \
-/usr/local/share/delphes/delphes/DelphesHepMC2 {config['delphes']['card']} {Path(config['delphes']['output'])} hepmc && \
+/usr/local/share/delphes/delphes/DelphesHepMC3 {config['delphes']['card']} {Path(config['delphes']['output'])} hepmc && \
 set +x && \
 rsync -rav --exclude hepmc . /data/""",
         "utf-8",
@@ -283,6 +283,19 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
         f"""/opt/SimpleAnalysis/ci/entrypoint.sh simpleAnalysis -a {config['simpleanalysis']['name']} {config['analysis']['output']} -n""",
         "utf-8",
     )
+    if (
+        "input" in config["simpleanalysis"]
+        and "hepmc" in config["simpleanalysis"]["input"]
+    ):
+        command = bytes(
+            f"""pwd && ls -lavh && ls -lavh /data && \
+find /data -name "*hepmc.gz" && \
+cp $(find /data/madgraph -name "*hepmc.gz") hepmc.gz && \
+gunzip -f hepmc.gz && \
+/opt/SimpleAnalysis/ci/entrypoint.sh simpleAnalysis -a {config['simpleanalysis']['name']} {config['simpleanalysis']['input']} -n && \
+rm hepmc""",
+            "utf-8",
+        )
 
     with Container(
         image=image,
@@ -338,7 +351,7 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['pyhf']['image']}"
     command = bytes(
-        f"""python3.8 /scripts/muscan.py -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']}""",
+        f"""python3.8 /scripts/muscan.py -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']} {config['pyhf']['other-options']}""",
         "utf-8",
     )
 
