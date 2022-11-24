@@ -41,6 +41,7 @@ dependencies = [
     "jinja2",
     "in_place",
     "importlib_resources>=1.3.0; python_version<'3.9'",  # for resources in schema
+    "rich",
 ]
 
 [project.optional-dependencies]
