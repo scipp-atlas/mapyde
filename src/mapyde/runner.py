@@ -104,6 +104,16 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
         "utf-8",
     )
+    if ("keep_output" in config["madgraph"]) and (
+        not config["madgraph"]["keep_output"]
+    ):
+        command = bytes(
+            f"mg5_aMC /data/{config['madgraph']['generator']['output']} && \
+mkdir -p /data/madgraph && \
+rsync -a PROC_madgraph/Events/run_01/unweighted_events.lhe.gz /data/madgraph/ && \
+rsync -a PROC_madgraph/Events/run_01/tag_1_pythia8_events.hepmc.gz /data/madgraph/ \n",
+            "utf-8",
+        )
 
     with Container(
         image=image,
