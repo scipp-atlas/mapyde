@@ -6,32 +6,42 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 
 ---
 
-[![Actions Status][actions-badge]][actions-link]
-[![Documentation Status][rtd-badge]][rtd-link]
+<!-- sync the following div with docs/index.md -->
+<div align="center">
 
-[![PyPI version][pypi-version]][pypi-link]
-[![Conda-Forge][conda-badge]][conda-link]
-[![PyPI platforms][pypi-platforms]][pypi-link]
+<img src="https://raw.githubusercontent.com/scipp-atlas/mario-mapyde/main/docs/assets/images/logo.svg" alt="Mapyde logo" width="500" role="img">
 
-[![GitHub Discussion][github-discussions-badge]][github-discussions-link]
-[![ReadTheDocs][rtd-badge]][rtd-link]
+|         |                                                                                                                                                                                                                                                                                            |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| CI/CD   | [![CI - Test][actions-badge-ci]{ loading=lazy .off-glb }][actions-link-ci] [![CI - Docker][actions-badge-docker]{ loading=lazy .off-glb }][actions-link-docker]                                                                                                                            |
+| Docs    | [![Docs - Release][actions-badge-docs]{ loading=lazy .off-glb }][actions-link-docs] [![Docs - Dev][actions-badge-docs-dev]{ loading=lazy .off-glb }][actions-link-docs-dev]                                                                                                                |
+| Package | [![PyPI - Downloads][pypi-downloads]{ loading=lazy .off-glb }][pypi-link] [![PyPI - Version][pypi-version]{ loading=lazy .off-glb }][pypi-link] [![PyPI platforms][pypi-platforms]{ loading=lazy .off-glb }][pypi-link] [![Conda-Forge][conda-badge]{ loading=lazy .off-glb }][conda-link] |
+| Meta    | [![GitHub - Discussion][github-discussions-badge]{ loading=lazy .off-glb }][github-discussions-link] [![GitHub - Issue][github-issues-badge]{ loading=lazy .off-glb }][github-issues-link] [![License - Apache 2.0][license-badge]{ loading=lazy .off-glb }][license-link]                 |
 
 <!-- prettier-ignore-start -->
-[actions-badge]:            https://github.com/scipp-atlas/mario-mapyde/workflows/CI/badge.svg
-[actions-link]:             https://github.com/scipp-atlas/mario-mapyde/actions
+[actions-badge-ci]:         https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml/badge.svg?branch=main
+[actions-link-ci]:          https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml
+[actions-badge-docker]:     https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docker.yml/badge.svg?branch=main
+[actions-link-docker]:      https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docker.yml
+[actions-badge-docs]:       https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs-release.yml/badge.svg?branch=main
+[actions-link-docs]:        https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs-release.yml
+[actions-badge-docs-dev]:   https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs-dev.yml/badge.svg?branch=main
+[actions-link-docs-dev]:    https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs-dev.yml
 [conda-badge]:              https://img.shields.io/conda/vn/conda-forge/mapyde
 [conda-link]:               https://github.com/conda-forge/mapyde-feedstock
 [github-discussions-badge]: https://img.shields.io/static/v1?label=Discussions&message=Ask&color=blue&logo=github
 [github-discussions-link]:  https://github.com/scipp-atlas/mario-mapyde/discussions
-[gitter-badge]:             https://badges.gitter.im/https://github.com/scipp-atlas/mario-mapyde/community.svg
-[gitter-link]:              https://gitter.im/https://github.com/scipp-atlas/mario-mapyde/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
+[github-issues-badge]:      https://img.shields.io/static/v1?label=Issues&message=File&color=blue&logo=github
+[github-issues-link]:       https://github.com/scipp-atlas/mario-mapyde/issues
 [pypi-link]:                https://pypi.org/project/mapyde/
+[pypi-downloads]:           https://img.shields.io/pypi/dm/mapyde.svg?color=blue&label=Downloads&logo=pypi&logoColor=gold
 [pypi-platforms]:           https://img.shields.io/pypi/pyversions/mapyde
 [pypi-version]:             https://badge.fury.io/py/mapyde.svg
-[rtd-badge]:                https://readthedocs.org/projects/mapyde/badge/?version=latest
-[rtd-link]:                 https://mapyde.readthedocs.io/en/latest/?badge=latest
-[sk-badge]:                 https://scikit-hep.org/assets/images/Scikit--HEP-Project-blue.svg
+[license-badge]:            https://img.shields.io/badge/License-Apache_2.0-blue.svg
+[license-link]:              https://spdx.org/licenses/Apache-2.0.html
 <!-- prettier-ignore-end -->
+
+</div>
 
 ## Docker Images
 

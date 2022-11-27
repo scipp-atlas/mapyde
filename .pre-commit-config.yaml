@@ -42,7 +42,6 @@ repos:
       - id: prettier
         types_or: [yaml, markdown, html, css, scss, javascript, json]
         args: [--prose-wrap=always]
-        exclude: docs/
 
   - repo: https://github.com/asottile/blacken-docs
     rev: v1.12.1

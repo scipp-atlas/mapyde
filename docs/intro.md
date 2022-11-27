@@ -4,7 +4,8 @@
 
 ## Configuration
 
-All project-specific configuration recognized by mapyde can be defined in a custom `user.toml`:
+All project-specific configuration recognized by mapyde can be defined in a
+custom `user.toml`:
 
 === ":octicons-file-code-16: default"
 
@@ -58,5 +59,6 @@ All project-specific configuration recognized by mapyde can be defined in a cust
     MN1 = 240
     ```
 
+<!-- prettier-ignore -->
 !!! tip
     This is all highly customizable with the usage of templates to make it easier to inherit a _convenient_ set of defaults for which you can override.
