@@ -104,6 +104,14 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
         "utf-8",
     )
+    if config["madgraph"].get("keep_output", False):
+        command = bytes(
+            f"mg5_aMC /data/{config['madgraph']['generator']['output']} && \
+mkdir -p /data/madgraph && \
+rsync -a PROC_madgraph/Events/run_01/unweighted_events.lhe.gz /data/madgraph/ && \
+rsync -a PROC_madgraph/Events/run_01/tag_1_pythia8_events.hepmc.gz /data/madgraph/ \n",
+            "utf-8",
+        )
 
     with Container(
         image=image,
@@ -134,7 +142,7 @@ cp /cards/delphes/{config['delphes']['card']} . && \
 /bin/ls -ltrh --color && \
 mkdir -p {Path(config['delphes']['output']).parent} && \
 set -x && \
-/usr/local/share/delphes/delphes/DelphesHepMC2 {config['delphes']['card']} {Path(config['delphes']['output'])} hepmc && \
+/usr/local/share/delphes/delphes/DelphesHepMC3 {config['delphes']['card']} {Path(config['delphes']['output'])} hepmc && \
 set +x && \
 rsync -rav --exclude hepmc . /data/""",
         "utf-8",
@@ -280,9 +288,29 @@ def run_simpleanalysis(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     image = "gitlab-registry.cern.ch/atlas-sa/simple-analysis:master"
     command = bytes(
-        f"""/opt/SimpleAnalysis/ci/entrypoint.sh simpleAnalysis -a {config['simpleanalysis']['name']} {config['analysis']['output']} -n""",
+        f"""mkdir -p tmp_SA && cd tmp_SA && \
+/opt/SimpleAnalysis/ci/entrypoint.sh simpleAnalysis -a {config['simpleanalysis']['name']} ../{config['analysis']['output']} -n && \
+mv {config['simpleanalysis']['name']}.root ../{config['simpleanalysis']['name']}{config['simpleanalysis']['outputtag']}.root && \
+mv {config['simpleanalysis']['name']}.txt ../{config['simpleanalysis']['name']}{config['simpleanalysis']['outputtag']}.txt && \
+cd ../ && rm -rf tmp_SA""",
         "utf-8",
     )
+    if (
+        "input" in config["simpleanalysis"]
+        and "hepmc" in config["simpleanalysis"]["input"]
+    ):
+        command = bytes(
+            f"""mkdir -p tmp_SA && cd tmp_SA && \
+find /data -name "*hepmc.gz" && \
+cp $(find /data/madgraph -name "*hepmc.gz") hepmc.gz && \
+gunzip -f hepmc.gz && \
+/opt/SimpleAnalysis/ci/entrypoint.sh simpleAnalysis -a {config['simpleanalysis']['name']} {config['simpleanalysis']['input']} -n && \
+mv {config['simpleanalysis']['name']}.root ../{config['simpleanalysis']['name']}{config['simpleanalysis']['outputtag']}.root && \
+mv {config['simpleanalysis']['name']}.txt ../{config['simpleanalysis']['name']}{config['simpleanalysis']['outputtag']}.txt && \
+rm hepmc && \
+cd ../ && rm -rf tmp_SA""",
+            "utf-8",
+        )
 
     with Container(
         image=image,
@@ -309,9 +337,15 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     for i in config["sa2json"]["inputs"].split():
         inputstr += f" -i {i} "
 
+    scalefactorstring = ""
+    if "hepmc" in config["simpleanalysis"]["input"]:
+        # scale weights up by kfactor*br and down by number of generated events
+        scalefactor = config["analysis"]["kfactor"] / config["madgraph"]["nevents"]
+        scalefactorstring = f"--scale {scalefactor}"
+
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['sa2json']['image']}"
     command = bytes(
-        f"""python /scripts/SAtoJSON.py {inputstr} -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']} {config['sa2json']['options']}""",
+        f"""python /scripts/SAtoJSON.py {inputstr} -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']} {config['sa2json']['options']} {scalefactorstring}""",
         "utf-8",
     )
 
@@ -338,7 +372,7 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['pyhf']['image']}"
     command = bytes(
-        f"""python3.8 /scripts/muscan.py -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']}""",
+        f"""python3.8 /scripts/muscan.py -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']} {config['pyhf']['other-options']}""",
         "utf-8",
     )
 

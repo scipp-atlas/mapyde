@@ -42,6 +42,12 @@ parser.add_argument(
     default=None,
     help="pass in full likelihood, with both signal and background included.",
 )
+parser.add_argument(
+    "-S",
+    "--skipfit",
+    action="store_true",
+    help="only manage the json stuff, don't actually perform the fit.",
+)
 parser.add_argument("-p", "--plot", action="store_true", help="make a plot of the CLs")
 args = parser.parse_args()
 
@@ -81,6 +87,10 @@ if args.likelihood is None:
 else:
     spec = json.load(open(args.likelihood))
     ana = args.likelihood.replace(".json", "")
+
+# we may only want to write out the json likelihood file.
+if args.skipfit:
+    exit(0)
 
 ws = pyhf.Workspace(spec)
 pdf = ws.model()

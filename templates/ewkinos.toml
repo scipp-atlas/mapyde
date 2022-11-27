@@ -80,11 +80,12 @@ lumi = 139000
 skip = false
 additional_opts = ""
 name = "EwkCompressed2018"
+outputtag = ""
 
 [sa2json]
-inputs = "{{simpleanalysis['name']}}.root"
+inputs = "{{simpleanalysis['output']}}.root"
 image = "pyplotting:latest"
-output = "{{simpleanalysis['name']}}_patch.json"
+output = "{{simpleanalysis['output']}}_patch.json"
 options = "-c"
 
 [pyhf]
