@@ -8,6 +8,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from rich.live import Live
+
 from mapyde import utils
 from mapyde.backends import madgraph
 from mapyde.container import Container
@@ -56,22 +58,48 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
     Run madgraph.
     """
 
-    # in some cases we'll need to run MG once to get a XS, e.g. without decays, and then run again with the "real" proc card.
-    if (
-        "run_without_decays" in config["madgraph"]
-        and config["madgraph"]["run_without_decays"]
-    ):
+    with Live(screen=True):
 
-        # modify config to run without decays and store in a separate area
-        origcard = config["madgraph"]["proc"]["card"]
-        origout = config["base"]["output"]
-        origpythia = config["pythia"]["skip"]
+        # in some cases we'll need to run MG once to get a XS, e.g. without decays, and then run again with the "real" proc card.
+        if (
+            "run_without_decays" in config["madgraph"]
+            and config["madgraph"]["run_without_decays"]
+        ):
 
-        config["madgraph"]["proc"]["card"] = (
-            config["madgraph"]["proc"]["card"] + "_nodecays"
-        )
-        config["base"]["output"] = config["base"]["output"] + "_nodecays"
-        config["pythia"]["skip"] = True
+            # modify config to run without decays and store in a separate area
+            origcard = config["madgraph"]["proc"]["card"]
+            origout = config["base"]["output"]
+            origpythia = config["pythia"]["skip"]
+
+            config["madgraph"]["proc"]["card"] = (
+                config["madgraph"]["proc"]["card"] + "_nodecays"
+            )
+            config["base"]["output"] = config["base"]["output"] + "_nodecays"
+            config["pythia"]["skip"] = True
+
+            madgraph.generate_mg5config(config)
+
+            image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['madgraph']['version']}"
+            command = bytes(
+                f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
+                "utf-8",
+            )
+
+            with Container(
+                image=image,
+                name=f"{config['base']['output']}__mgpy",
+                engine=config["base"].get("engine", "docker"),
+                mounts=mounts(config),
+                stdout=sys.stdout,
+                output_path=utils.output_path(config),
+                logs_path=config["base"]["logs"],
+            ) as container:
+                stdout, stderr = container.call(command)
+
+            # change config options back
+            config["madgraph"]["proc"]["card"] = origcard
+            config["base"]["output"] = origout
+            config["pythia"]["skip"] = origpythia
 
         madgraph.generate_mg5config(config)
 
@@ -97,32 +125,32 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         config["base"]["output"] = origout
         config["pythia"]["skip"] = origpythia
 
-    madgraph.generate_mg5config(config)
+        madgraph.generate_mg5config(config)
 
-    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['madgraph']['version']}"
-    command = bytes(
-        f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
-        "utf-8",
-    )
-    if config["madgraph"].get("keep_output", False):
+        image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['madgraph']['version']}"
         command = bytes(
-            f"mg5_aMC /data/{config['madgraph']['generator']['output']} && \
-mkdir -p /data/madgraph && \
-rsync -a PROC_madgraph/Events/run_01/unweighted_events.lhe.gz /data/madgraph/ && \
-rsync -a PROC_madgraph/Events/run_01/tag_1_pythia8_events.hepmc.gz /data/madgraph/ \n",
+            f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
             "utf-8",
         )
+        if config["madgraph"].get("keep_output", False):
+            command = bytes(
+                f"mg5_aMC /data/{config['madgraph']['generator']['output']} && \
+    mkdir -p /data/madgraph && \
+    rsync -a PROC_madgraph/Events/run_01/unweighted_events.lhe.gz /data/madgraph/ && \
+    rsync -a PROC_madgraph/Events/run_01/tag_1_pythia8_events.hepmc.gz /data/madgraph/ \n",
+                "utf-8",
+            )
 
-    with Container(
-        image=image,
-        name=f"{config['base']['output']}__mgpy",
-        engine=config["base"].get("engine", "docker"),
-        mounts=mounts(config),
-        stdout=sys.stdout,
-        output_path=utils.output_path(config),
-        logs_path=config["base"]["logs"],
-    ) as container:
-        stdout, stderr = container.call(command)
+        with Container(
+            image=image,
+            name=f"{config['base']['output']}__mgpy",
+            engine=config["base"].get("engine", "docker"),
+            mounts=mounts(config),
+            stdout=sys.stdout,
+            output_path=utils.output_path(config),
+            logs_path=config["base"]["logs"],
+        ) as container:
+            stdout, stderr = container.call(command)
 
     return stdout, stderr
 
