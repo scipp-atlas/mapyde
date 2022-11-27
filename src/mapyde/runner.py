@@ -104,9 +104,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
         "utf-8",
     )
-    if ("keep_output" in config["madgraph"]) and (
-        not config["madgraph"]["keep_output"]
-    ):
+    if config["madgraph"].get("keep_output", False):
         command = bytes(
             f"mg5_aMC /data/{config['madgraph']['generator']['output']} && \
 mkdir -p /data/madgraph && \
