@@ -12,6 +12,11 @@ repos:
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-yaml
+        exclude: mkdocs.yml
+      - id: check-yaml
+        name: check yaml (unsafe)
+        files: mkdocs.yml
+        args: ["--unsafe"]
       - id: debug-statements
       - id: end-of-file-fixer
       - id: mixed-line-ending
@@ -37,6 +42,7 @@ repos:
       - id: prettier
         types_or: [yaml, markdown, html, css, scss, javascript, json]
         args: [--prose-wrap=always]
+        exclude: docs/
 
   - repo: https://github.com/asottile/blacken-docs
     rev: v1.12.1
