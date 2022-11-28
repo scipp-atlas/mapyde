@@ -46,12 +46,12 @@ def docs(session: nox.Session) -> None:
     """
 
     session.install(".[docs]")
-    session.run("mkdocs", "build", "-d", "_build")
+    session.run("mkdocs", "build")
 
     if session.posargs:
         if "serve" in session.posargs:
             print("Launching docs at http://localhost:8000/ - use Ctrl-C to quit")
-            session.run("python", "-m", "http.server", "8000", "-d", "_build")
+            session.run("python", "-m", "http.server", "8000", "-d", "site")
         else:
             session.warn("Unsupported argument to docs")
 
