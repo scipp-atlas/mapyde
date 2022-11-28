@@ -11,6 +11,7 @@ docs_dir: docs
 site_dir: site
 theme:
   name: material
+  custom_dir: docs/.overrides
   language: en
   favicon: assets/images/logo.svg
   icon:
