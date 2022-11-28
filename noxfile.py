@@ -65,7 +65,7 @@ def mike(session: nox.Session) -> None:
     session.install(".[docs]")
 
     args = session.posargs or ["dev"]
-    print("mike", "deploy", "--branch", "gh-pages", *args)
+    session.run("mike", "deploy", "--branch", "gh-pages", *args)
 
 
 @nox.session
