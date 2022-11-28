@@ -27,7 +27,7 @@ jobs:
           python-version: "3.x"
 
       - name: Build Docs
-        run: pipx run nox -s mkdocs
+        run: pipx run nox -s docs
 
       - name: Check documentation
         run: pipx run linkchecker --config .linkcheckerrc site
