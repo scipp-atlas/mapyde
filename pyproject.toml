@@ -77,9 +77,9 @@ docs = [
 ]
 
 [project.urls]
-homepage = "https://github.com/scipp-atlas/mario-mapyde"
-tracker = "https://github.com/scipp-atlas/mario-mapyde/issues"
-source = "https://github.com/scipp-atlas/mario-mapyde"
+Homepage = "https://scipp-atlas.github.io/mario-mapyde/0.4/"
+Tracker = "https://github.com/scipp-atlas/mario-mapyde/issues"
+Source = "https://github.com/scipp-atlas/mario-mapyde"
 
 [project.scripts]
 mapyde = "mapyde.cli:app"
