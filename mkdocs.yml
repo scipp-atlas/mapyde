@@ -47,6 +47,7 @@ nav:
       - About: index.md
       - Installation: install.md
       - Introduction: intro.md
+      - Code Reference: reference/
   - CLI:
       - About: cli/about.md
       - Reference: cli/reference.md
@@ -66,10 +67,16 @@ plugins:
     minify_html: true
   git-revision-date-localized:
     type: date
-    # Required for blog plugin's generated indices
+    # Required for generated documentation from gen-files
     fallback_to_build_date: true
   mike:
     alias_type: copy
+  gen-files:
+    scripts:
+      - docs/gen_ref_nav.py
+  literate-nav:
+    nav_file: SUMMARY.md
+  section-index: {}
   mkdocstrings:
     default_handler: python
     handlers:
@@ -81,11 +88,19 @@ plugins:
           show_root_heading: true
           show_root_full_path: false
           # Docstrings
-          show_if_no_docstring: true
+          docstring_style: google
+          docstring_options:
+            ignore_init_summary: true
           # Signatures/annotations
+          show_if_no_docstring: false
+          merge_init_into_class: true
+          separate_signature: true
           show_signature_annotations: true
+          show_source: true
           # Other
-          show_bases: false
+          filters:
+            - "!__all__"
+            - "!^_[^_]"
   # to add redirects
   #redirects:
   #  redirect_maps:

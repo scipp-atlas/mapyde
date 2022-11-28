@@ -57,7 +57,7 @@ docs = [
     # Plugins
     "mkdocs-minify-plugin>=0.5.0",
     "mkdocs-git-revision-date-localized-plugin>=1.1.0",
-    "mkdocstrings-python>=0.7.1",
+    "mkdocstrings[python]>=0.18",
     "mkdocs-redirects>=1.1.0",
     "mkdocs-glightbox>=0.3.0",
     # https://github.com/jimporter/mike/issues/82#issuecomment-1172913929
@@ -70,6 +70,10 @@ docs = [
     # Validation
     # https://github.com/linkchecker/linkchecker/pull/669#issuecomment-1267236287
     "linkchecker @ git+https://github.com/linkchecker/linkchecker.git@d9265bb71c2054bf57b8c5734a4825d62505c779",
+    # auto-generation of docs
+    "mkdocs-gen-files>=0.4",
+    "mkdocs-literate-nav>=0.5.0",
+    "mkdocs-section-index>=0.3.4",
 ]
 
 [project.urls]
