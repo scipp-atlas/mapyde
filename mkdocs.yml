@@ -136,6 +136,7 @@ markdown_extensions:
       check_paths: true
       base_path:
         - docs/.snippets
+        - README.md
       auto_append:
         - links.txt
         - abbrs.txt

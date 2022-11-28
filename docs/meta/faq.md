@@ -4,12 +4,13 @@
 
 ## Backends
 
-***Q***: What backends do you support?
+**_Q_**: What backends do you support?
 
-***A***: So far: singularity, apptainer, and docker.
+**_A_**: So far: singularity, apptainer, and docker.
 
 ## Potpourri
 
-***Q***: Why is the FAQ empty?
+**_Q_**: Why is the FAQ empty?
 
-***A***: We're still working on fleshing it out. Check back soon. In the meantime, open a [discussion][] or file an [issue][].
+**_A_**: We're still working on fleshing it out. Check back soon. In the
+meantime, open a [discussion][] or file an [issue][].

@@ -11,14 +11,16 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 
 <img src="https://raw.githubusercontent.com/scipp-atlas/mario-mapyde/main/docs/assets/images/logo.svg" alt="Mapyde logo" width="500" role="img">
 
-|         |                                                                                                                                                                                                                                                                                            |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| CI/CD   | [![CI - Test][actions-badge-ci]{ loading=lazy .off-glb }][actions-link-ci] [![CI - Docker][actions-badge-docker]{ loading=lazy .off-glb }][actions-link-docker]                                                                                                                            |
-| Docs    | [![Docs - Release][actions-badge-docs]{ loading=lazy .off-glb }][actions-link-docs] [![Docs - Dev][actions-badge-docs-dev]{ loading=lazy .off-glb }][actions-link-docs-dev]                                                                                                                |
-| Package | [![PyPI - Downloads][pypi-downloads]{ loading=lazy .off-glb }][pypi-link] [![PyPI - Version][pypi-version]{ loading=lazy .off-glb }][pypi-link] [![PyPI platforms][pypi-platforms]{ loading=lazy .off-glb }][pypi-link] [![Conda-Forge][conda-badge]{ loading=lazy .off-glb }][conda-link] |
-| Meta    | [![GitHub - Discussion][github-discussions-badge]{ loading=lazy .off-glb }][github-discussions-link] [![GitHub - Issue][github-issues-badge]{ loading=lazy .off-glb }][github-issues-link] [![License - Apache 2.0][license-badge]{ loading=lazy .off-glb }][license-link]                 |
+<!-- --8<-- [start:badges] -->
 
 <!-- prettier-ignore-start -->
+| | |
+| --- | --- |
+| CI/CD | [![CI - Test][actions-badge-ci]{ loading=lazy .off-glb }][actions-link-ci] [![CI - Docker][actions-badge-docker]{ loading=lazy .off-glb }][actions-link-docker] |
+| Docs | [![Docs - Release][actions-badge-docs]{ loading=lazy .off-glb }][actions-link-docs] [![Docs - Dev][actions-badge-docs-dev]{ loading=lazy .off-glb }][actions-link-docs-dev] |
+| Package | [![PyPI - Downloads][pypi-downloads]{ loading=lazy .off-glb }][pypi-link] [![PyPI - Version][pypi-version]{ loading=lazy .off-glb }][pypi-link] [![PyPI platforms][pypi-platforms]{ loading=lazy .off-glb }][pypi-link] [![Conda-Forge][conda-badge]{ loading=lazy .off-glb }][conda-link] |
+| Meta | [![GitHub - Discussion][github-discussions-badge]{ loading=lazy .off-glb }][github-discussions-link] [![GitHub - Issue][github-issues-badge]{ loading=lazy .off-glb }][github-issues-link] [![License - Apache 2.0][license-badge]{ loading=lazy .off-glb }][license-link] |
+
 [actions-badge-ci]:         https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml/badge.svg?branch=main
 [actions-link-ci]:          https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml
 [actions-badge-docker]:     https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docker.yml/badge.svg?branch=main
@@ -40,6 +42,8 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 [license-badge]:            https://img.shields.io/badge/License-Apache_2.0-blue.svg
 [license-link]:              https://spdx.org/licenses/Apache-2.0.html
 <!-- prettier-ignore-end -->
+
+<!-- --8<-- [end:badges] -->
 
 </div>
 

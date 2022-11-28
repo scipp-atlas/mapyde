@@ -52,25 +52,24 @@ dev = [
     "tbump>=6.7.0"
 ]
 docs = [
-    "mkdocs~=1.4.0",
-    "mkdocs-material~=8.5.6",
+    "mkdocs>=1.4.0",
+    "mkdocs-material>=8.5.6",
     # Plugins
-    "mkdocs-minify-plugin~=0.5.0",
-    "mkdocs-git-revision-date-localized-plugin~=1.1.0",
-    "mkdocstrings-python~=0.7.1",
-    "mkdocs-redirects~=1.1.0",
-    "mkdocs-glightbox~=0.3.0",
+    "mkdocs-minify-plugin>=0.5.0",
+    "mkdocs-git-revision-date-localized-plugin>=1.1.0",
+    "mkdocstrings-python>=0.7.1",
+    "mkdocs-redirects>=1.1.0",
+    "mkdocs-glightbox>=0.3.0",
     # https://github.com/jimporter/mike/issues/82#issuecomment-1172913929
     "mike @ https://github.com/jimporter/mike/archive/392d57b8bb9d14bcedf2451a0dc302709f8055eb.zip",
     # Extensions
-    "mkdocs-click~=0.8.0",
-    "pymdown-extensions~=9.6.0",
+    "mkdocs-click>=0.8.0",
+    "pymdown-extensions>=9.7.0",
     # Necessary for syntax highlighting in code blocks
-    "pygments~=2.13.0",
+    "pygments>=2.13.0",
     # Validation
     # https://github.com/linkchecker/linkchecker/pull/669#issuecomment-1267236287
     "linkchecker @ git+https://github.com/linkchecker/linkchecker.git@d9265bb71c2054bf57b8c5734a4825d62505c779",
-    "mkdocs >=1.4"
 ]
 
 [project.urls]
