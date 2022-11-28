@@ -52,3 +52,7 @@ def main(
             }[prefix].resolve()
         )
         raise typer.Exit()
+
+
+# for generating documentation using mkdocs-click
+typer_click_object = typer.main.get_command(app)

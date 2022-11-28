@@ -1,0 +1,3 @@
+[SCIPP]: https://scipp.science.ucsc.edu/
+[discussion]: https://github.com/scipp-atlas/mario-mapyde/discussions
+[issue]: https://github.com/scipp-atlas/mario-mapyde/issues

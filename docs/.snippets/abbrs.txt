@@ -1,0 +1,1 @@
+*[MaPyDe]: Madgraph-Pythia-Delphes
