@@ -16,10 +16,10 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 <!-- prettier-ignore-start -->
 | | |
 | --- | --- |
-| CI/CD | [![CI - Test][actions-badge-ci]{ loading=lazy .off-glb }][actions-link-ci] [![CI - Docker][actions-badge-docker]{ loading=lazy .off-glb }][actions-link-docker] |
-| Docs | [![Docs][actions-badge-docs]{ loading=lazy .off-glb }][actions-link-docs] |
-| Package | [![PyPI - Downloads][pypi-downloads]{ loading=lazy .off-glb }][pypi-link] [![PyPI - Version][pypi-version]{ loading=lazy .off-glb }][pypi-link] [![PyPI platforms][pypi-platforms]{ loading=lazy .off-glb }][pypi-link] [![Conda-Forge][conda-badge]{ loading=lazy .off-glb }][conda-link] |
-| Meta | [![GitHub - Discussion][github-discussions-badge]{ loading=lazy .off-glb }][github-discussions-link] [![GitHub - Issue][github-issues-badge]{ loading=lazy .off-glb }][github-issues-link] [![License - Apache 2.0][license-badge]{ loading=lazy .off-glb }][license-link] |
+| CI/CD | [![CI - Test][actions-badge-ci]][actions-link-ci] [![CI - Docker][actions-badge-docker]][actions-link-docker] |
+| Docs | [![Docs][actions-badge-docs]][actions-link-docs] |
+| Package | [![PyPI - Downloads][pypi-downloads]][pypi-link] [![PyPI - Version][pypi-version]][pypi-link] [![PyPI platforms][pypi-platforms]][pypi-link] [![Conda-Forge][conda-badge]][conda-link] |
+| Meta | [![GitHub - Discussion][github-discussions-badge]][github-discussions-link] [![GitHub - Issue][github-issues-badge]][github-issues-link] [![License - Apache 2.0][license-badge]][license-link] |
 
 [actions-badge-ci]:         https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml/badge.svg?branch=main
 [actions-link-ci]:          https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml?query=branch:main

@@ -48,7 +48,7 @@ custom `user.toml`:
     [base]
     path = "/data/users/{{USER}}/SUSY"
     output = "mytag"
-    template = "{{MAPYDE_TEMPLATES}}/ewkinos.toml"
+    template = "{{MAPYDE_TEMPLATES}}/sleptons.toml"
 
     [madgraph.proc]
     name = "isrslep"
