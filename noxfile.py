@@ -57,6 +57,18 @@ def docs(session: nox.Session) -> None:
 
 
 @nox.session
+def mike(session: nox.Session) -> None:
+    """
+    Build and deploy docs using mike.
+    """
+
+    session.install(".[docs]")
+
+    args = session.posargs or ["dev"]
+    print("mike", "deploy", "--branch", "gh-pages", *args)
+
+
+@nox.session
 def build(session: nox.Session) -> None:
     """
     Build an SDist and wheel.

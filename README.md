@@ -22,11 +22,11 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 | Meta | [![GitHub - Discussion][github-discussions-badge]{ loading=lazy .off-glb }][github-discussions-link] [![GitHub - Issue][github-issues-badge]{ loading=lazy .off-glb }][github-issues-link] [![License - Apache 2.0][license-badge]{ loading=lazy .off-glb }][license-link] |
 
 [actions-badge-ci]:         https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml/badge.svg?branch=main
-[actions-link-ci]:          https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml
+[actions-link-ci]:          https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml?query=branch:main
 [actions-badge-docker]:     https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docker.yml/badge.svg?branch=main
-[actions-link-docker]:      https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docker.yml
+[actions-link-docker]:      https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docker.yml?query=branch:main
 [actions-badge-docs]:       https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs.yml/badge.svg?branch=main
-[actions-link-docs]:        https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs.yml
+[actions-link-docs]:        https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs.yml?query=branch:main
 [conda-badge]:              https://img.shields.io/conda/vn/conda-forge/mapyde
 [conda-link]:               https://github.com/conda-forge/mapyde-feedstock
 [github-discussions-badge]: https://img.shields.io/static/v1?label=Discussions&message=Ask&color=blue&logo=github
