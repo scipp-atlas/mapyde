@@ -35,6 +35,11 @@ search = "Bump version: {current_version} → "
 [[file]]
 src = "README.md"
 
+[[file]]
+src = "pyproject.toml"
+version_template = "{major}.{minor}"
+search = "/mario-mapyde/{current_version}/"
+
 [[field]]
 # the name of the field
 name = "candidate"
