@@ -76,8 +76,10 @@ docs = [
     "mkdocs-section-index>=0.3.4",
 ]
 
+# see https://github.com/pypi/warehouse/blob/main/warehouse/templates/packaging/detail.html
 [project.urls]
-Homepage = "https://scipp-atlas.github.io/mario-mapyde/0.4/"
+Homepage = "https://scipp-atlas.github.io/mario-mapyde/latest/"
+Documentation = "https://scipp-atlas.github.io/mario-mapyde/0.4/"
 Tracker = "https://github.com/scipp-atlas/mario-mapyde/issues"
 Source = "https://github.com/scipp-atlas/mario-mapyde"
 
