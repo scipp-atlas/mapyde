@@ -463,7 +463,7 @@ jobs:
           echo ::set-output name=tag::${TAG}
 
       - name: Tag latest as stable
-        uses: akhilerm/tag-push-action@v2.0.0
+        uses: akhilerm/tag-push-action@v2.1.0
         with:
           src: |
             ${{ steps.label.outputs.image }}:${{ steps.label.outputs.latest }}
@@ -472,7 +472,7 @@ jobs:
 
       - name: Tag latest as ${{ github.event.release.tag_name }}
         if: ${{ steps.label.outputs.version_unset == 'true' }}
-        uses: akhilerm/tag-push-action@v2.0.0
+        uses: akhilerm/tag-push-action@v2.1.0
         with:
           src: |
             ${{ steps.label.outputs.image }}:${{ steps.label.outputs.latest }}
