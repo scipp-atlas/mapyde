@@ -17,7 +17,7 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 | | |
 | --- | --- |
 | CI/CD | [![CI - Test][actions-badge-ci]{ loading=lazy .off-glb }][actions-link-ci] [![CI - Docker][actions-badge-docker]{ loading=lazy .off-glb }][actions-link-docker] |
-| Docs | [![Docs - Release][actions-badge-docs]{ loading=lazy .off-glb }][actions-link-docs] [![Docs - Dev][actions-badge-docs-dev]{ loading=lazy .off-glb }][actions-link-docs-dev] |
+| Docs | [![Docs][actions-badge-docs]{ loading=lazy .off-glb }][actions-link-docs] |
 | Package | [![PyPI - Downloads][pypi-downloads]{ loading=lazy .off-glb }][pypi-link] [![PyPI - Version][pypi-version]{ loading=lazy .off-glb }][pypi-link] [![PyPI platforms][pypi-platforms]{ loading=lazy .off-glb }][pypi-link] [![Conda-Forge][conda-badge]{ loading=lazy .off-glb }][conda-link] |
 | Meta | [![GitHub - Discussion][github-discussions-badge]{ loading=lazy .off-glb }][github-discussions-link] [![GitHub - Issue][github-issues-badge]{ loading=lazy .off-glb }][github-issues-link] [![License - Apache 2.0][license-badge]{ loading=lazy .off-glb }][license-link] |
 
@@ -25,10 +25,8 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 [actions-link-ci]:          https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml
 [actions-badge-docker]:     https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docker.yml/badge.svg?branch=main
 [actions-link-docker]:      https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docker.yml
-[actions-badge-docs]:       https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs-release.yml/badge.svg?branch=main
-[actions-link-docs]:        https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs-release.yml
-[actions-badge-docs-dev]:   https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs-dev.yml/badge.svg?branch=main
-[actions-link-docs-dev]:    https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs-dev.yml
+[actions-badge-docs]:       https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs.yml/badge.svg?branch=main
+[actions-link-docs]:        https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs.yml
 [conda-badge]:              https://img.shields.io/conda/vn/conda-forge/mapyde
 [conda-link]:               https://github.com/conda-forge/mapyde-feedstock
 [github-discussions-badge]: https://img.shields.io/static/v1?label=Discussions&message=Ask&color=blue&logo=github

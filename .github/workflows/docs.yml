@@ -1,0 +1,70 @@
+name: docs
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Build Docs
+        run: pipx run nox -s mkdocs
+
+      - name: Check documentation
+        run: pipx run linkchecker --config .linkcheckerrc site
+
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Configure Git for GitHub Actions bot
+        run: |
+          git config --local user.name 'github-actions[bot]'
+          git config --local user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Deploy documentation (dev) with mike 🚀
+        if:
+          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+          github.repository == 'scipp-atlas/mario-mapyde'
+        run: |
+          pipx run mike deploy dev --branch gh-pages --push
+
+      - name: Get MAJOR.MINOR version
+        if: github.event_name == 'release' && github.event.action == 'published'
+        id: label
+        run: |
+          VERSION=$(cut -d '.' -f 1,2 <<< "${{ github.event.release.tag_name }}")
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name:
+          Deploy documentation (${{ steps.label.outputs.version }}) with mike 🚀
+        if: github.event_name == 'release' && github.event.action == 'published'
+        run: |
+          pipx run mike deploy --update-aliases ${{ steps.label.outputs.version }} latest
+                               --branch gh-pages
+                               --push
