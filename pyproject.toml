@@ -106,9 +106,6 @@ dependencies = [
   "pre-commit",
   "pylint",
 ]
-post-install-commands = [
-  "pre-commit install-hooks"
-]
 [tool.hatch.envs.lint.scripts]
 pre-commmit = "pre-commit run --all-files --hook-stage manual"
 typing = "pre-commit mypy"
