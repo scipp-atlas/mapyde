@@ -140,7 +140,9 @@ dependencies = [
 MKDOCS_CONFIG = "mkdocs.yml"
 MKDOCS_BRANCH = "gh-pages"
 [tool.hatch.envs.docs.scripts]
-build = "mkdocs build --config-file {env:MKDOCS_CONFIG} --clean --strict {args}"
+# --strict disabled for now, see https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/101
+build = "mkdocs build --config-file {env:MKDOCS_CONFIG} --clean {args}"
+#build = "mkdocs build --config-file {env:MKDOCS_CONFIG} --clean --strict {args}"
 serve = "mkdocs serve --config-file {env:MKDOCS_CONFIG} --dev-addr localhost:8000 {args}"
 ci-build = "mike deploy --config-file {env:MKDOCS_CONFIG} --branch {env:MKDOCS_BRANCH} --update-aliases {args}"
 deploy = "ci-build --push"
