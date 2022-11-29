@@ -27,7 +27,7 @@ jobs:
           python-version: "3.x"
 
       - name: Check documentation
-        run: pipx run hatch run docs:build-check dev
+        run: pipx run hatch run docs:build-check
 
   publish:
     runs-on: ubuntu-latest
