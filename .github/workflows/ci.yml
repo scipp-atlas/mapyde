@@ -28,11 +28,11 @@ jobs:
         with:
           python-version: "3.x"
       - name: Run pre-commit
-        run: hatch run lint:pre-commit
+        run: pipx run hatch run lint:pre-commit
       - name: Run PyLint
         run: |
           echo "::add-matcher::$GITHUB_WORKSPACE/.github/matchers/pylint.json"
-          hatch run lint:pylint
+          pipx run hatch run lint:pylint
 
   checks:
     name: Check Python ${{ matrix.python-version }} on ${{ matrix.runs-on }}

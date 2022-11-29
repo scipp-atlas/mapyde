@@ -27,7 +27,7 @@ jobs:
           python-version: "3.x"
 
       - name: Check documentation
-        run: hatch run docs:build-check dev
+        run: pipx run hatch run docs:build-check dev
 
   publish:
     runs-on: ubuntu-latest
@@ -49,7 +49,7 @@ jobs:
         if:
           github.event_name == 'push' && github.ref == 'refs/heads/main' &&
           github.repository == 'scipp-atlas/mario-mapyde'
-        run: hatch run docs:deploy dev
+        run: pipx run hatch run docs:deploy dev
 
       - name: Get MAJOR.MINOR version
         if: github.event_name == 'release' && github.event.action == 'published'
@@ -61,4 +61,6 @@ jobs:
       - name:
           Deploy documentation (${{ steps.label.outputs.version }}) with mike 🚀
         if: github.event_name == 'release' && github.event.action == 'published'
-        run: hatch run docs:deploy ${{ steps.label.outputs.version }} latest
+        run:
+          pipx run hatch run docs:deploy ${{ steps.label.outputs.version }}
+          latest
