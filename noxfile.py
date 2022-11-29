@@ -40,35 +40,6 @@ def tests(session: nox.Session) -> None:
 
 
 @nox.session
-def docs(session: nox.Session) -> None:
-    """
-    Build the docs. Pass "serve" to serve.
-    """
-
-    session.install(".[docs]")
-    session.run("mkdocs", "build")
-
-    if session.posargs:
-        if "serve" in session.posargs:
-            print("Launching docs at http://localhost:8000/ - use Ctrl-C to quit")
-            session.run("python", "-m", "http.server", "8000", "-d", "site")
-        else:
-            session.warn("Unsupported argument to docs")
-
-
-@nox.session
-def mike(session: nox.Session) -> None:
-    """
-    Build and deploy docs using mike.
-    """
-
-    session.install(".[docs]")
-
-    args = session.posargs or ["dev"]
-    session.run("mike", "deploy", "--branch", "gh-pages", *args)
-
-
-@nox.session
 def build(session: nox.Session) -> None:
     """
     Build an SDist and wheel.
