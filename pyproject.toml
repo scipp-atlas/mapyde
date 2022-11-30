@@ -43,15 +43,6 @@ dependencies = [
     "importlib_resources>=1.3.0; python_version<'3.9'",  # for resources in schema
 ]
 
-[project.optional-dependencies]
-test = [
-    "pytest >=6",
-]
-dev = [
-    "pytest >=6",
-    "tbump>=6.7.0"
-]
-
 # see https://github.com/pypi/warehouse/blob/main/warehouse/templates/packaging/detail.html
 [project.urls]
 Homepage = "https://scipp-atlas.github.io/mario-mapyde/latest/"
@@ -77,7 +68,6 @@ exclude = [
   "/Dockerfiles",
   "/stats/",
   "/test/",
-  "/noxfile.py",
   "/.*",
   "/*.sh",
   "/*.toml", # note: does not remove pyproject.toml
@@ -93,22 +83,40 @@ exclude = [
 
 [tool.hatch.envs.default]
 dependencies = [
-  "pytest",
+    "tbump>=6.7.0",
+    "pre-commit",
+    "pylint",
+    "build",
 ]
 
-[tool.hatch.envs.lint]
-# pylint needs to be installed into package environment
+[tool.hatch.envs.default.scripts]
+tag = "tbump {args}"
+pre-commmit = "pre-commit run --all-files --hook-stage manual"
+lint = "pylint src"
+build = "python -m build"
+validate = "twine check dist/*"
+# https://github.com/linkchecker/linkchecker/issues/678
+build-check = [
+  "build",
+  "validate",
+]
+
+[tool.hatch.envs.dev]
+template = "dev"
+# pylint and pytest needs to be installed into package environment
 detached = false
 dependencies = [
-  "pre-commit",
-  "pylint",
+    "pytest >=6",
 ]
-[tool.hatch.envs.lint.scripts]
-pre-commmit = "pre-commit run --all-files --hook-stage manual"
-typing = "pre-commit mypy"
-lint = "pylint src"
+
+[tool.hatch.envs.dev.scripts]
+test = "pytest -ra"
+
+[[tool.hatch.envs.dev.matrix]]
+python = ["3.7", "3.8", "3.9", "3.10", "3.11", "pypy3.8"]
 
 [tool.hatch.envs.docs]
+template = "docs"
 dependencies = [
     "mkdocs>=1.4.0",
     "mkdocs-material>=8.5.6",
