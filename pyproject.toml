@@ -86,6 +86,7 @@ dependencies = [
     "tbump>=6.7.0",
     "pylint",
     "build",
+    "twine",
 ]
 
 [tool.hatch.envs.default.scripts]
