@@ -84,14 +84,12 @@ exclude = [
 [tool.hatch.envs.default]
 dependencies = [
     "tbump>=6.7.0",
-    "pre-commit",
     "pylint",
     "build",
 ]
 
 [tool.hatch.envs.default.scripts]
 tag = "tbump {args}"
-pre-commmit = "pre-commit run --all-files --hook-stage manual"
 lint = "pylint src"
 build = "python -m build"
 validate = "twine check dist/*"
