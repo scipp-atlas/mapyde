@@ -61,10 +61,10 @@ You can also/alternatively run `pre-commit run` (changes only) or
 
 # Testing
 
-Use pytest to run the unit checks:
+Use pytest to run the unit checks (via `hatch`):
 
 ```bash
-pytest
+hatch run dev:test
 ```
 
 # Building docs
