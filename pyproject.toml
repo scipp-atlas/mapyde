@@ -43,15 +43,80 @@ dependencies = [
     "importlib_resources>=1.3.0; python_version<'3.9'",  # for resources in schema
 ]
 
-[project.optional-dependencies]
-test = [
+# see https://github.com/pypi/warehouse/blob/main/warehouse/templates/packaging/detail.html
+[project.urls]
+Homepage = "https://scipp-atlas.github.io/mario-mapyde/latest/"
+Documentation = "https://scipp-atlas.github.io/mario-mapyde/0.4/"
+Tracker = "https://github.com/scipp-atlas/mario-mapyde/issues"
+Source = "https://github.com/scipp-atlas/mario-mapyde"
+
+[project.scripts]
+mapyde = "mapyde.cli:app"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+local_scheme = "no-local-version"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/mapyde/_version.py"
+
+[tool.hatch.build]
+exclude = [
+  "/ci",
+  "/Dockerfiles",
+  "/stats/",
+  "/test/",
+  "/.*",
+  "/*.sh",
+  "/*.toml", # note: does not remove pyproject.toml
+]
+
+[tool.hatch.build.targets.sdist]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"cards" = "share/mapyde/cards"
+"likelihoods" = "share/mapyde/likelihoods"
+"scripts" = "share/mapyde/scripts"
+"templates" = "share/mapyde/templates"
+
+[tool.hatch.envs.default]
+dependencies = [
+    "tbump>=6.7.0",
+    "pylint",
+    "build",
+    "twine",
+]
+
+[tool.hatch.envs.default.scripts]
+tag = "tbump {args}"
+lint = "pylint src"
+build = "python -m build"
+validate = "twine check dist/*"
+# https://github.com/linkchecker/linkchecker/issues/678
+build-check = [
+  "build",
+  "validate",
+]
+
+[tool.hatch.envs.dev]
+template = "dev"
+# pylint and pytest needs to be installed into package environment
+detached = false
+dependencies = [
     "pytest >=6",
 ]
-dev = [
-    "pytest >=6",
-    "tbump>=6.7.0"
-]
-docs = [
+
+[tool.hatch.envs.dev.scripts]
+test = "pytest -ra"
+
+[[tool.hatch.envs.dev.matrix]]
+python = ["3.7", "3.8", "3.9", "3.10", "3.11", "pypy3.8"]
+
+[tool.hatch.envs.docs]
+template = "docs"
+dependencies = [
     "mkdocs>=1.4.0",
     "mkdocs-material>=8.5.6",
     # Plugins
@@ -75,54 +140,22 @@ docs = [
     "mkdocs-literate-nav>=0.5.0",
     "mkdocs-section-index>=0.3.4",
 ]
-
-# see https://github.com/pypi/warehouse/blob/main/warehouse/templates/packaging/detail.html
-[project.urls]
-Homepage = "https://scipp-atlas.github.io/mario-mapyde/latest/"
-Documentation = "https://scipp-atlas.github.io/mario-mapyde/0.4/"
-Tracker = "https://github.com/scipp-atlas/mario-mapyde/issues"
-Source = "https://github.com/scipp-atlas/mario-mapyde"
-
-[project.scripts]
-mapyde = "mapyde.cli:app"
-
-[tool.hatch.version]
-source = "vcs"
-
-[tool.hatch.version.raw-options]
-local_scheme = "no-local-version"
-
-[tool.hatch.build.hooks.vcs]
-version-file = "src/mapyde/_version.py"
-
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.build]
-exclude = [
-  "/ci",
-  "/Dockerfiles",
-  "/stats/",
-  "/test/",
-  "/noxfile.py",
-  "/.*",
-  "/*.sh",
-  "/*.toml", # note: does not remove pyproject.toml
+[tool.hatch.envs.docs.env-vars]
+MKDOCS_CONFIG = "mkdocs.yml"
+MKDOCS_BRANCH = "gh-pages"
+[tool.hatch.envs.docs.scripts]
+# --strict disabled for now, see https://github.com/timvink/mkdocs-git-revision-date-localized-plugin/issues/101
+build = "mkdocs build --config-file {env:MKDOCS_CONFIG} --clean {args}"
+#build = "mkdocs build --config-file {env:MKDOCS_CONFIG} --clean --strict {args}"
+serve = "mkdocs serve --config-file {env:MKDOCS_CONFIG} --dev-addr localhost:8000 {args}"
+ci-build = "mike deploy --config-file {env:MKDOCS_CONFIG} --branch {env:MKDOCS_BRANCH} --update-aliases {args}"
+deploy = "ci-build --push"
+validate = "linkchecker --config .linkcheckerrc site"
+# https://github.com/linkchecker/linkchecker/issues/678
+build-check = [
+  "build --no-directory-urls",
+  "validate",
 ]
-
-[tool.hatch.build.targets.sdist]
-
-[tool.hatch.build.targets.wheel.shared-data]
-"cards" = "share/mapyde/cards"
-"likelihoods" = "share/mapyde/likelihoods"
-"scripts" = "share/mapyde/scripts"
-"templates" = "share/mapyde/templates"
-
-[tool.hatch.envs.default]
-dependencies = [
-  "pytest",
-]
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
