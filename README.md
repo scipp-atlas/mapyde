@@ -39,8 +39,8 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 [pypi-version]:             https://badge.fury.io/py/mapyde.svg
 [license-badge]:            https://img.shields.io/badge/License-Apache_2.0-blue.svg
 [license-link]:             https://spdx.org/licenses/Apache-2.0.html
-[zenodo-badge]:             https://zenodo.org/badge/DOI/10.5281/zenodo.7420123.svg
-[zenodo-link]:              https://doi.org/10.5281/zenodo.7420123
+[zenodo-badge]:             https://zenodo.org/badge/424389185.svg
+[zenodo-link]:              https://zenodo.org/badge/latestdoi/424389185
 
 <!-- prettier-ignore-end -->
 
