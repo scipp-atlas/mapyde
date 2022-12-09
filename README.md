@@ -17,7 +17,7 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 | | |
 | --- | --- |
 | CI/CD | [![CI - Test][actions-badge-ci]][actions-link-ci] [![CI - Docker][actions-badge-docker]][actions-link-docker] |
-| Docs | [![Docs][actions-badge-docs]][actions-link-docs] |
+| Docs | [![Docs][actions-badge-docs]][actions-link-docs] [![Zenodo][zenodo-badge]][zenodo-link] |
 | Package | [![PyPI - Downloads][pypi-downloads]][pypi-link] [![PyPI - Version][pypi-version]][pypi-link] [![PyPI platforms][pypi-platforms]][pypi-link] [![Conda-Forge][conda-badge]][conda-link] |
 | Meta | [![GitHub - Discussion][github-discussions-badge]][github-discussions-link] [![GitHub - Issue][github-issues-badge]][github-issues-link] [![License - Apache 2.0][license-badge]][license-link] |
 
@@ -38,7 +38,10 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 [pypi-platforms]:           https://img.shields.io/pypi/pyversions/mapyde
 [pypi-version]:             https://badge.fury.io/py/mapyde.svg
 [license-badge]:            https://img.shields.io/badge/License-Apache_2.0-blue.svg
-[license-link]:              https://spdx.org/licenses/Apache-2.0.html
+[license-link]:             https://spdx.org/licenses/Apache-2.0.html
+[zenodo-badge]:             https://zenodo.org/badge/DOI/10.5281/zenodo.7420123.svg
+[zenodo-link]:              https://doi.org/10.5281/zenodo.7420123
+
 <!-- prettier-ignore-end -->
 
 <!-- --8<-- [end:badges] -->
