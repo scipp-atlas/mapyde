@@ -1,73 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/install/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/install/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/intro/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/intro/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/cli/about/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/cli/about/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/cli/reference/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/cli/reference/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/meta/authors/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/meta/authors/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/meta/faq/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/meta/faq/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/reference/mapyde/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/reference/mapyde/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/reference/mapyde/container/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/reference/mapyde/container/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/reference/mapyde/runner/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/reference/mapyde/runner/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/reference/mapyde/typing/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/reference/mapyde/typing/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/reference/mapyde/utils/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/reference/mapyde/utils/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/reference/mapyde/backends/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/reference/mapyde/backends/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://scipp-atlas.github.io/mario-mapyde/0.4/reference/mapyde/backends/madgraph/</loc>
-         <lastmod>2022-11-30</lastmod>
+         <loc>https://scipp-atlas.github.io/mapyde/0.4/reference/mapyde/backends/madgraph/</loc>
+         <lastmod>2022-12-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
