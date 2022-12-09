@@ -48,7 +48,7 @@ jobs:
       - name: Deploy documentation (dev) with mike 🚀
         if:
           github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-          github.repository == 'scipp-atlas/mario-mapyde'
+          github.repository == 'scipp-atlas/mapyde'
         run: pipx run hatch run docs:deploy dev
 
       - name: Get MAJOR.MINOR version

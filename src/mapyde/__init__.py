@@ -1,7 +1,7 @@
 """
 Copyright (c) 2022 Michael Hance and Giordon Stark. All rights reserved.
 
-mario-mapyde: A great package.
+mapyde: A great package.
 """
 
 

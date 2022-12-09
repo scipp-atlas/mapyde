@@ -377,14 +377,14 @@ jobs:
       - name: "Deploy as latest: ${{ steps.label.outputs.latest }}"
         if: |
           github.event_name == 'push' && github.ref == 'refs/heads/main' &&
-          github.repository == 'scipp-atlas/mario-mapyde'
+          github.repository == 'scipp-atlas/mapyde'
         run: |
           docker image push "${{ steps.label.outputs.image }}:${{
           steps.label.outputs.latest }}"
 
       - name: "Deploy as version: ${{ steps.label.outputs.version }}"
         if: |
-          github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde' &&
+          github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mapyde' &&
           steps.label.outputs.version
         run: |
           docker image push "${{ steps.label.outputs.image }}:${{
@@ -392,7 +392,7 @@ jobs:
 
       - name: "Deploy as refname: ${{ steps.label.outputs.refname }}"
         if: |
-          github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mario-mapyde' &&
+          github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'scipp-atlas/mapyde' &&
           steps.label.outputs.refname
         run: |
           docker image push "${{ steps.label.outputs.image }}:${{
@@ -406,7 +406,7 @@ jobs:
       always() &&
       (needs.build.result == 'success' || needs.build.result == 'skipped') &&
       (needs.run.result == 'success' || needs.run.result == 'skipped') &&
-      github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mario-mapyde'
+      github.event_name == 'release' && github.event.action == 'published' && github.repository == 'scipp-atlas/mapyde'
     runs-on: ubuntu-latest
     strategy:
       matrix:

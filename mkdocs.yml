@@ -1,9 +1,9 @@
 site_name: MaPyDe
 site_description: Reduce, reuse, and reproduce particle physics phenomenology
 site_author: Mike Hance, Giordon Stark
-site_url: https://scipp-atlas.github.io/mario-mapyde
-repo_name: scipp-atlas/mario-mapyde
-repo_url: https://github.com/scipp-atlas/mario-mapyde
+site_url: https://scipp-atlas.github.io/mapyde
+repo_name: scipp-atlas/mapyde
+repo_url: https://github.com/scipp-atlas/mapyde
 edit_uri: blob/main/docs
 copyright: "Copyright &copy; Mike Hance, Giordon Stark 2022-present"
 
@@ -143,7 +143,7 @@ markdown_extensions:
       normalize_issue_symbols: true
       provider: github
       user: scipp-atlas
-      repo: mario-mapyde
+      repo: mapyde
   - pymdownx.mark:
   - pymdownx.progressbar:
   - pymdownx.saneheaders:

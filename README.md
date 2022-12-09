@@ -1,4 +1,4 @@
-# mario-mapyde v0.4.3
+# mapyde v0.4.3
 
 MaPyDe stands for MadGraph-Pythia-Delphes which is a utility that allows one to
 run all of the various HEP toolings or chain them together and perform a quick
@@ -9,7 +9,7 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 <!-- sync the following div with docs/index.md -->
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/scipp-atlas/mario-mapyde/main/docs/assets/images/logo.svg" alt="Mapyde logo" width="500" role="img">
+<img src="https://raw.githubusercontent.com/scipp-atlas/mapyde/main/docs/assets/images/logo.svg" alt="Mapyde logo" width="500" role="img">
 
 <!-- --8<-- [start:badges] -->
 
@@ -21,18 +21,18 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 | Package | [![PyPI - Downloads][pypi-downloads]][pypi-link] [![PyPI - Version][pypi-version]][pypi-link] [![PyPI platforms][pypi-platforms]][pypi-link] [![Conda-Forge][conda-badge]][conda-link] |
 | Meta | [![GitHub - Discussion][github-discussions-badge]][github-discussions-link] [![GitHub - Issue][github-issues-badge]][github-issues-link] [![License - Apache 2.0][license-badge]][license-link] |
 
-[actions-badge-ci]:         https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml/badge.svg?branch=main
-[actions-link-ci]:          https://github.com/scipp-atlas/mario-mapyde/actions/workflows/ci.yml?query=branch:main
-[actions-badge-docker]:     https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docker.yml/badge.svg?branch=main
-[actions-link-docker]:      https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docker.yml?query=branch:main
-[actions-badge-docs]:       https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs.yml/badge.svg?branch=main
-[actions-link-docs]:        https://github.com/scipp-atlas/mario-mapyde/actions/workflows/docs.yml?query=branch:main
+[actions-badge-ci]:         https://github.com/scipp-atlas/mapyde/actions/workflows/ci.yml/badge.svg?branch=main
+[actions-link-ci]:          https://github.com/scipp-atlas/mapyde/actions/workflows/ci.yml?query=branch:main
+[actions-badge-docker]:     https://github.com/scipp-atlas/mapyde/actions/workflows/docker.yml/badge.svg?branch=main
+[actions-link-docker]:      https://github.com/scipp-atlas/mapyde/actions/workflows/docker.yml?query=branch:main
+[actions-badge-docs]:       https://github.com/scipp-atlas/mapyde/actions/workflows/docs.yml/badge.svg?branch=main
+[actions-link-docs]:        https://github.com/scipp-atlas/mapyde/actions/workflows/docs.yml?query=branch:main
 [conda-badge]:              https://img.shields.io/conda/vn/conda-forge/mapyde
 [conda-link]:               https://github.com/conda-forge/mapyde-feedstock
 [github-discussions-badge]: https://img.shields.io/static/v1?label=Discussions&message=Ask&color=blue&logo=github
-[github-discussions-link]:  https://github.com/scipp-atlas/mario-mapyde/discussions
+[github-discussions-link]:  https://github.com/scipp-atlas/mapyde/discussions
 [github-issues-badge]:      https://img.shields.io/static/v1?label=Issues&message=File&color=blue&logo=github
-[github-issues-link]:       https://github.com/scipp-atlas/mario-mapyde/issues
+[github-issues-link]:       https://github.com/scipp-atlas/mapyde/issues
 [pypi-link]:                https://pypi.org/project/mapyde/
 [pypi-downloads]:           https://img.shields.io/pypi/dm/mapyde.svg?color=blue&label=Downloads&logo=pypi&logoColor=gold
 [pypi-platforms]:           https://img.shields.io/pypi/pyversions/mapyde
@@ -51,16 +51,16 @@ Docker images are made available in our
 [container registry](../../../container_registry).
 
 ```
-docker pull ghcr.io/scipp-atlas/mario-mapyde/madgraph
-docker pull ghcr.io/scipp-atlas/mario-mapyde/delphes
-docker pull ghcr.io/scipp-atlas/mario-mapyde/pyplotting
+docker pull ghcr.io/scipp-atlas/mapyde/madgraph
+docker pull ghcr.io/scipp-atlas/mapyde/delphes
+docker pull ghcr.io/scipp-atlas/mapyde/pyplotting
 ```
 
 If you want to run on a machine with an NVidia GPU and use it for limit setting
 with `pyhf`, then there's a container for that too:
 
 ```
-docker pull ghcr.io/scipp-atlas/mario-mapyde/pyplotting-cuda
+docker pull ghcr.io/scipp-atlas/mapyde/pyplotting-cuda
 ```
 
 ## Running

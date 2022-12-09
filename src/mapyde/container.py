@@ -125,7 +125,7 @@ class Container:
             )
 
         else:
-            self.name = self.name or f"mario-mapyde-{uuid.uuid4()}"
+            self.name = self.name or f"mapyde-{uuid.uuid4()}"
 
             subprocess.run(
                 [

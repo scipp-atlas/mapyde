@@ -1,4 +1,4 @@
-github_url = "https://github.com/scipp-atlas/mario-mapyde/"
+github_url = "https://github.com/scipp-atlas/mapyde/"
 
 [version]
 current = "0.4.3"
@@ -38,7 +38,7 @@ src = "README.md"
 [[file]]
 src = "pyproject.toml"
 version_template = "{major}.{minor}"
-search = "/mario-mapyde/{current_version}/"
+search = "/mapyde/{current_version}/"
 
 [[field]]
 # the name of the field

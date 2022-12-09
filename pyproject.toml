@@ -45,10 +45,10 @@ dependencies = [
 
 # see https://github.com/pypi/warehouse/blob/main/warehouse/templates/packaging/detail.html
 [project.urls]
-Homepage = "https://scipp-atlas.github.io/mario-mapyde/latest/"
-Documentation = "https://scipp-atlas.github.io/mario-mapyde/0.4/"
-Tracker = "https://github.com/scipp-atlas/mario-mapyde/issues"
-Source = "https://github.com/scipp-atlas/mario-mapyde"
+Homepage = "https://scipp-atlas.github.io/mapyde/latest/"
+Documentation = "https://scipp-atlas.github.io/mapyde/0.4/"
+Tracker = "https://github.com/scipp-atlas/mapyde/issues"
+Source = "https://github.com/scipp-atlas/mapyde"
 
 [project.scripts]
 mapyde = "mapyde.cli:app"
