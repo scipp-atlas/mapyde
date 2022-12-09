@@ -75,7 +75,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
         madgraph.generate_mg5config(config)
 
-        image = f"ghcr.io/scipp-atlas/mapyde/{config['madgraph']['version']}"
+        image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['madgraph']['version']}"
         command = bytes(
             f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
             "utf-8",
@@ -99,7 +99,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     madgraph.generate_mg5config(config)
 
-    image = f"ghcr.io/scipp-atlas/mapyde/{config['madgraph']['version']}"
+    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['madgraph']['version']}"
     command = bytes(
         f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
         "utf-8",
@@ -132,7 +132,7 @@ def run_delphes(config: ImmutableConfig) -> tuple[bytes, bytes]:
     Run delphes.
     """
     # ./test/wrapper_delphes.py config_file
-    image = f"ghcr.io/scipp-atlas/mapyde/{config['delphes']['version']}"
+    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
         f"""pwd && ls -lavh && ls -lavh /data && \
 find /data/madgraph -name "*hepmc.gz" && \
@@ -256,7 +256,7 @@ def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
     if config["analysis"]["kfactor"] > 0:
         xsec *= config["analysis"]["kfactor"]
 
-    image = f"ghcr.io/scipp-atlas/mapyde/{config['delphes']['version']}"
+    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['delphes']['version']}"
     command = bytes(
         f"""mkdir -p {Path(config['analysis']['output']).parent} && \
 /scripts/{config['analysis']['script']} --input {Path('/data').joinpath(config['delphes']['output'])} \
@@ -343,7 +343,7 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
         scalefactor = config["analysis"]["kfactor"] / config["madgraph"]["nevents"]
         scalefactorstring = f"--scale {scalefactor}"
 
-    image = f"ghcr.io/scipp-atlas/mapyde/{config['sa2json']['image']}"
+    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['sa2json']['image']}"
     command = bytes(
         f"""python /scripts/SAtoJSON.py {inputstr} -o {config['sa2json']['output']} -n {config['base']['output']} -b /likelihoods/{config['pyhf']['likelihood']} -l {config['analysis']['lumi']} {config['sa2json']['options']} {scalefactorstring}""",
         "utf-8",
@@ -370,7 +370,7 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     assert config
 
-    image = f"ghcr.io/scipp-atlas/mapyde/{config['pyhf']['image']}"
+    image = f"ghcr.io/scipp-atlas/mario-mapyde/{config['pyhf']['image']}"
     command = bytes(
         f"""python3.8 /scripts/muscan.py -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']} {config['pyhf']['other-options']}""",
         "utf-8",
@@ -442,7 +442,7 @@ def run_root2hdf5(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     assert config
 
-    image = "ghcr.io/scipp-atlas/mapyde/pyplotting:latest"
+    image = "ghcr.io/scipp-atlas/mario-mapyde/pyplotting:latest"
     command = bytes(
         f"""python3 /scripts/root2hdf5.py {config['root2hdf5']['input']}:{config['root2hdf5']['treename']} """,
         "utf-8",
