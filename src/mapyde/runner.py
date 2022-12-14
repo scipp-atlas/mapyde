@@ -142,7 +142,7 @@ cp /cards/delphes/{config['delphes']['card']} . && \
 /bin/ls -ltrh --color && \
 mkdir -p {Path(config['delphes']['output']).parent} && \
 set -x && \
-/usr/local/share/delphes/delphes/DelphesHepMC3 {config['delphes']['card']} {Path(config['delphes']['output'])} hepmc && \
+/usr/local/share/delphes/delphes/DelphesHepMC2 {config['delphes']['card']} {Path(config['delphes']['output'])} hepmc && \
 set +x && \
 rsync -rav --exclude hepmc . /data/""",
         "utf-8",
