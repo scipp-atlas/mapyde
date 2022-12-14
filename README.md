@@ -1,4 +1,4 @@
-# mapyde v0.4.6
+# mapyde v0.4.7
 
 MaPyDe stands for MadGraph-Pythia-Delphes which is a utility that allows one to
 run all of the various HEP toolings or chain them together and perform a quick
