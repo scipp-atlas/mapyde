@@ -54,9 +54,9 @@ Docker images are made available in our
 [container registry](../../../container_registry).
 
 ```
-docker pull ghcr.io/scipp-atlas/mario-mapyde/madgraph
-docker pull ghcr.io/scipp-atlas/mario-mapyde/delphes
-docker pull ghcr.io/scipp-atlas/mario-mapyde/pyplotting
+docker pull ghcr.io/scipp-atlas/mapyde/madgraph
+docker pull ghcr.io/scipp-atlas/mapyde/delphes
+docker pull ghcr.io/scipp-atlas/mapyde/pyplotting
 ```
 
 If you want to run on a machine with an NVidia GPU and use it for limit setting
