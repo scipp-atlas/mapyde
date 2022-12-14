@@ -188,6 +188,7 @@ jobs:
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
           outputs: type=docker,dest=image.tar
+          platforms: linux/amd64,linux/arm64
 
       - name: Image digest
         run: echo ${{ steps.docker_build_test.outputs.digest }}
