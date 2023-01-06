@@ -50,7 +50,7 @@ repos:
         additional_dependencies: [black==22.3.0]
 
   - repo: https://github.com/PyCQA/isort
-    rev: v5.11.3
+    rev: 5.11.4
     hooks:
       - id: isort
         args: ["-a", "from __future__ import annotations"] # Python 3.7+
