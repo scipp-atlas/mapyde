@@ -75,6 +75,7 @@ skip = false
 additional_opts = ""
 name = "EwkCompressed2018"
 outputtag = ""
+input = ""
 
 [sa2json]
 inputs = "{{simpleanalysis['name']}}{{simpleanalysis['outputtag']}}.root"
