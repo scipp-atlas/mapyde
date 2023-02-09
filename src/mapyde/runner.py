@@ -11,7 +11,7 @@ from pathlib import Path
 from mapyde import utils
 from mapyde.backends import madgraph
 from mapyde.container import Container
-from mapyde.typing import ImmutableConfig, PathOrStr
+from mapyde.typing import ImmutableConfig, MutableConfig, PathOrStr
 
 
 def mounts(config: ImmutableConfig) -> list[tuple[PathOrStr, PathOrStr]]:
@@ -364,7 +364,9 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     return stdout, stderr
 
 
-def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
+def run_pyhf(
+    config: ImmutableConfig,
+) -> tuple[bytes, bytes, MutableConfig]:
     """
     Run statistical inference via pyhf.
     """
@@ -395,7 +397,15 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
     ) as container:
         stdout, stderr = container.call(command)
 
-    return stdout, stderr, json.load(open(f"{config['base']['path']}/{config['base']['output']}/muscan_results.json","r"))
+    return (
+        stdout,
+        stderr,
+        json.load(
+            open(
+                f"{config['base']['path']}/{config['base']['output']}/muscan_results.json",
+            )
+        ),
+    )
 
 
 def run_sherpa(config: ImmutableConfig) -> tuple[bytes, bytes]:

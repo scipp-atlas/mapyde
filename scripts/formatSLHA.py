@@ -3,25 +3,22 @@
 from __future__ import annotations
 
 import argparse
-import json
-import os
-import jsonpatch
-
 
 parser = argparse.ArgumentParser(description="Process some arguments.")
 parser.add_argument("-i", "--input", help="name of analysis")
 parser.add_argument("-o", "--output", help="path to JSON background-only file")
 args = parser.parse_args()
 
-output=open(args.output,'w')
+output = open(args.output, "w")
 for line in open(args.input):
-    sline=line.split()
-    if len(sline)>0:
+    sline = line.split()
+    if len(sline) > 0:
         try:
-            particle=int(sline[0])
-            if (particle>1000000 and particle<=1000016) or \
-               (particle>2000000 and particle<=2000016):
-                line=line.replace(sline[1],"2.00000000e+03")
+            particle = int(sline[0])
+            if (particle > 1000000 and particle <= 1000016) or (
+                particle > 2000000 and particle <= 2000016
+            ):
+                line = line.replace(sline[1], "2.00000000e+03")
         except ValueError:
             pass
     output.write(line)

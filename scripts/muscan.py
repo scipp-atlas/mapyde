@@ -135,7 +135,7 @@ if args.plot:
     brazil.plot_results(poi_values, results, ax=ax)
     fig.savefig(f"muscan_{args.tag}__{ana}.pdf")
 
-jsonoutput={
+jsonoutput = {
     "observed": float(obs_limit),
     "expected": float(exp_limits[2]),
     "p1sigma": float(exp_limits[3]),
@@ -144,9 +144,8 @@ jsonoutput={
     "m2sigma": float(exp_limits[0]),
 }
 
-#print(json.dumps(jsonoutput,indent=4))
+# print(json.dumps(jsonoutput,indent=4))
 
 # make a json output file
-with open("muscan_results.json","w") as jsonoutputfile:
-    json.dump(jsonoutput,jsonoutputfile,indent=4)
-
+with open("muscan_results.json", "w") as jsonoutputfile:
+    json.dump(jsonoutput, jsonoutputfile, indent=4)
