@@ -81,11 +81,12 @@ skip = false
 additional_opts = ""
 name = "EwkCompressed2018"
 outputtag = ""
+input = ""
 
 [sa2json]
-inputs = "{{simpleanalysis['output']}}.root"
+inputs = "{{simpleanalysis['name']}}{{simpleanalysis['outputtag']}}.root"
 image = "pyplotting:latest"
-output = "{{simpleanalysis['output']}}_patch.json"
+output = "{{simpleanalysis['name']}}{{simpleanalysis['outputtag']}}_patch.json"
 options = "-c"
 
 [pyhf]
@@ -93,3 +94,4 @@ skip = false
 likelihood = "Higgsino_2L_bkgonly.json"
 image = "pyplotting:latest"
 gpu-options = "-c -B jax"
+other-options = ""

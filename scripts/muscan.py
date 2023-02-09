@@ -97,7 +97,7 @@ pdf = ws.model()
 
 observations = ws.data(pdf)
 
-poi_values = np.linspace(0.1, 2, 10)
+poi_values = np.linspace(0.1, 2, 5)
 
 init_pars = pdf.config.suggested_init()
 init_pars[pdf.config.poi_index] = 1.0
@@ -121,6 +121,7 @@ print("printing results")
 obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
     observations, pdf, poi_values, level=0.05, return_results=True
 )
+
 print(f"Observed limit: {obs_limit}")
 print("Expected limit: %5.3f" % exp_limits[2])
 print("      -1 sigma: %5.3f" % exp_limits[1])
@@ -133,3 +134,19 @@ if args.plot:
     fig, ax = plt.subplots()
     brazil.plot_results(poi_values, results, ax=ax)
     fig.savefig(f"muscan_{args.tag}__{ana}.pdf")
+
+jsonoutput={
+    "observed": float(obs_limit),
+    "expected": float(exp_limits[2]),
+    "p1sigma": float(exp_limits[3]),
+    "m1sigma": float(exp_limits[1]),
+    "p2sigma": float(exp_limits[4]),
+    "m2sigma": float(exp_limits[0]),
+}
+
+#print(json.dumps(jsonoutput,indent=4))
+
+# make a json output file
+with open("muscan_results.json","w") as jsonoutputfile:
+    json.dump(jsonoutput,jsonoutputfile,indent=4)
+

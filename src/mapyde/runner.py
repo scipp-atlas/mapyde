@@ -395,7 +395,7 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
     ) as container:
         stdout, stderr = container.call(command)
 
-    return stdout, stderr
+    return stdout, stderr, json.load(open(f"{config['base']['path']}/{config['base']['output']}/muscan_results.json","r"))
 
 
 def run_sherpa(config: ImmutableConfig) -> tuple[bytes, bytes]:
