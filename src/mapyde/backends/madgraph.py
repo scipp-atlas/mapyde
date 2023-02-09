@@ -83,11 +83,11 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         pythia_onoff = "Pythia8"
         pythia_config_path = f"/data/{new_pythia_card_path.name}"
 
-    substitution = dict(
-        ecms=float(config["madgraph"]["ecms"]) / 2,
-        nevents=int(config["madgraph"]["nevents"]),
-        iseed=int(config["madgraph"]["seed"]),
-    )
+    substitution = {
+        "ecms": float(config["madgraph"]["ecms"]) / 2,
+        "nevents": int(config["madgraph"]["nevents"]),
+        "iseed": int(config["madgraph"]["seed"]),
+    }
 
     masses = config["madgraph"].get("masses", {})
     if any(key in masses for key in substitution):
@@ -248,7 +248,9 @@ done
 """
 
     with mgconfig_card_path.open(mode="w", encoding="utf-8") as fpointer:
-        for proc_line in new_proc_card_path.open(encoding="utf-8"):
+        for proc_line in new_proc_card_path.open(
+            encoding="utf-8"
+        ):  # pylint: disable consider-using-with
             if not proc_line.strip():
                 continue
             if proc_line.startswith("output"):

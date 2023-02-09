@@ -334,8 +334,8 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     assert config
 
     inputstr = ""
-    for i in config["sa2json"]["inputs"].split():
-        inputstr += f" -i {i} "
+    for i in config["sa2json"]["inputs"].split():  # pylint: disable consider-using-join
+        inputstr += f" -i {i} "  # pylint: disable consider-using-join
 
     scalefactorstring = ""
     if "hepmc" in config["simpleanalysis"]["input"]:
@@ -403,6 +403,7 @@ def run_pyhf(
         json.load(
             open(
                 f"{config['base']['path']}/{config['base']['output']}/muscan_results.json",
+                encoding="utf-8",
             )
         ),
     )
