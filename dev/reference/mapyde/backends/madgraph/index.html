@@ -240,7 +240,7 @@
 <span class=linenos data-linenos="250 "></span>    <span class=k>with</span> <span class=n>mgconfig_card_path</span><span class=o>.</span><span class=n>open</span><span class=p>(</span><span class=n>mode</span><span class=o>=</span><span class=s2>"w"</span><span class=p>,</span> <span class=n>encoding</span><span class=o>=</span><span class=s2>"utf-8"</span><span class=p>)</span> <span class=k>as</span> <span class=n>fpointer</span><span class=p>:</span>
 <span class=linenos data-linenos="251 "></span>        <span class=k>for</span> <span class=n>proc_line</span> <span class=ow>in</span> <span class=n>new_proc_card_path</span><span class=o>.</span><span class=n>open</span><span class=p>(</span>
 <span class=linenos data-linenos="252 "></span>            <span class=n>encoding</span><span class=o>=</span><span class=s2>"utf-8"</span>
-<span class=linenos data-linenos="253 "></span>        <span class=p>):</span>  <span class=c1># pylint: disable consider-using-with</span>
+<span class=linenos data-linenos="253 "></span>        <span class=p>):</span>  <span class=c1># pylint: disable=consider-using-with</span>
 <span class=linenos data-linenos="254 "></span>            <span class=k>if</span> <span class=ow>not</span> <span class=n>proc_line</span><span class=o>.</span><span class=n>strip</span><span class=p>():</span>
 <span class=linenos data-linenos="255 "></span>                <span class=k>continue</span>
 <span class=linenos data-linenos="256 "></span>            <span class=k>if</span> <span class=n>proc_line</span><span class=o>.</span><span class=n>startswith</span><span class=p>(</span><span class=s2>"output"</span><span class=p>):</span>
