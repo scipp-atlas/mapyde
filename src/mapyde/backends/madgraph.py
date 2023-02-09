@@ -248,9 +248,8 @@ done
 """
 
     with mgconfig_card_path.open(mode="w", encoding="utf-8") as fpointer:
-        for proc_line in new_proc_card_path.open(
-            encoding="utf-8"
-        ):  # pylint: disable=consider-using-with
+        # pylint: disable-next=consider-using-with
+        for proc_line in new_proc_card_path.open(encoding="utf-8"):
             if not proc_line.strip():
                 continue
             if proc_line.startswith("output"):
