@@ -334,8 +334,8 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     assert config
 
     inputstr = ""
-    for i in config["sa2json"]["inputs"].split():  # pylint: disable consider-using-join
-        inputstr += f" -i {i} "  # pylint: disable consider-using-join
+    for i in config["sa2json"]["inputs"].split():  # pylint: disable=consider-using-join
+        inputstr += f" -i {i} "  # pylint: disable=consider-using-join
 
     scalefactorstring = ""
     if "hepmc" in config["simpleanalysis"]["input"]:
