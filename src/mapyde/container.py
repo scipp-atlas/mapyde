@@ -76,7 +76,6 @@ class Container:
                 )
 
     def __enter__(self) -> Container:
-
         if self.engine in ["singularity", "apptainer"]:
             self.name = self.name or slugify(self.image)
 
@@ -169,7 +168,6 @@ class Container:
         exc_val: T.Optional[BaseException],
         exc_tb: T.Optional[TracebackType],
     ) -> None:
-
         if self.logs_path:
             # dump log files
             assert self.name

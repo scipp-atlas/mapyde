@@ -83,7 +83,6 @@ branchsets = [t.arrays() for t in trees]
 
 # loop over all channels in the workspace and update them where appropriate.
 for channel in ws.channels:
-
     c_index = ws.channels.index(channel)
     SAname = JSONtoSA(channel, args.background)
     if SAname is None:

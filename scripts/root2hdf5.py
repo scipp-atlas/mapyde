@@ -23,7 +23,6 @@ dt = np.dtype(
 )
 
 with h5py.File(infile.replace(".root", ".hf5"), "w") as hdf5file:
-
     data = hdf5file.create_dataset(
         intree,
         (len(branches),),

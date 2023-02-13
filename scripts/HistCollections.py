@@ -306,7 +306,6 @@ class Hists:
                 k.add(coll.collections[i])
 
     def fill(self, event, weight=0):
-
         defaultfill = -9
 
         for _, k in self.collections.items():
@@ -544,7 +543,6 @@ class tthhTree:
                 k.add(coll.collections[i])
 
     def fill(self, event, weight=0):
-
         defaultfill = -9
 
         for _, k in self.collections.items():
@@ -746,7 +744,6 @@ class lowlevelTree:
                 k.add(coll.collections[i])
 
     def fill(self, event, weight=0):
-
         defaultfill = -9
 
         for _, k in self.collections.items():
