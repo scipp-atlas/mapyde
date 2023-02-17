@@ -18,16 +18,15 @@ branches = tree.arrays()
 dt = np.dtype(
     [
         (bname, int) if bname[0] == "n" else (bname, float)
-        for bname in branches[0].tolist().keys()
+        for bname in branches[0].tolist()
     ]
 )
 
 with h5py.File(infile.replace(".root", ".hf5"), "w") as hdf5file:
-
     data = hdf5file.create_dataset(
         intree,
         (len(branches),),
         dtype=dt,
     )
-    for bname in branches[0].tolist().keys():
+    for bname in branches[0].tolist():
         data[bname] = branches[bname]

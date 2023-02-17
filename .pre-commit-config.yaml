@@ -1,11 +1,15 @@
+ci:
+  autoupdate_commit_msg: "chore: update pre-commit hooks"
+  autofix_commit_msg: "style: pre-commit fixes"
+
 repos:
   - repo: https://github.com/psf/black
-    rev: 22.12.0
+    rev: "23.1.0"
     hooks:
       - id: black-jupyter
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: "v4.4.0"
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -14,7 +18,7 @@ repos:
       - id: check-yaml
         exclude: mkdocs.yml
       - id: check-yaml
-        name: check yaml (unsafe)
+        name: check-yaml (unsafe)
         files: mkdocs.yml
         args: ["--unsafe"]
       - id: debug-statements
@@ -26,12 +30,8 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.10.0
+    rev: "v1.10.0"
     hooks:
-      - id: python-check-blanket-noqa
-      - id: python-check-blanket-type-ignore
-      - id: python-no-eval
-      - id: python-use-type-annotations
       - id: rst-backticks
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
@@ -44,49 +44,19 @@ repos:
         args: [--prose-wrap=always]
 
   - repo: https://github.com/asottile/blacken-docs
-    rev: 1.13.0
+    rev: "1.13.0"
     hooks:
       - id: blacken-docs
-        additional_dependencies: [black==22.3.0]
+        additional_dependencies: [black==22.8.0]
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.0.246
     hooks:
-      - id: isort
-        args: ["-a", "from __future__ import annotations"] # Python 3.7+
-
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
-    hooks:
-      - id: pyupgrade
-        args: ["--py37-plus"]
-
-  - repo: https://github.com/hadialqattan/pycln
-    rev: v2.1.3
-    hooks:
-      - id: pycln
-        additional_dependencies: [click<8.1]
-        args: [--all]
-        stages: [manual]
-
-  - repo: https://github.com/asottile/yesqa
-    rev: v1.4.0
-    hooks:
-      - id: yesqa
-        exclude: docs/conf.py
-        additional_dependencies: &flake8_dependencies
-          - flake8-bugbear
-          - flake8-print
-
-  - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
-    hooks:
-      - id: flake8
-        exclude: docs/conf.py
-        additional_dependencies: *flake8_dependencies
+      - id: ruff
+        args: ["--fix", "--show-fixes"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.991
+    rev: "v1.0.0"
     hooks:
       - id: mypy
         files: src
@@ -102,7 +72,7 @@ repos:
         args: ["-w", "-L", "hist"]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.2
+    rev: "v0.9.0.2"
     hooks:
       - id: shellcheck
 

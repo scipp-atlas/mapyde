@@ -68,7 +68,6 @@ if not args.cpu:
     # useful when running on a machine with a GPU
     pyhf.set_backend("jax", optimizer)
 
-
 # We can either pass in a full likelihood with signal+background already there, or pass in
 # a background likelihood and a signal patch file.  If we do use a signal patch file, then
 # write the full likelihood out to a file for reference later.
@@ -102,25 +101,10 @@ poi_values = np.linspace(0.1, 2, 10)
 init_pars = pdf.config.suggested_init()
 init_pars[pdf.config.poi_index] = 1.0
 
-print("running scan")
-
-results = [
-    pyhf.infer.hypotest(
-        poi_value,
-        observations,
-        pdf,
-        init_pars=init_pars,
-        test_stat="qtilde",
-        return_expected_set=True,
-    )
-    for poi_value in poi_values
-]
-
-print("printing results")
-
 obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
     observations, pdf, poi_values, level=0.05, return_results=True
 )
+
 print(f"Observed limit: {obs_limit}")
 print("Expected limit: %5.3f" % exp_limits[2])
 print("      -1 sigma: %5.3f" % exp_limits[1])
@@ -128,8 +112,45 @@ print("      +1 sigma: %5.3f" % exp_limits[3])
 print("      -2 sigma: %5.3f" % exp_limits[0])
 print("      +2 sigma: %5.3f" % exp_limits[4])
 
+
+# getting some values at mu=1.
+
+cls_results = pyhf.infer.hypotest(
+    1.0,
+    observations,
+    pdf,
+    init_pars=init_pars,
+    test_stat="qtilde",
+    return_expected_set=True,
+)
+
 if args.plot:
     print("making plot")
     fig, ax = plt.subplots()
     brazil.plot_results(poi_values, results, ax=ax)
     fig.savefig(f"muscan_{args.tag}__{ana}.pdf")
+
+jsonoutput = {
+    "mu": {
+        "observed": float(obs_limit),
+        "expected": float(exp_limits[2]),
+        "p1sigma": float(exp_limits[3]),
+        "m1sigma": float(exp_limits[1]),
+        "p2sigma": float(exp_limits[4]),
+        "m2sigma": float(exp_limits[0]),
+    },
+    "cls": {
+        "observed": float(cls_results[0]),
+        "expected": float(cls_results[1][2]),
+        "p1sigma": float(cls_results[1][3]),
+        "m1sigma": float(cls_results[1][1]),
+        "p2sigma": float(cls_results[1][4]),
+        "m2sigma": float(cls_results[1][0]),
+    },
+}
+
+# print(json.dumps(jsonoutput,indent=4))
+
+# make a json output file
+with open("muscan_results.json", "w") as jsonoutputfile:
+    json.dump(jsonoutput, jsonoutputfile, indent=4)

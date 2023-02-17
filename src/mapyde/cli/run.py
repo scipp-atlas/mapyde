@@ -28,8 +28,7 @@ def loadfile(filename: str) -> T.Any:
     Helper function to load a configuration file in and build the config.
     """
     user = load_config(filename)
-    config = build_config(user)
-    return config
+    return build_config(user)
 
 
 @app.command("all")

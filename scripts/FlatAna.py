@@ -5,10 +5,10 @@ from __future__ import annotations
 import argparse
 import sys
 
-import matplotlib
+import matplotlib as mpl
 import ROOT
 
-matplotlib.use("TkAgg")
+mpl.use("TkAgg")
 
 parser = argparse.ArgumentParser()
 parser.add_argument(

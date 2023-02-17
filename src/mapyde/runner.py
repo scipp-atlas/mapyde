@@ -11,7 +11,7 @@ from pathlib import Path
 from mapyde import utils
 from mapyde.backends import madgraph
 from mapyde.container import Container
-from mapyde.typing import ImmutableConfig, PathOrStr
+from mapyde.typing import ImmutableConfig, MutableConfig, PathOrStr
 
 
 def mounts(config: ImmutableConfig) -> list[tuple[PathOrStr, PathOrStr]]:
@@ -41,10 +41,9 @@ def dumpconfig(config: ImmutableConfig) -> None:
     output_path.mkdir(parents=True, exist_ok=True)
 
     now = datetime.now()
-    with open(
-        utils.output_path(config).joinpath(
-            f"configs/config_{now.year}{now.month}{now.day}{now.hour}{now.minute}{now.second}.json"
-        ),
+    with utils.output_path(config).joinpath(
+        f"configs/config_{now.year}{now.month}{now.day}{now.hour}{now.minute}{now.second}.json"
+    ).open(
         "w",
         encoding="utf-8",
     ) as outfile:
@@ -61,7 +60,6 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         "run_without_decays" in config["madgraph"]
         and config["madgraph"]["run_without_decays"]
     ):
-
         # modify config to run without decays and store in a separate area
         origcard = config["madgraph"]["proc"]["card"]
         origout = config["base"]["output"]
@@ -334,8 +332,8 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     assert config
 
     inputstr = ""
-    for i in config["sa2json"]["inputs"].split():
-        inputstr += f" -i {i} "
+    for i in config["sa2json"]["inputs"].split():  # pylint: disable=consider-using-join
+        inputstr += f" -i {i} "  # pylint: disable=consider-using-join
 
     scalefactorstring = ""
     if "hepmc" in config["simpleanalysis"]["input"]:
@@ -364,7 +362,9 @@ def run_sa2json(config: ImmutableConfig) -> tuple[bytes, bytes]:
     return stdout, stderr
 
 
-def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
+def run_pyhf(
+    config: ImmutableConfig,
+) -> tuple[bytes, bytes, MutableConfig]:
     """
     Run statistical inference via pyhf.
     """
@@ -395,7 +395,16 @@ def run_pyhf(config: ImmutableConfig) -> tuple[bytes, bytes]:
     ) as container:
         stdout, stderr = container.call(command)
 
-    return stdout, stderr
+    with Path(config["base"]["path"]).joinpath(
+        config["base"]["output"], "muscan_results.json"
+    ).open(encoding="utf-8") as fpointer:
+        data = json.load(fpointer)
+
+    return (
+        stdout,
+        stderr,
+        data,
+    )
 
 
 def run_sherpa(config: ImmutableConfig) -> tuple[bytes, bytes]:

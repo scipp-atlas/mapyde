@@ -22,9 +22,9 @@ for path in sorted(Path("src").rglob("*.py")):
         doc_path = doc_path.with_name("index.md")
         full_doc_path = full_doc_path.with_name("index.md")
 
-    if parts[-1] in ["__main__", "_version"]:
-        continue
-    elif len(parts) > 1 and parts[1] == "cli":
+    if (parts[-1] in ["__main__", "_version"]) or (
+        len(parts) > 1 and parts[1] == "cli"
+    ):
         continue
 
     nav[parts] = doc_path.as_posix()
