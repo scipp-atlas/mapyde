@@ -4,6 +4,7 @@ Top-level entrypoint for the command line interface.
 from __future__ import annotations
 
 from enum import Enum
+from typing import Optional
 
 import typer
 
@@ -27,11 +28,15 @@ class Prefix(str, Enum):
     TEMPLATES = "templates"
 
 
+PrefixOrNone = Optional[Prefix]
+
+
 @app.callback(invoke_without_command=True)
 def main(
     version: bool = typer.Option(False, "--version", help="Print the current version."),
-    prefix: Prefix
-    | None = typer.Option(None, help="Print the path prefix for data files."),
+    prefix: PrefixOrNone = typer.Option(
+        None, help="Print the path prefix for data files."
+    ),
 ) -> None:
     """
     Manage top-level options
