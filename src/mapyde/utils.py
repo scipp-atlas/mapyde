@@ -26,7 +26,7 @@ else:
 
 
 def merge(
-    left: MutableConfig, right: ImmutableConfig, path: T.Optional[list[str]] = None
+    left: MutableConfig, right: ImmutableConfig, path: list[str] | None = None
 ) -> ImmutableConfig:
     """
     merges right dictionary into left dictionary
@@ -36,7 +36,7 @@ def merge(
     for key in right:
         if key in left:
             if isinstance(left[key], dict) and isinstance(right[key], dict):
-                merge(left[key], right[key], path + [str(key)])
+                merge(left[key], right[key], [*path, str(key)])
             else:
                 left[key] = right[key]
         else:
@@ -44,7 +44,7 @@ def merge(
     return left
 
 
-def render_string(blob: str, variables: T.Optional[ImmutableConfig] = None) -> str:
+def render_string(blob: str, variables: ImmutableConfig | None = None) -> str:
     """
     Render a string using various variables set by the mapyde package.
     """
@@ -78,7 +78,8 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
 
     tpl = env.get_template(filename)
     assert tpl.filename
-    return toml.load(open(tpl.filename, encoding="utf-8"))
+    with Path(tpl.filename).open(encoding="utf-8") as fpointer:
+        return toml.load(fpointer)
 
 
 def build_config(user: MutableConfig) -> T.Any:
@@ -94,13 +95,12 @@ def build_config(user: MutableConfig) -> T.Any:
 
     with resources.as_file(template_path) as template:
         if not template.exists():
-            raise OSError(f"{template_path} does not exist.")
+            msg = f"{template_path} does not exist."
+            raise OSError(msg)
         defaults = load_config(template.name, str(template.parent))
 
     variables = merge(defaults, user)
-    config = toml.loads(render_string(toml.dumps(variables), variables))
-
-    return config
+    return toml.loads(render_string(toml.dumps(variables), variables))
 
 
 def output_path(config: ImmutableConfig) -> Path:

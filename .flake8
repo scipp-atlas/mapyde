@@ -1,8 +1,0 @@
-[flake8]
-extend-ignore = E203, E501, E722, B950, W503
-select = C,E,F,W,T,B,B9,I
-per-file-ignores =
-    tests/*: T
-    scripts/*: T20
-    scripts/SAtoJSON.py: T20, B905
-    src/mapyde/cli/*: B008

@@ -56,8 +56,8 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         new_pythia_card_path = output_path.joinpath("pythia_card.dat")
 
         # block below replaces a straightforward copy of pythia card to run area
-        with open(new_pythia_card_path, "w", encoding="utf-8") as new_pythia_card:
-            with open(pythia_card_path, encoding="utf-8") as pcard:
+        with new_pythia_card_path.open("w", encoding="utf-8") as new_pythia_card:
+            with pythia_card_path.open(encoding="utf-8") as pcard:
                 for line in pcard:
                     # now handle specific pythia options.  can be refactored later to be more elegant.
                     # really only turning MPI on/off at the moment
@@ -91,7 +91,8 @@ def generate_mg5config(config: ImmutableConfig) -> None:
 
     masses = config["madgraph"].get("masses", {})
     if any(key in masses for key in substitution):
-        raise ValueError("Particles cannot be named ecms, nevents, or iseed.")
+        msg = "Particles cannot be named ecms, nevents, or iseed."
+        raise ValueError(msg)
 
     substitution.update(masses)
 
@@ -155,7 +156,7 @@ def generate_mg5config(config: ImmutableConfig) -> None:
                 newvalue = str(run_options.pop(groups["key"], groups["value"]))
                 # update the line based on input from the user, default to what is in the file
                 line = line[: span[0]] + newvalue + line[span[1] :]
-                if not newvalue == groups["value"]:
+                if newvalue != groups["value"]:
                     log.info(
                         "    replacing value for %s: %s -> %s",
                         groups["key"],
@@ -206,17 +207,18 @@ def generate_mg5config(config: ImmutableConfig) -> None:
 
         # block below replaces a straightforward copy of madspin card to run area,
         # but allows us to modify the card according to config options
-        with open(new_madspin_card_path, "w", encoding="utf-8") as new_madspin_card:
-            with open(madspin_card_path, encoding="utf-8") as pcard:
-                for line in pcard:
-                    # now handle specific madspin options.  can be refactored later
-                    # to be more elegant. really only changing the spinmode at the moment
-                    if "set spinmode" in line and "spinmode" in config["madspin"]:
-                        new_madspin_card.write(
-                            f"set spinmode {config['madspin']['spinmode']} \n"
-                        )
-                    else:
-                        new_madspin_card.write(line)
+        with new_madspin_card_path.open(
+            "w", encoding="utf-8"
+        ) as new_madspin_card, madspin_card_path.open(encoding="utf-8") as pcard:
+            for line in pcard:
+                # now handle specific madspin options.  can be refactored later
+                # to be more elegant. really only changing the spinmode at the moment
+                if "set spinmode" in line and "spinmode" in config["madspin"]:
+                    new_madspin_card.write(
+                        f"set spinmode {config['madspin']['spinmode']} \n"
+                    )
+                else:
+                    new_madspin_card.write(line)
 
         log.info("MadSpin Card: %s", new_madspin_card_path)
         madspin_onoff = "ON"

@@ -306,7 +306,6 @@ class Hists:
                 k.add(coll.collections[i])
 
     def fill(self, event, weight=0):
-
         defaultfill = -9
 
         for _, k in self.collections.items():
@@ -544,7 +543,6 @@ class tthhTree:
                 k.add(coll.collections[i])
 
     def fill(self, event, weight=0):
-
         defaultfill = -9
 
         for _, k in self.collections.items():
@@ -746,7 +744,6 @@ class lowlevelTree:
                 k.add(coll.collections[i])
 
     def fill(self, event, weight=0):
-
         defaultfill = -9
 
         for _, k in self.collections.items():
@@ -887,8 +884,8 @@ class JetBins:
         for _, k in self.collections["njets"].collections.items():
             if k.tag == "njets_inclusive":
                 continue
-            else:
-                self.collections["njets"].collections["inclusive"].add(k)
+
+            self.collections["njets"].collections["inclusive"].add(k)
 
         for _, k in self.collections.items():
             k.write()

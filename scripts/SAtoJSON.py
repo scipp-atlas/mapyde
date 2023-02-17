@@ -83,7 +83,6 @@ branchsets = [t.arrays() for t in trees]
 
 # loop over all channels in the workspace and update them where appropriate.
 for channel in ws.channels:
-
     c_index = ws.channels.index(channel)
     SAname = JSONtoSA(channel, args.background)
     if SAname is None:
@@ -94,7 +93,7 @@ for channel in ws.channels:
     # only do something if the SA output has a field for this
     # particular signal region.
     for tree, branches in zip(trees, branchsets):
-        if SAname in tree.keys():
+        if SAname in tree:
             mask = branches[SAname] > 0
             if args.compressed:
                 # in the Compressed SA output, the SR's are not broken down
