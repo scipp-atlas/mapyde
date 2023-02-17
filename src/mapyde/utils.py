@@ -78,8 +78,8 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
 
     tpl = env.get_template(filename)
     assert tpl.filename
-    with Path(tpl.filename).open(encoding="utf-8") as fp:
-        return toml.load(fp)
+    with Path(tpl.filename).open(encoding="utf-8") as fpointer:
+        return toml.load(fpointer)
 
 
 def build_config(user: MutableConfig) -> T.Any:

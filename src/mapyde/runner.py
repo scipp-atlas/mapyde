@@ -397,8 +397,8 @@ def run_pyhf(
 
     with Path(config["base"]["path"]).joinpath(
         config["base"]["output"], "muscan_results.json"
-    ).open(encoding="utf-8") as f:
-        data = json.load(f)
+    ).open(encoding="utf-8") as fpointer:
+        data = json.load(fpointer)
 
     return (
         stdout,
