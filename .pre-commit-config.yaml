@@ -60,7 +60,9 @@ repos:
     hooks:
       - id: mypy
         files: src
-        args: ["types-Jinja2", "types-toml", "typer", "importlib_resources"]
+        args: []
+        additional_dependencies:
+          ["types-Jinja2", "types-toml", "typer", "importlib_resources"]
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.2
