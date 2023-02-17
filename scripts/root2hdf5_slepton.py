@@ -76,7 +76,7 @@ print(n_events_after_mask)
 print(len(branches))
 
 outputbranches = []
-for bname in branches[0].tolist().keys():
+for bname in branches[0].tolist():
     if bname not in branches_to_keep:
         continue
     if bname[0:3] != "jet":
@@ -92,13 +92,12 @@ for bname in branches[0].tolist().keys():
 dt = np.dtype(outputbranches)
 
 with h5py.File(infile.replace(".root", "__" + intree + ".hf5"), "w") as hdf5file:
-
     data = hdf5file.create_dataset(
         intree,
         (n_events_after_mask,),
         dtype=dt,
     )
-    for bname in branches[0].tolist().keys():
+    for bname in branches[0].tolist():
         if bname not in branches_to_keep:
             continue
 
@@ -118,7 +117,6 @@ with h5py.File(infile.replace(".root", "__" + intree + ".hf5"), "w") as hdf5file
 
             # loop over all events
             for j in range(num_entries):
-
                 # print("=====================================================")
                 # print(len(branches[bname][j]))
                 num_jets = ak.count(branches[bname][mask][j], 0)

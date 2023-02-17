@@ -26,7 +26,7 @@ else:
 
 
 def merge(
-    left: MutableConfig, right: ImmutableConfig, path: T.Optional[list[str]] = None
+    left: MutableConfig, right: ImmutableConfig, path: list[str] | None = None
 ) -> ImmutableConfig:
     """
     merges right dictionary into left dictionary
@@ -36,7 +36,7 @@ def merge(
     for key in right:
         if key in left:
             if isinstance(left[key], dict) and isinstance(right[key], dict):
-                merge(left[key], right[key], path + [str(key)])
+                merge(left[key], right[key], [*path, str(key)])
             else:
                 left[key] = right[key]
         else:
@@ -44,7 +44,7 @@ def merge(
     return left
 
 
-def render_string(blob: str, variables: T.Optional[ImmutableConfig] = None) -> str:
+def render_string(blob: str, variables: ImmutableConfig | None = None) -> str:
     """
     Render a string using various variables set by the mapyde package.
     """

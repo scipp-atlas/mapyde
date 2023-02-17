@@ -61,7 +61,6 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         "run_without_decays" in config["madgraph"]
         and config["madgraph"]["run_without_decays"]
     ):
-
         # modify config to run without decays and store in a separate area
         origcard = config["madgraph"]["proc"]["card"]
         origout = config["base"]["output"]

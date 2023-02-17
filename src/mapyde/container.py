@@ -29,22 +29,22 @@ class Container:
 
     process: PopenBytes
     stdin: T.IO[bytes]
-    stdout: T.Optional[T.Union[T.IO[bytes], T.IO[str]]]
+    stdout: T.IO[bytes] | T.IO[str] | None
 
     def __init__(
         self,
         *,
         image: str,
-        user: T.Optional[int] = None,
-        group: T.Optional[int] = None,
-        mounts: T.Optional[list[tuple[PathOrStr, PathOrStr]]] = None,
-        cwd: T.Optional[PathOrStr] = "/tmp",
+        user: int | None = None,
+        group: int | None = None,
+        mounts: list[tuple[PathOrStr, PathOrStr]] | None = None,
+        cwd: PathOrStr | None = "/tmp",
         engine: ContainerEngine = "docker",
-        name: T.Optional[str] = None,
-        stdout: T.Optional[T.Union[T.IO[bytes], T.IO[str]]] = None,
-        output_path: T.Optional[Path] = None,
-        logs_path: T.Optional[PathOrStr] = None,
-        additional_options: T.Optional[list[str]] = None,
+        name: str | None = None,
+        stdout: T.IO[bytes] | T.IO[str] | None = None,
+        output_path: Path | None = None,
+        logs_path: PathOrStr | None = None,
+        additional_options: list[str] | None = None,
     ):
         if not image:
             raise ValueError("Must specify an image to run.")
@@ -76,7 +76,6 @@ class Container:
                 )
 
     def __enter__(self) -> Container:
-
         if self.engine in ["singularity", "apptainer"]:
             self.name = self.name or slugify(self.image)
 
@@ -165,11 +164,10 @@ class Container:
 
     def __exit__(
         self,
-        exc_type: T.Optional[T.Type[BaseException]],
-        exc_val: T.Optional[BaseException],
-        exc_tb: T.Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
-
         if self.logs_path:
             # dump log files
             assert self.name

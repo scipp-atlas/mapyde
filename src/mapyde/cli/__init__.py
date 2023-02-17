@@ -3,7 +3,6 @@ Top-level entrypoint for the command line interface.
 """
 from __future__ import annotations
 
-import typing as T
 from enum import Enum
 
 import typer
@@ -31,7 +30,7 @@ class Prefix(str, Enum):
 @app.callback(invoke_without_command=True)
 def main(
     version: bool = typer.Option(False, "--version", help="Print the current version."),
-    prefix: T.Optional[Prefix] = typer.Option(
+    prefix: Prefix | None = typer.Option(
         None, help="Print the path prefix for data files."
     ),
 ) -> None:

@@ -155,7 +155,7 @@ def generate_mg5config(config: ImmutableConfig) -> None:
                 newvalue = str(run_options.pop(groups["key"], groups["value"]))
                 # update the line based on input from the user, default to what is in the file
                 line = line[: span[0]] + newvalue + line[span[1] :]
-                if not newvalue == groups["value"]:
+                if newvalue != groups["value"]:
                     log.info(
                         "    replacing value for %s: %s -> %s",
                         groups["key"],
