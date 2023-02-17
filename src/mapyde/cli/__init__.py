@@ -30,9 +30,8 @@ class Prefix(str, Enum):
 @app.callback(invoke_without_command=True)
 def main(
     version: bool = typer.Option(False, "--version", help="Print the current version."),
-    prefix: Prefix | None = typer.Option(
-        None, help="Print the path prefix for data files."
-    ),
+    prefix: Prefix
+    | None = typer.Option(None, help="Print the path prefix for data files."),
 ) -> None:
     """
     Manage top-level options

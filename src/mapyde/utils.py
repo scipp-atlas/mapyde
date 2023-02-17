@@ -78,7 +78,8 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
 
     tpl = env.get_template(filename)
     assert tpl.filename
-    return toml.load(open(tpl.filename, encoding="utf-8"))
+    with Path(tpl.filename).open(encoding="utf-8") as fp:
+        return toml.load(fp)
 
 
 def build_config(user: MutableConfig) -> T.Any:
@@ -94,13 +95,12 @@ def build_config(user: MutableConfig) -> T.Any:
 
     with resources.as_file(template_path) as template:
         if not template.exists():
-            raise OSError(f"{template_path} does not exist.")
+            msg = f"{template_path} does not exist."
+            raise OSError(msg)
         defaults = load_config(template.name, str(template.parent))
 
     variables = merge(defaults, user)
-    config = toml.loads(render_string(toml.dumps(variables), variables))
-
-    return config
+    return toml.loads(render_string(toml.dumps(variables), variables))
 
 
 def output_path(config: ImmutableConfig) -> Path:

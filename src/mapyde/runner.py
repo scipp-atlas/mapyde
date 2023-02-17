@@ -41,10 +41,9 @@ def dumpconfig(config: ImmutableConfig) -> None:
     output_path.mkdir(parents=True, exist_ok=True)
 
     now = datetime.now()
-    with open(
-        utils.output_path(config).joinpath(
-            f"configs/config_{now.year}{now.month}{now.day}{now.hour}{now.minute}{now.second}.json"
-        ),
+    with utils.output_path(config).joinpath(
+        f"configs/config_{now.year}{now.month}{now.day}{now.hour}{now.minute}{now.second}.json"
+    ).open(
         "w",
         encoding="utf-8",
     ) as outfile:
@@ -396,15 +395,15 @@ def run_pyhf(
     ) as container:
         stdout, stderr = container.call(command)
 
+    with Path(config["base"]["path"]).joinpath(
+        config["base"]["output"], "muscan_results.json"
+    ).open(encoding="utf-8") as f:
+        data = json.load(f)
+
     return (
         stdout,
         stderr,
-        json.load(
-            open(
-                f"{config['base']['path']}/{config['base']['output']}/muscan_results.json",
-                encoding="utf-8",
-            )
-        ),
+        data,
     )
 
 

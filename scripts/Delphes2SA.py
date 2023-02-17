@@ -56,7 +56,6 @@ outVectors = []
 
 class NtupleVector:
     def __init__(self, name, tree, floatVar=False):
-        global outVectors
         rootVar = ROOT.std.vector("float")() if floatVar else ROOT.std.vector("int")()
         tree.Branch(name, rootVar)
         self.var = rootVar

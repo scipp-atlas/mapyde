@@ -47,12 +47,14 @@ class Container:
         additional_options: list[str] | None = None,
     ):
         if not image:
-            raise ValueError("Must specify an image to run.")
+            msg = "Must specify an image to run."
+            raise ValueError(msg)
 
         try:
             subprocess.run(["bash", "-c", f"hash {engine}"], check=True)
         except subprocess.CalledProcessError as err:
-            raise OSError(f"{engine} does not exist on your system.") from err
+            msg = f"{engine} does not exist on your system."
+            raise OSError(msg) from err
 
         self.image = image
         self.user = user or os.geteuid()
@@ -71,9 +73,8 @@ class Container:
         self.output_path.mkdir(parents=True, exist_ok=True)
         for host, container in self.mounts:
             if not Path(container).is_absolute():
-                raise ValueError(
-                    f"The mount {host}:{container} does not point to an absolute path in the container."
-                )
+                msg = f"The mount {host}:{container} does not point to an absolute path in the container."
+                raise ValueError(msg)
 
     def __enter__(self) -> Container:
         if self.engine in ["singularity", "apptainer"]:
