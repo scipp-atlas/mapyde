@@ -12,7 +12,13 @@ from pathlib import Path
 
 from mapyde._version import __version__
 
-data = Path(sysconfig.get_path("data")).joinpath("share", __name__)
+for scheme_name in sysconfig.get_scheme_names()[
+    ::-1
+]:  # ('posix_user', 'posix_prefix', 'posix_home', 'osx_framework_user', 'nt_user', 'nt')
+    data = Path(sysconfig.get_path("data", scheme_name)).joinpath("share", __name__)
+    if data.exists():
+        break
+
 cards = data / "cards"
 likelihoods = data / "likelihoods"
 scripts = data / "scripts"
