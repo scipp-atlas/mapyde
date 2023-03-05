@@ -14,7 +14,7 @@ from pathlib import Path
 import toml
 from jinja2 import Environment, FileSystemLoader, Template
 
-from mapyde import cards, data, likelihoods, scripts, templates
+from mapyde import prefix
 from mapyde.typing import ImmutableConfig, MutableConfig
 
 # importlib.resources.as_file wasn't added until Python 3.9
@@ -53,11 +53,11 @@ def render_string(blob: str, variables: ImmutableConfig | None = None) -> str:
     return tpl.render(
         PWD=os.getenv("PWD"),
         USER=os.getenv("USER"),
-        MAPYDE_DATA=data,
-        MAPYDE_CARDS=cards,
-        MAPYDE_LIKELIHOODS=likelihoods,
-        MAPYDE_SCRIPTS=scripts,
-        MAPYDE_TEMPLATES=templates,
+        MAPYDE_DATA=prefix.data,  # type: ignore[attr-defined]
+        MAPYDE_CARDS=prefix.cards,  # type: ignore[attr-defined]
+        MAPYDE_LIKELIHOODS=prefix.likelihoods,  # type: ignore[attr-defined]
+        MAPYDE_SCRIPTS=prefix.scripts,  # type: ignore[attr-defined]
+        MAPYDE_TEMPLATES=prefix.templates,  # type: ignore[attr-defined]
         **variables,
     )
 
