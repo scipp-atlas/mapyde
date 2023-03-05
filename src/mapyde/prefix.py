@@ -63,6 +63,7 @@ class Prefix(sys.modules[__name__].__class__):  # type: ignore[misc]
     _likelihoods_path: Path | None = None
     _scripts_path: Path | None = None
     _templates_path: Path | None = None
+    _orig_path: Path = Path()
 
     __all__ = [
         "data",
@@ -86,7 +87,7 @@ class Prefix(sys.modules[__name__].__class__):  # type: ignore[misc]
         Returns:
             self (mapyde.prefix.Prefix): Returns itself (for contextlib management)
         """
-        self.orig_path, self.data = self.data, Path(new_path)
+        self._orig_path, self.data = self.data, Path(new_path)
         return self
 
     def __enter__(self) -> None:
@@ -99,7 +100,7 @@ class Prefix(sys.modules[__name__].__class__):  # type: ignore[misc]
         Returns:
             None
         """
-        self.data = self.orig_path
+        self.data = self._orig_path
 
     def __dir__(self) -> list[str]:
         return self.__all__
