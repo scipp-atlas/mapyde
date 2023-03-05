@@ -54,10 +54,10 @@ def render_string(blob: str, variables: ImmutableConfig | None = None) -> str:
         PWD=os.getenv("PWD"),
         USER=os.getenv("USER"),
         MAPYDE_DATA=prefix.data,  # type: ignore[attr-defined]
-        MAPYDE_CARDS=prefix.cards,  # type: ignore[attr-defined]
-        MAPYDE_LIKELIHOODS=prefix.likelihoods,  # type: ignore[attr-defined]
-        MAPYDE_SCRIPTS=prefix.scripts,  # type: ignore[attr-defined]
-        MAPYDE_TEMPLATES=prefix.templates,  # type: ignore[attr-defined]
+        MAPYDE_CARDS=prefix.cards,  # type: ignore[attr-defined]  # pylint: disable=no-member
+        MAPYDE_LIKELIHOODS=prefix.likelihoods,  # type: ignore[attr-defined]  # pylint: disable=no-member
+        MAPYDE_SCRIPTS=prefix.scripts,  # type: ignore[attr-defined]  # pylint: disable=no-member
+        MAPYDE_TEMPLATES=prefix.templates,  # type: ignore[attr-defined]  # pylint: disable=no-member
         **variables,
     )
 
