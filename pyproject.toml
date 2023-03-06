@@ -35,7 +35,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "typing_extensions >=3.7; python_version<'3.8'",
+    "typing_extensions >=3.7; python_version<'3.11'",
     "typer",
     "toml",
     "jinja2",

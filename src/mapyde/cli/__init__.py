@@ -45,15 +45,7 @@ def main(
         typer.echo(f"mapyde v{mapyde.__version__}")
         raise typer.Exit()
     if prefix:
-        typer.echo(
-            {
-                Prefix.DATA: mapyde.data,
-                Prefix.CARDS: mapyde.cards,
-                Prefix.LIKELIHOODS: mapyde.likelihoods,
-                Prefix.SCRIPTS: mapyde.scripts,
-                Prefix.TEMPLATES: mapyde.templates,
-            }[prefix].resolve()
-        )
+        typer.echo(getattr(mapyde.prefix, prefix.value).resolve())
         raise typer.Exit()
 
 
