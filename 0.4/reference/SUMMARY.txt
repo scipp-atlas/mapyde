@@ -2,6 +2,7 @@
     * [backends](mapyde/backends/index.md)
         * [madgraph](mapyde/backends/madgraph.md)
     * [container](mapyde/container.md)
+    * [prefix](mapyde/prefix.md)
     * [runner](mapyde/runner.md)
     * [typing](mapyde/typing.md)
     * [utils](mapyde/utils.md)
