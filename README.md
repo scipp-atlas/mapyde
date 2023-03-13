@@ -16,8 +16,8 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 <!-- prettier-ignore-start -->
 | | |
 | --- | --- |
-| CI/CD | [![CI - Test][actions-badge-ci]][actions-link-ci] [![CI - Docker][actions-badge-docker]][actions-link-docker] |
-| Docs | [![Docs][actions-badge-docs]][actions-link-docs] [![Zenodo][zenodo-badge]][zenodo-link] |
+| CI/CD | [![CI - Test][actions-badge-ci]][actions-link-ci] [![CI - Docker][actions-badge-docker]][actions-link-docker] [![Docs][actions-badge-docs]][actions-link-docs] |
+| Docs |  [![doc][doc-badge]][doc-link] [![Zenodo][zenodo-badge]][zenodo-link] |
 | Package | [![PyPI - Downloads][pypi-downloads]][pypi-link] [![PyPI - Version][pypi-version]][pypi-link] [![PyPI platforms][pypi-platforms]][pypi-link] [![Conda-Forge][conda-badge]][conda-link] |
 | Meta | [![GitHub - Discussion][github-discussions-badge]][github-discussions-link] [![GitHub - Issue][github-issues-badge]][github-issues-link] [![License - Apache 2.0][license-badge]][license-link] |
 
@@ -29,6 +29,8 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 [actions-link-docs]:        https://github.com/scipp-atlas/mapyde/actions/workflows/docs.yml?query=branch:main
 [conda-badge]:              https://img.shields.io/conda/vn/conda-forge/mapyde
 [conda-link]:               https://github.com/conda-forge/mapyde-feedstock
+[doc-badge]:                https://img.shields.io/badge/docs-online-success
+[doc-link]:                 https://scipp-atlas.github.io/mapyde/latest/
 [github-discussions-badge]: https://img.shields.io/static/v1?label=Discussions&message=Ask&color=blue&logo=github
 [github-discussions-link]:  https://github.com/scipp-atlas/mapyde/discussions
 [github-issues-badge]:      https://img.shields.io/static/v1?label=Issues&message=File&color=blue&logo=github
