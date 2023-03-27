@@ -18,10 +18,12 @@ for line in open(args.input):
             if (particle > 1000000 and particle <= 1000016) or (
                 particle > 2000000 and particle <= 2000016
             ):
-                line = line.replace(sline[1], "2.00000000e+03")
+                out = line.replace(sline[1], "2.00000000e+03")
         except ValueError:
             pass
-    output.write(line)
+    else:
+        out = line
+    output.write(out)
 
 
 output.close()

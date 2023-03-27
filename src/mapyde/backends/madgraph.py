@@ -149,13 +149,14 @@ def generate_mg5config(config: ImmutableConfig) -> None:
     )
     with in_place.InPlace(new_run_card_path) as fpointer:
         for line in fpointer:
+            output = line
             match = pattern.match(line)
             if match:
                 groups = match.groupdict()
                 span = match.span("value")
                 newvalue = str(run_options.pop(groups["key"], groups["value"]))
                 # update the line based on input from the user, default to what is in the file
-                line = line[: span[0]] + newvalue + line[span[1] :]
+                output = line[: span[0]] + newvalue + line[span[1] :]
                 if newvalue != groups["value"]:
                     log.info(
                         "    replacing value for %s: %s -> %s",
@@ -163,7 +164,7 @@ def generate_mg5config(config: ImmutableConfig) -> None:
                         groups["value"],
                         newvalue,
                     )
-            fpointer.write(line)
+            fpointer.write(output)
 
     unused_keys = list(run_options.keys())
     if unused_keys:
@@ -255,6 +256,7 @@ done
             if not proc_line.strip():
                 continue
             if proc_line.startswith("output"):
-                proc_line = "output PROC_madgraph\n"
-            fpointer.write(proc_line)
+                fpointer.write("output PROC_madgraph\n")
+            else:
+                fpointer.write(proc_line)
         fpointer.write(mg5config)
