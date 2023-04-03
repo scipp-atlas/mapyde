@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "Please cite the following works when using this software."
+type: software
+authors:
+- family-names: "Hance"
+  given-names: "Michael"
+  orcid: "https://orcid.org/0000-0001-8392-0934"
+  affiliation: "University of California, Santa Cruz"
+- family-names: "Stark"
+  given-names: "Giordon"
+  orcid: "https://orcid.org/0000-0001-6616-3433"
+  affiliation: "SCIPP, University of California, Santa Cruz"
+title: "mapyde, v0.4.9"
+version: 0.4.9
+doi: 10.5281/zenodo.7796373
+repository-code: "https://github.com/scipp-atlas/mapyde/tree/v0.4.9"
+url: "https://scipp-atlas.github.io/mapyde/latest/"
+keywords:
+  - python
+  - physics
+  - reinterpretation
+license: "Apache-2.0"
+abstract: |
+  Searches for new physics at the Large Hadron Collider have constrained many models of physics beyond the Standard Model. 
+  Many searches also provide resources that allow them to be reinterpreted in the context of other models. We describe a 
+  reinterpretation pipeline that examines previously untested models of new physics using supplementary information from 
+  ATLAS SUSY searches, such as public analysis routines and serialized likelihoods, in a way that provides accurate limits 
+  even in models that differ meaningfully from the benchmark models of the original analysis. These resources are combined 
+  with common event generation and simulation toolkits MadGraph, Pythia, and Delphes into workflows steered by TOML 
+  configuration files, and bundled into the mapyde python package.
+references:
+  - type: article
+    authors:
+    - name: "Hance, M. and Stark, G."
+    title: "Reduce, Reuse, Reinterpret: an end-to-end pipeline for recycling particle physics results"
+    doi: TBD
+    url: TBD
+    year: 2023
