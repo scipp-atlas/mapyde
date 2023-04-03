@@ -36,6 +36,9 @@ search = "Bump version: {current_version} → "
 src = "README.md"
 
 [[file]]
+src = ".zenodo.json"
+
+[[file]]
 src = "pyproject.toml"
 version_template = "{major}.{minor}"
 search = "/mapyde/{current_version}/"
