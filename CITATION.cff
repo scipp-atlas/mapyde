@@ -21,12 +21,12 @@ keywords:
   - reinterpretation
 license: "Apache-2.0"
 abstract: |
-  Searches for new physics at the Large Hadron Collider have constrained many models of physics beyond the Standard Model. 
-  Many searches also provide resources that allow them to be reinterpreted in the context of other models. We describe a 
-  reinterpretation pipeline that examines previously untested models of new physics using supplementary information from 
-  ATLAS SUSY searches, such as public analysis routines and serialized likelihoods, in a way that provides accurate limits 
-  even in models that differ meaningfully from the benchmark models of the original analysis. These resources are combined 
-  with common event generation and simulation toolkits MadGraph, Pythia, and Delphes into workflows steered by TOML 
+  Searches for new physics at the Large Hadron Collider have constrained many models of physics beyond the Standard Model.
+  Many searches also provide resources that allow them to be reinterpreted in the context of other models. We describe a
+  reinterpretation pipeline that examines previously untested models of new physics using supplementary information from
+  ATLAS SUSY searches, such as public analysis routines and serialized likelihoods, in a way that provides accurate limits
+  even in models that differ meaningfully from the benchmark models of the original analysis. These resources are combined
+  with common event generation and simulation toolkits MadGraph, Pythia, and Delphes into workflows steered by TOML
   configuration files, and bundled into the mapyde python package.
 references:
   - type: article
