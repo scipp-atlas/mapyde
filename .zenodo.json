@@ -1,0 +1,41 @@
+{
+  "description": "Generation, simulation, analysis, and statistical inference in one go",
+  "license": "Apache-2.0",
+  "title": "scipp-atlas/mapyde: v0.4.8",
+  "version": "v0.4.8",
+  "upload_type": "software",
+  "creators": [
+    {
+      "affiliation": "SCIPP, University of California, Santa Cruz",
+      "name": "Mike Hance",
+      "orcid": "0000-0001-8392-0934"
+    },
+    {
+      "affiliation": "SCIPP, University of California, Santa Cruz",
+      "name": "Giordon Stark",
+      "orcid": "0000-0001-6616-3433"
+    }
+  ],
+  "access_right": "open",
+  "keywords": [
+    "physics",
+    "toolchain",
+    "generation",
+    "simulation",
+    "statistics",
+    "reinterpretation",
+    "reusability",
+    "madgraph",
+    "pythia",
+    "delphes",
+    "simpleanalysis",
+    "pyhf"
+  ],
+  "related_identifiers": [
+    {
+      "scheme": "url",
+      "identifier": "https://github.com/scipp-atlas/mapyde/tree/v0.4.8",
+      "relation": "isSupplementTo"
+    }
+  ]
+}
