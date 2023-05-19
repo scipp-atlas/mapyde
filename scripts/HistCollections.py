@@ -658,8 +658,8 @@ class tthhTree:
         lepCount = 1
         for aLep in event.sortedleptons:
             self.branches["lepton%dpT" % lepCount][0] = aLep.PT
-            self.branches["lepton%dpT" % lepCount][0] = aLep.Eta
-            self.branches["lepton%dpT" % lepCount][0] = aLep.Phi
+            self.branches["lepton%deta" % lepCount][0] = aLep.Eta
+            self.branches["lepton%dphi" % lepCount][0] = aLep.Phi
             self.branches["mt%d" % lepCount][0] = ROOT.TMath.Sqrt(
                 2
                 * event.met.Pt()
@@ -676,8 +676,8 @@ class tthhTree:
 
         for i in range(lepCount, self.maxleptons):
             self.branches["lepton%dpT" % i][0] = defaultfill
-            self.branches["lepton%dpT" % i][0] = defaultfill
-            self.branches["lepton%dpT" % i][0] = defaultfill
+            self.branches["lepton%deta" % i][0] = defaultfill
+            self.branches["lepton%dphi" % i][0] = defaultfill
             self.branches["mt%d" % i][0] = defaultfill
             self.branches["dr%d" % i][0] = defaultfill
 
@@ -785,8 +785,8 @@ class lowlevelTree:
         lepCount = 1
         for aLep in event.sortedleptons:
             self.branches["lepton%dpT" % lepCount][0] = aLep.PT
-            self.branches["lepton%dpT" % lepCount][0] = aLep.Eta
-            self.branches["lepton%dpT" % lepCount][0] = aLep.Phi
+            self.branches["lepton%deta" % lepCount][0] = aLep.Eta
+            self.branches["lepton%dphi" % lepCount][0] = aLep.Phi
             self.branches["lepton%dmT" % lepCount][0] = ROOT.TMath.Sqrt(
                 2
                 * event.met.Pt()
@@ -803,8 +803,8 @@ class lowlevelTree:
 
         for i in range(lepCount, self.maxleptons):
             self.branches["lepton%dpT" % i][0] = defaultfill
-            self.branches["lepton%dpT" % i][0] = defaultfill
-            self.branches["lepton%dpT" % i][0] = defaultfill
+            self.branches["lepton%deta" % i][0] = defaultfill
+            self.branches["lepton%dphi" % i][0] = defaultfill
             self.branches["lepton%dmT" % i][0] = defaultfill
             self.branches["lepton%dminjetdr" % i][0] = defaultfill
 
