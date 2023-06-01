@@ -78,7 +78,7 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
 
     tpl = env.get_template(filename)
     assert tpl.filename
-    with Path(tpl.filename).open(encoding="utf-8") as fpointer:
+    with Path(tpl.filename).open("rb", encoding="utf-8") as fpointer:
         return toml.load(fpointer)
 
 
