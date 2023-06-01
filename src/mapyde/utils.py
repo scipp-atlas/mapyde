@@ -12,9 +12,9 @@ import unicodedata
 from pathlib import Path
 
 if sys.version_info >= (3, 11):
-    import tomlib
+    import tomllib
 else:
-    import tomli as tomlib
+    import tomli as tomllib
 
 import tomli_w
 from jinja2 import Environment, FileSystemLoader, Template
@@ -84,7 +84,7 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
     tpl = env.get_template(filename)
     assert tpl.filename
     with Path(tpl.filename).open("rb") as fpointer:
-        return tomlib.load(fpointer)
+        return tomllib.load(fpointer)
 
 
 def build_config(user: MutableConfig, depth: int = 0) -> T.Any:
@@ -121,7 +121,7 @@ def build_config(user: MutableConfig, depth: int = 0) -> T.Any:
     return (
         variables
         if depth
-        else tomlib.loads(render_string(tomli_w.dumps(variables), variables))
+        else tomllib.loads(render_string(tomli_w.dumps(variables), variables))
     )
 
 

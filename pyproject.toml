@@ -189,10 +189,6 @@ ignore_missing_imports = true
 module = 'tomli_w'
 ignore_missing_imports = true
 
-[[tool.mypy.overrides]]
-module = 'tomlib'
-ignore_missing_imports = true
-
 [tool.ruff]
 select = [
   "E", "F", "W", # flake8
