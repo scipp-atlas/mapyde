@@ -35,6 +35,9 @@ def test_template_empty():
     assert "madspin" in built
     assert "sherpa" in built
     assert built["madspin"]["skip"]
+    assert built["base"]["engine"] == "docker"
+    assert built["madgraph"]["params"] == "Higgsino"
+    assert built["madgraph"]["paramcard"] == "Higgsino.slha"
 
 
 def test_template_nested(tmp_path):
@@ -45,11 +48,14 @@ skip = false"""
     )
     config = {
         "base": {
+            "engine": "fakeengine",
             "path": "/data/users/{{USER}}/SUSY",
             "output": "mytag",
             "template": str(template),
+            "rendered_engine": "{{base['engine']}}",
         },
         "madgraph": {
+            "params": "fakeparams",
             "proc": {"name": "charginos", "card": "{{madgraph['proc']['name']}}"},
             "masses": {"MN2": 500},
         },
@@ -60,3 +66,9 @@ skip = false"""
     assert "madspin" in built
     assert "sherpa" in built
     assert not built["madspin"]["skip"]
+    assert built["base"]["engine"] == "fakeengine"
+    assert built["base"]["rendered_engine"] == "fakeengine"
+    assert built["madgraph"]["params"] == "fakeparams"
+    assert (
+        built["madgraph"]["paramcard"] == "fakeparams.slha"
+    ), "The rendering of the config happened prematurely, rather than after merging templates."
