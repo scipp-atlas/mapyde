@@ -33,3 +33,30 @@ def test_template_empty():
     assert built
     assert "{{USER}}" not in built["base"]["path"]
     assert "madspin" in built
+    assert "sherpa" in built
+    assert built["madspin"]["skip"]
+
+
+def test_template_nested(tmp_path):
+    template = tmp_path / "enable_madspin.toml"
+    template.write_text(
+        """[madspin]
+skip = false"""
+    )
+    config = {
+        "base": {
+            "path": "/data/users/{{USER}}/SUSY",
+            "output": "mytag",
+            "template": str(template),
+        },
+        "madgraph": {
+            "proc": {"name": "charginos", "card": "{{madgraph['proc']['name']}}"},
+            "masses": {"MN2": 500},
+        },
+    }
+    built = mapyde.utils.build_config(config)
+    assert built
+    assert "{{USER}}" not in built["base"]["path"]
+    assert "madspin" in built
+    assert "sherpa" in built
+    assert not built["madspin"]["skip"]
