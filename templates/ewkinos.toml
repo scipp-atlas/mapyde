@@ -21,8 +21,6 @@ version = "madgraph:2.7.3"
 batch = false
 paramcard = "{{madgraph['params']}}.slha"
 run_without_decays = false
-
-[madgraph.generator]
 output = "run.mg5"
 
 [madgraph.masses]

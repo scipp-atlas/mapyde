@@ -21,8 +21,6 @@ cores = 20
 version = "madgraph"
 batch = false
 paramcard = "{{madgraph['params']}}.slha"
-
-[madgraph.generator]
 output = "run.mg5"
 
 [madgraph.masses]
