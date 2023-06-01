@@ -12,9 +12,9 @@ import unicodedata
 from pathlib import Path
 
 if sys.version_info >= (3, 11):
-    import tomli as tomlib
-else:
     import tomlib
+else:
+    import tomli as tomlib
 
 import tomli_w
 from jinja2 import Environment, FileSystemLoader, Template
