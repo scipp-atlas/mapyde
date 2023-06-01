@@ -182,6 +182,10 @@ module = 'in_place'
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
+module = 'tomli'
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
 module = 'tomli_w'
 ignore_missing_imports = true
 
