@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import pytest
+import toml
+
 import mapyde
+import mapyde.utils
 
 
 def test_template_false():
@@ -72,3 +76,24 @@ skip = false"""
     assert (
         built["madgraph"]["paramcard"] == "fakeparams.slha"
     ), "The rendering of the config happened prematurely, rather than after merging templates."
+
+
+def test_template_max_nested(tmp_path):
+    templates = tmp_path / "templates"
+    templates.mkdir()
+
+    defaults = templates / "defaults.toml"
+
+    template = mapyde.utils.load_config("defaults.toml", mapyde.prefix.templates)
+    template["base"].pop("template")  # remove the template key to force recursion
+    defaults.write_text(toml.dumps(template))
+
+    with mapyde.prefix(templates.parent):
+        config = {
+            "base": {
+                "path": "/data/users/{{USER}}/SUSY",
+                "output": "mytag",
+            },
+        }
+        with pytest.raises(RuntimeError, match=r"Maximum template depth .* exceeded"):
+            mapyde.utils.build_config(config)
