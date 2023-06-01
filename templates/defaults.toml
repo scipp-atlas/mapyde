@@ -17,15 +17,10 @@ likelihoods_path = "{{MAPYDE_LIKELIHOODS}}"
 [madgraph]
 skip = false
 params = "Higgsino"
-ecms = 13000
 cores = 20
-nevents = 10000
-seed = 0
 version = "madgraph"
 batch = false
 paramcard = "{{madgraph['params']}}.slha"
-
-[madgraph.generator]
 output = "run.mg5"
 
 [madgraph.masses]
@@ -34,6 +29,9 @@ MC1 = 150
 
 [madgraph.run]
 card = "default_LO.dat"
+ecms = 13000
+nevents = 10000
+seed = 0
 
 [madgraph.run.options]
 mmjj = 0
