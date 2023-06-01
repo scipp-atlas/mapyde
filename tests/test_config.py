@@ -53,7 +53,7 @@ def test_template_nested(tmp_path):
             "engine": "fakeengine",
             "path": "/data/users/{{USER}}/SUSY",
             "output": "mytag",
-            "template": str(template),
+            "template": template.as_posix(),
             "rendered_engine": "{{base['engine']}}",
         },
         "madgraph": {
