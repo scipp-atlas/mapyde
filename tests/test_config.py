@@ -46,10 +46,8 @@ def test_template_empty():
 
 def test_template_nested(tmp_path):
     template = tmp_path / "enable_madspin.toml"
-    template.write_text(
-        """[madspin]
-skip = false"""
-    )
+    template.write_text(toml.dumps({"madspin": {"skip": False}}))
+
     config = {
         "base": {
             "engine": "fakeengine",
