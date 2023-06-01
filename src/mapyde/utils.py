@@ -91,7 +91,7 @@ def build_config(user: MutableConfig, depth: int = 0) -> T.Any:
     """
 
     template_str = user.get("base", {}).pop(
-        "template", "{{MAPYDE_TEMPLATES}}/defaults.toml"
+        "template", str(prefix.templates / "defaults.toml")  # type: ignore[attr-defined]  # pylint: disable=no-member
     )
     parent = {}
 
