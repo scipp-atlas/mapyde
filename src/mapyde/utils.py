@@ -82,25 +82,42 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
         return toml.load(fpointer)
 
 
-def build_config(user: MutableConfig) -> T.Any:
+def build_config(user: MutableConfig, depth: int = 0) -> T.Any:
     """
     Function to build a configuration from a user-provided toml configuration on top of the base/template one.
+
+    The templates can be further nested (this function is recursive) up to a maximum (non-configurable) depth of 10.
+
     """
 
-    template_path = Path(
-        render_string(
-            user["base"].get("template", "{{MAPYDE_TEMPLATES}}/defaults.toml")
-        )
+    template_str = user.get("base", {}).pop(
+        "template", "{{MAPYDE_TEMPLATES}}/defaults.toml"
     )
+    parent = {}
 
-    with resources.as_file(template_path) as template:
-        if not template.exists():
-            msg = f"{template_path} does not exist."
-            raise OSError(msg)
-        defaults = load_config(template.name, str(template.parent))
+    if template_str:
+        if depth >= 10:
+            msg = 'Maximum template depth (10) exceeded. This is likely due to your base template not having `"template" = false` set.'
+            raise RuntimeError(msg)
 
-    variables = merge(defaults, user)
-    return toml.loads(render_string(toml.dumps(variables), variables))
+        template_path = Path(render_string(template_str))
+
+        with resources.as_file(template_path) as template:
+            if not template.exists():
+                msg = f"{template_path} does not exist."
+                raise OSError(msg)
+            parent = build_config(
+                load_config(template.name, str(template.parent)), depth=depth + 1
+            )
+
+    variables = merge(parent, user)
+
+    # only render the entire merged configuration, not the intermediate ones
+    return (
+        variables
+        if depth
+        else toml.loads(render_string(toml.dumps(variables), variables))
+    )
 
 
 def output_path(config: ImmutableConfig) -> Path:
