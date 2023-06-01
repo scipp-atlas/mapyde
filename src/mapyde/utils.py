@@ -56,13 +56,13 @@ def render_string(blob: str, variables: ImmutableConfig | None = None) -> str:
     variables = variables or {}
     tpl = Template(blob)
     return tpl.render(
-        PWD=os.getenv("PWD"),
-        USER=os.getenv("USER"),
-        MAPYDE_DATA=prefix.data,  # type: ignore[attr-defined]
-        MAPYDE_CARDS=prefix.cards,  # type: ignore[attr-defined]  # pylint: disable=no-member
-        MAPYDE_LIKELIHOODS=prefix.likelihoods,  # type: ignore[attr-defined]  # pylint: disable=no-member
-        MAPYDE_SCRIPTS=prefix.scripts,  # type: ignore[attr-defined]  # pylint: disable=no-member
-        MAPYDE_TEMPLATES=prefix.templates,  # type: ignore[attr-defined]  # pylint: disable=no-member
+        PWD=Path(os.getenv("PWD", ".")).as_posix(),
+        USER=os.getenv("USER", "USER"),
+        MAPYDE_DATA=prefix.data.as_posix(),  # type: ignore[attr-defined]
+        MAPYDE_CARDS=prefix.cards.as_posix(),  # type: ignore[attr-defined]  # pylint: disable=no-member
+        MAPYDE_LIKELIHOODS=prefix.likelihoods.as_posix(),  # type: ignore[attr-defined]  # pylint: disable=no-member
+        MAPYDE_SCRIPTS=prefix.scripts.as_posix(),  # type: ignore[attr-defined]  # pylint: disable=no-member
+        MAPYDE_TEMPLATES=prefix.templates.as_posix(),  # type: ignore[attr-defined]  # pylint: disable=no-member
         **variables,
     )
 
