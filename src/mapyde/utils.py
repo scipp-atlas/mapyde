@@ -11,7 +11,11 @@ import typing as T
 import unicodedata
 from pathlib import Path
 
-import tomli
+if sys.version_info >= (3, 11):
+    import tomli as tomlib
+else:
+    import tomlib
+
 import tomli_w
 from jinja2 import Environment, FileSystemLoader, Template
 
@@ -80,7 +84,7 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
     tpl = env.get_template(filename)
     assert tpl.filename
     with Path(tpl.filename).open("rb") as fpointer:
-        return tomli.load(fpointer)
+        return tomlib.load(fpointer)
 
 
 def build_config(user: MutableConfig, depth: int = 0) -> T.Any:
@@ -117,7 +121,7 @@ def build_config(user: MutableConfig, depth: int = 0) -> T.Any:
     return (
         variables
         if depth
-        else tomli.loads(render_string(tomli_w.dumps(variables), variables))
+        else tomlib.loads(render_string(tomli_w.dumps(variables), variables))
     )
 
 

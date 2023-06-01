@@ -37,7 +37,7 @@ classifiers = [
 dependencies = [
     "typing_extensions >=3.7; python_version<'3.11'",
     "typer",
-    "tomli",
+    "tomli; python_version<'3.11'",
     "tomli-w",
     "jinja2",
     "in_place",
@@ -183,6 +183,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = 'tomli_w'
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = 'tomlib'
 ignore_missing_imports = true
 
 [tool.ruff]
