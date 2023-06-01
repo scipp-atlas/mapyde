@@ -16,10 +16,7 @@ likelihoods_path = "{{MAPYDE_LIKELIHOODS}}"
 [madgraph]
 skip = false
 params = "SleptonBino"
-ecms = 13000
 cores = 1
-nevents = 50000
-seed = 0
 version = "madgraph:2.9.3"
 batch = false
 paramcard = "{{madgraph['params']}}.slha"
@@ -33,6 +30,9 @@ MN1 = 240
 
 [madgraph.run]
 card = "default_LO.dat"
+ecms = 13000
+nevents = 50000
+seed = 0
 
 [madgraph.run.options]
 mmjj = 0

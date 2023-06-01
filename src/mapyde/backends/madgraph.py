@@ -84,9 +84,9 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         pythia_config_path = f"/data/{new_pythia_card_path.name}"
 
     substitution = {
-        "ecms": float(config["madgraph"]["ecms"]) / 2,
-        "nevents": int(config["madgraph"]["nevents"]),
-        "iseed": int(config["madgraph"]["seed"]),
+        "ecms": float(config["madgraph"]["run"]["ecms"]) / 2,
+        "nevents": int(config["madgraph"]["run"]["nevents"]),
+        "iseed": int(config["madgraph"]["run"]["seed"]),
     }
 
     masses = config["madgraph"].get("masses", {})
