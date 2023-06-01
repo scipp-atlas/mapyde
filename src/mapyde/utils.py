@@ -11,7 +11,8 @@ import typing as T
 import unicodedata
 from pathlib import Path
 
-import toml
+import tomli
+import tomli_w
 from jinja2 import Environment, FileSystemLoader, Template
 
 from mapyde import prefix
@@ -78,8 +79,8 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
 
     tpl = env.get_template(filename)
     assert tpl.filename
-    with Path(tpl.filename).open("rb", encoding="utf-8") as fpointer:
-        return toml.load(fpointer)
+    with Path(tpl.filename).open("rb") as fpointer:
+        return tomli.load(fpointer)
 
 
 def build_config(user: MutableConfig, depth: int = 0) -> T.Any:
@@ -116,7 +117,7 @@ def build_config(user: MutableConfig, depth: int = 0) -> T.Any:
     return (
         variables
         if depth
-        else toml.loads(render_string(toml.dumps(variables), variables))
+        else tomli.loads(render_string(tomli_w.dumps(variables), variables))
     )
 
 

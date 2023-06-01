@@ -37,7 +37,8 @@ classifiers = [
 dependencies = [
     "typing_extensions >=3.7; python_version<'3.11'",
     "typer",
-    "toml",
+    "tomli",
+    "tomli-w",
     "jinja2",
     "in_place",
     "importlib_resources>=1.3.0; python_version<'3.9'",  # for resources in schema
@@ -178,6 +179,10 @@ warn_unreachable = true
 
 [[tool.mypy.overrides]]
 module = 'in_place'
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = 'tomli_w'
 ignore_missing_imports = true
 
 [tool.ruff]

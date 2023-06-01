@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pytest
-import toml
+import tomli_w
 
 import mapyde
 import mapyde.utils
@@ -46,7 +46,7 @@ def test_template_empty():
 
 def test_template_nested(tmp_path):
     template = tmp_path / "enable_madspin.toml"
-    template.write_text(toml.dumps({"madspin": {"skip": False}}))
+    template.write_text(tomli_w.dumps({"madspin": {"skip": False}}))
 
     config = {
         "base": {
@@ -84,7 +84,7 @@ def test_template_max_nested(tmp_path):
 
     template = mapyde.utils.load_config("defaults.toml", mapyde.prefix.templates)
     template["base"].pop("template")  # remove the template key to force recursion
-    defaults.write_text(toml.dumps(template))
+    defaults.write_text(tomli_w.dumps(template))
 
     with mapyde.prefix(templates.parent):
         config = {
