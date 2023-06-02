@@ -13,6 +13,7 @@ pythia_path = "{{MAPYDE_CARDS}}/pythia/"
 delphes_path = "{{MAPYDE_CARDS}}/delphes/"
 madspin_path = "{{MAPYDE_CARDS}}/madspin/"
 likelihoods_path = "{{MAPYDE_LIKELIHOODS}}"
+template = false
 
 [madgraph]
 skip = false
