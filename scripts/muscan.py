@@ -101,7 +101,7 @@ poi_values = np.linspace(0.1, 2, 10)
 init_pars = pdf.config.suggested_init()
 init_pars[pdf.config.poi_index] = 1.0
 
-obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upperlimit(
+obs_limit, exp_limits, (scan, results) = pyhf.infer.intervals.upper_limits.upper_limit(
     observations, pdf, poi_values, level=0.05, return_results=True
 )
 
@@ -147,6 +147,10 @@ jsonoutput = {
         "p2sigma": float(cls_results[1][4]),
         "m2sigma": float(cls_results[1][0]),
     },
+    "scan": pyhf.tensorlib.tolist(scan),
+    "results": [
+        (pyhf.tensorlib.tolist(x[0]), pyhf.tensorlib.tolist(x[1])) for x in results
+    ],
 }
 
 # print(json.dumps(jsonoutput,indent=4))
