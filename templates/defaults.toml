@@ -93,6 +93,7 @@ skip = true
 likelihood = "Higgsino_2L_bkgonly.json"
 image = "pyplotting:latest"
 gpu-options = "-c"
+other-options = ""
 
 [root2hdf5]
 input = "analysis/lowlevelAna.root"
