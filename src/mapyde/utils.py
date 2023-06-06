@@ -11,7 +11,12 @@ import typing as T
 import unicodedata
 from pathlib import Path
 
-import toml
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
+
+import tomli_w
 from jinja2 import Environment, FileSystemLoader, Template
 
 from mapyde import prefix
@@ -51,13 +56,13 @@ def render_string(blob: str, variables: ImmutableConfig | None = None) -> str:
     variables = variables or {}
     tpl = Template(blob)
     return tpl.render(
-        PWD=os.getenv("PWD"),
-        USER=os.getenv("USER"),
-        MAPYDE_DATA=prefix.data,  # type: ignore[attr-defined]
-        MAPYDE_CARDS=prefix.cards,  # type: ignore[attr-defined]  # pylint: disable=no-member
-        MAPYDE_LIKELIHOODS=prefix.likelihoods,  # type: ignore[attr-defined]  # pylint: disable=no-member
-        MAPYDE_SCRIPTS=prefix.scripts,  # type: ignore[attr-defined]  # pylint: disable=no-member
-        MAPYDE_TEMPLATES=prefix.templates,  # type: ignore[attr-defined]  # pylint: disable=no-member
+        PWD=Path(os.getenv("PWD", ".")).as_posix(),
+        USER=os.getenv("USER", "USER"),
+        MAPYDE_DATA=prefix.data.as_posix(),  # type: ignore[attr-defined]
+        MAPYDE_CARDS=prefix.cards.as_posix(),  # type: ignore[attr-defined]  # pylint: disable=no-member
+        MAPYDE_LIKELIHOODS=prefix.likelihoods.as_posix(),  # type: ignore[attr-defined]  # pylint: disable=no-member
+        MAPYDE_SCRIPTS=prefix.scripts.as_posix(),  # type: ignore[attr-defined]  # pylint: disable=no-member
+        MAPYDE_TEMPLATES=prefix.templates.as_posix(),  # type: ignore[attr-defined]  # pylint: disable=no-member
         **variables,
     )
 
@@ -78,29 +83,46 @@ def load_config(filename: str, cwd: str = ".") -> T.Any:
 
     tpl = env.get_template(filename)
     assert tpl.filename
-    with Path(tpl.filename).open(encoding="utf-8") as fpointer:
-        return toml.load(fpointer)
+    with Path(tpl.filename).open("rb") as fpointer:
+        return tomllib.load(fpointer)
 
 
-def build_config(user: MutableConfig) -> T.Any:
+def build_config(user: MutableConfig, depth: int = 0) -> T.Any:
     """
     Function to build a configuration from a user-provided toml configuration on top of the base/template one.
+
+    The templates can be further nested (this function is recursive) up to a maximum (non-configurable) depth of 10.
+
     """
 
-    template_path = Path(
-        render_string(
-            user["base"].get("template", "{{MAPYDE_TEMPLATES}}/defaults.toml")
-        )
+    template_str = user.get("base", {}).pop(
+        "template", str(prefix.templates / "defaults.toml")  # type: ignore[attr-defined]  # pylint: disable=no-member
     )
+    parent = {}
 
-    with resources.as_file(template_path) as template:
-        if not template.exists():
-            msg = f"{template_path} does not exist."
-            raise OSError(msg)
-        defaults = load_config(template.name, str(template.parent))
+    if template_str:
+        if depth >= 10:
+            msg = 'Maximum template depth (10) exceeded. This is likely due to your base template not having `"template" = false` set.'
+            raise RuntimeError(msg)
 
-    variables = merge(defaults, user)
-    return toml.loads(render_string(toml.dumps(variables), variables))
+        template_path = Path(render_string(template_str))
+
+        with resources.as_file(template_path) as template:
+            if not template.exists():
+                msg = f"{template_path} does not exist."
+                raise OSError(msg)
+            parent = build_config(
+                load_config(template.name, str(template.parent)), depth=depth + 1
+            )
+
+    variables = merge(parent, user)
+
+    # only render the entire merged configuration, not the intermediate ones
+    return (
+        variables
+        if depth
+        else tomllib.loads(render_string(tomli_w.dumps(variables), variables))
+    )
 
 
 def output_path(config: ImmutableConfig) -> Path:

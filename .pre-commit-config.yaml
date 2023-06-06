@@ -50,19 +50,19 @@ repos:
         additional_dependencies: [black==22.8.0]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.263
+    rev: v0.0.270
     hooks:
       - id: ruff
         args: ["--fix", "--show-fixes"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.2.0"
+    rev: "v1.3.0"
     hooks:
       - id: mypy
         files: src
         args: []
         additional_dependencies:
-          ["types-Jinja2", "types-toml", "typer", "importlib_resources"]
+          ["types-Jinja2", "typer", "importlib_resources"]
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.4
@@ -72,7 +72,7 @@ repos:
         args: ["-w", "-L", "hist"]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: "v0.9.0.2"
+    rev: "v0.9.0.5"
     hooks:
       - id: shellcheck
 

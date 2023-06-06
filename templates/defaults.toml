@@ -13,19 +13,15 @@ pythia_path = "{{MAPYDE_CARDS}}/pythia/"
 delphes_path = "{{MAPYDE_CARDS}}/delphes/"
 madspin_path = "{{MAPYDE_CARDS}}/madspin/"
 likelihoods_path = "{{MAPYDE_LIKELIHOODS}}"
+template = false
 
 [madgraph]
 skip = false
 params = "Higgsino"
-ecms = 13000
 cores = 20
-nevents = 10000
-seed = 0
 version = "madgraph"
 batch = false
 paramcard = "{{madgraph['params']}}.slha"
-
-[madgraph.generator]
 output = "run.mg5"
 
 [madgraph.masses]
@@ -34,6 +30,9 @@ MC1 = 150
 
 [madgraph.run]
 card = "default_LO.dat"
+ecms = 13000
+nevents = 10000
+seed = 0
 
 [madgraph.run.options]
 mmjj = 0
@@ -80,6 +79,8 @@ lumi = 1000
 skip = false
 additional_opts = ""
 name = "EwkCompressed2018"
+outputtag = ""
+input = ""
 
 [sa2json]
 inputs = "{{simpleanalysis['name']}}.root"

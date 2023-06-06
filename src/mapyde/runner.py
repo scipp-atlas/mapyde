@@ -75,7 +75,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
         image = f"ghcr.io/scipp-atlas/mapyde/{config['madgraph']['version']}"
         command = bytes(
-            f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
+            f"mg5_aMC /data/{config['madgraph']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
             "utf-8",
         )
 
@@ -99,12 +99,12 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
 
     image = f"ghcr.io/scipp-atlas/mapyde/{config['madgraph']['version']}"
     command = bytes(
-        f"mg5_aMC /data/{config['madgraph']['generator']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
+        f"mg5_aMC /data/{config['madgraph']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
         "utf-8",
     )
     if config["madgraph"].get("keep_output", False):
         command = bytes(
-            f"mg5_aMC /data/{config['madgraph']['generator']['output']} && \
+            f"mg5_aMC /data/{config['madgraph']['output']} && \
 mkdir -p /data/madgraph && \
 rsync -a PROC_madgraph/Events/run_01/unweighted_events.lhe.gz /data/madgraph/ && \
 rsync -a PROC_madgraph/Events/run_01/tag_1_pythia8_events.hepmc.gz /data/madgraph/ \n",

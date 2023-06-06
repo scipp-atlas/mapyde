@@ -84,9 +84,9 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         pythia_config_path = f"/data/{new_pythia_card_path.name}"
 
     substitution = {
-        "ecms": float(config["madgraph"]["ecms"]) / 2,
-        "nevents": int(config["madgraph"]["nevents"]),
-        "iseed": int(config["madgraph"]["seed"]),
+        "ecms": float(config["madgraph"]["run"]["ecms"]) / 2,
+        "nevents": int(config["madgraph"]["run"]["nevents"]),
+        "iseed": int(config["madgraph"]["run"]["seed"]),
     }
 
     masses = config["madgraph"].get("masses", {})
@@ -183,7 +183,7 @@ def generate_mg5config(config: ImmutableConfig) -> None:
     shutil.copyfile(proc_card_path, new_proc_card_path)
 
     # Create the madgraph configuration card
-    mgconfig_card_path = output_path.joinpath(config["madgraph"]["generator"]["output"])
+    mgconfig_card_path = output_path.joinpath(config["madgraph"]["output"])
     log.info("MadGraph Config: %s", mgconfig_card_path)
 
     # Figure out the run_mode.  0=single core, 1=cluster, 2=multicore.
@@ -235,7 +235,7 @@ reweight=OFF
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}
 {pythia_config_path}
-set iseed {config['madgraph']['seed']}
+set iseed {config['madgraph']['run']['seed']}
 done
 """
     if is_old_version:
