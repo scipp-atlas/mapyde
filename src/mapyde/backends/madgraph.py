@@ -235,7 +235,7 @@ reweight=OFF
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}
 {pythia_config_path}
-set iseed {config['madgraph']['seed']}
+set iseed {config['madgraph']['run']['seed']}
 done
 """
     if is_old_version:
