@@ -197,6 +197,7 @@ jobs:
           platforms: linux/amd64
 
       - name: Build image (arm64)
+        if: false # skip arm64 for now, not enough space on GitHub Runners
         id: docker_build_test_arm64
         uses: docker/build-push-action@v4
         with:
