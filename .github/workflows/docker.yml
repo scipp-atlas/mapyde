@@ -163,6 +163,12 @@ jobs:
       matrix:
         image: ${{ fromJSON(needs.changes.outputs.changed_images) }}
     steps:
+      - name: Get more space # https://github.com/actions/runner-images/issues/2840#issuecomment-790492173
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
       - uses: actions/checkout@v3
       - name: Prepare
         id: prep
@@ -176,8 +182,8 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build image
-        id: docker_build_test
+      - name: Build image (amd64)
+        id: docker_build_test_amd64
         uses: docker/build-push-action@v4
         with:
           context: Dockerfiles
@@ -188,10 +194,26 @@ jobs:
             org.opencontainers.image.created=${{ steps.prep.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
           outputs: type=docker,dest=image.tar
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
+
+      - name: Build image (arm64)
+        id: docker_build_test_arm64
+        uses: docker/build-push-action@v4
+        with:
+          context: Dockerfiles
+          tags: ghcr.io/${{github.repository}}/${{ matrix.image }}
+          file: Dockerfiles/${{ steps.prep.outputs.dockerfile }}
+          labels: |
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.created=${{ steps.prep.outputs.created }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          outputs: type=docker,dest=image.tar
+          platforms: linux/arm64
 
       - name: Image digest
-        run: echo ${{ steps.docker_build_test.outputs.digest }}
+        run: |
+          echo ${{ steps.docker_build_test_amd64.outputs.digest }}
+          echo ${{ steps.docker_build_test_arm64.outputs.digest }}
 
       - name: List built images
         run: docker images
