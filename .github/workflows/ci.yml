@@ -82,3 +82,6 @@ jobs:
           path: dist
 
       - uses: pypa/gh-action-pypi-publish@release/v1
+        if:
+          github.event_name == 'release' && github.event.action == 'published'
+          && github.repository == 'scipp-atlas/mapyde'
