@@ -44,12 +44,12 @@ def generate_proc_card(config: ImmutableConfig, output_path: Path) -> Path:
     [madgraph.proc]
     name = "isrslep"
     card = false
-    contents = \"\"\"\\ # (1)!
+    contents = \"\"\"\\
     import model MSSM_SLHA2
     define lep = e- e+ mu- mu+ ta- ta+
     generate p p > z, z > lep lep
     output -f
-    \"\"\"
+    \"\"\" # (1)!
     ```
 
     1. specifying the full process card contents to use for the process card will
