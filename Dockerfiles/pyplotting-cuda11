@@ -19,7 +19,7 @@ RUN apt-get update -y && \
     python3.8 -m pip install --upgrade --no-cache-dir pip && \
     python3.8 -m pip install --no-cache-dir 'jsonschema<4.15.0' && \
     python3.8 -m pip install --no-cache-dir tensorflow torch && \
-    python3.8 -m pip install --no-cache-dir pandas matplotlib numpy uproot hist pyhf jsonpatch awkward cabinetry && \
+    python3.8 -m pip install --no-cache-dir pandas matplotlib numpy uproot hist pyhf==0.7.2 jsonpatch awkward cabinetry && \
     python3.8 -m pip install --no-cache-dir jax jaxlib && \
     python3.8 -m pip install --upgrade --no-cache-dir "jax[cuda11_cudnn82]" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html && \
     python3.8 -m pip list
