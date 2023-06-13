@@ -20,6 +20,64 @@ logging.basicConfig()
 log = logging.getLogger()
 
 
+def generate_proc_card(config: ImmutableConfig, output_path: Path) -> Path:
+    """
+    Helper for creating the madgraph process card through two options:
+
+      - specifying the path inside process_path for the card to copy over
+      - specifying the contents as part of the config to use to make the process card
+
+    Examples:
+
+    ``` toml title="user_existing-card.toml"
+        [madgraph.proc]
+        name = "isrslep"
+        card = "{{madgraph['proc']['name']}}"
+        contents = false # (1)!
+    ```
+
+    1. specifying `false` (default) for the `contents` option while including the
+    path to the card is the way to copy the card `isrslep` from the process
+    card directory that is configured.
+
+    ``` toml title="user_on-the-fly.toml"
+        [madgraph.proc]
+        name = "isrslep"
+        card = false
+        contents = \"\"\"\\ # (1)!
+        import model MSSM_SLHA2
+        define lep = e- e+ mu- mu+ ta- ta+
+        generate p p > z, z > lep lep
+        output -f
+        \"\"\"
+    ```
+
+    1. specifying the full process card contents to use for the process card will
+    generate a process card with the specified name instead of copying over
+    `isrslep` from the process card directory.
+    """
+
+    assert bool(config["madgraph"]["proc"]["card"]) ^ bool(
+        config["madgraph"]["proc"]["contents"]
+    ), "Must specify either the Madgraph process card to copy or the contents to use to generate a Madgraph process card."
+
+    if config["madgraph"]["proc"]["contents"]:
+        new_proc_card_path = output_path.joinpath(config["madgraph"]["proc"]["name"])
+        new_proc_card_path.write_text(config["madgraph"]["proc"]["contents"])
+    else:
+        # Copy the proc card
+        proc_card_path = (
+            Path(config["base"]["process_path"])
+            .joinpath(config["madgraph"]["proc"]["card"])
+            .resolve()
+        )
+        new_proc_card_path = output_path.joinpath(proc_card_path.name)
+        shutil.copyfile(proc_card_path, new_proc_card_path)
+
+    log.info("Process Card: %s", new_proc_card_path)
+    return new_proc_card_path
+
+
 def generate_mg5config(config: ImmutableConfig) -> None:
     """
     Helper for generating the madgraph configs. Replaces mg5creator.py.
@@ -171,16 +229,7 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         log.error("Unused keys supplied by you: %s", unused_keys)
         raise KeyError(unused_keys[0])
 
-    # Copy the proc card
-    proc_card_path = (
-        Path(config["base"]["process_path"])
-        .joinpath(config["madgraph"]["proc"]["card"])
-        .resolve()
-    )
-    new_proc_card_path = output_path.joinpath(proc_card_path.name)
-    log.info("Process Card: %s", new_proc_card_path)
-
-    shutil.copyfile(proc_card_path, new_proc_card_path)
+    new_proc_card_path = generate_proc_card(config, output_path)
 
     # Create the madgraph configuration card
     mgconfig_card_path = output_path.joinpath(config["madgraph"]["output"])
@@ -252,11 +301,12 @@ done
 
     with mgconfig_card_path.open(mode="w", encoding="utf-8") as fpointer:
         # pylint: disable-next=consider-using-with
-        for proc_line in new_proc_card_path.open(encoding="utf-8"):
-            if not proc_line.strip():
-                continue
-            if proc_line.startswith("output"):
-                fpointer.write("output PROC_madgraph\n")
-            else:
-                fpointer.write(proc_line)
+        with new_proc_card_path.open(encoding="utf-8") as proc_lines:
+            for proc_line in proc_lines:
+                if not proc_line.strip():
+                    continue
+                if proc_line.startswith("output"):
+                    fpointer.write("output PROC_madgraph\n")
+                else:
+                    fpointer.write(proc_line)
         fpointer.write(mg5config)
