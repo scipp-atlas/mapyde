@@ -46,6 +46,7 @@ ptj1min = 0
 [madgraph.proc]
 name = "VBFSUSY_EWKQCD"
 card = "{{madgraph['proc']['name']}}"
+contents = false
 
 [madspin]
 skip = true
