@@ -90,6 +90,7 @@ options = ""
 
 [pyhf]
 skip = true
+script = "muscan.py"
 likelihood = "Higgsino_2L_bkgonly.json"
 image = "pyplotting:latest"
 gpu-options = "-c"

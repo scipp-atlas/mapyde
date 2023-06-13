@@ -371,8 +371,9 @@ def run_pyhf(
     assert config
 
     image = f"ghcr.io/scipp-atlas/mapyde/{config['pyhf']['image']}"
+    script = Path("/scripts", config["pyhf"]["script"])
     command = bytes(
-        f"""python3.8 /scripts/muscan.py -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']} {config['pyhf']['other-options']}""",
+        f"""python3.8 {script} -b /likelihoods/{config['pyhf']['likelihood']} -s {config['sa2json']['output']} -n {config['base']['output']} {config['pyhf']['gpu-options']} {config['pyhf']['other-options']}""",
         "utf-8",
     )
 
@@ -384,7 +385,7 @@ def run_pyhf(
 
     with Container(
         image=image,
-        name=f"{config['base']['output']}__muscan",
+        name=f"{config['base']['output']}__{script.stem}",
         engine=config["base"].get("engine", "docker"),
         mounts=mounts(config),
         stdout=sys.stdout,
@@ -396,7 +397,7 @@ def run_pyhf(
         stdout, stderr = container.call(command)
 
     with Path(config["base"]["path"]).joinpath(
-        config["base"]["output"], "muscan_results.json"
+        config["base"]["output"], f"{script.stem}_results.json"
     ).open(encoding="utf-8") as fpointer:
         data = json.load(fpointer)
 
