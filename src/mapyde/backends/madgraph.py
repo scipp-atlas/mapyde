@@ -30,10 +30,10 @@ def generate_proc_card(config: ImmutableConfig, output_path: Path) -> Path:
     Examples:
 
     ``` toml title="user_existing-card.toml"
-        [madgraph.proc]
-        name = "isrslep"
-        card = "{{madgraph['proc']['name']}}"
-        contents = false # (1)!
+    [madgraph.proc]
+    name = "isrslep"
+    card = "{{madgraph['proc']['name']}}"
+    contents = false # (1)!
     ```
 
     1. specifying `false` (default) for the `contents` option while including the
@@ -41,15 +41,15 @@ def generate_proc_card(config: ImmutableConfig, output_path: Path) -> Path:
     card directory that is configured.
 
     ``` toml title="user_on-the-fly.toml"
-        [madgraph.proc]
-        name = "isrslep"
-        card = false
-        contents = \"\"\"\\ # (1)!
-        import model MSSM_SLHA2
-        define lep = e- e+ mu- mu+ ta- ta+
-        generate p p > z, z > lep lep
-        output -f
-        \"\"\"
+    [madgraph.proc]
+    name = "isrslep"
+    card = false
+    contents = \"\"\"\\ # (1)!
+    import model MSSM_SLHA2
+    define lep = e- e+ mu- mu+ ta- ta+
+    generate p p > z, z > lep lep
+    output -f
+    \"\"\"
     ```
 
     1. specifying the full process card contents to use for the process card will
