@@ -5,6 +5,7 @@ import tomli_w
 
 import mapyde
 import mapyde.utils
+from mapyde.backends import madgraph
 
 
 def test_template_false():
@@ -95,3 +96,70 @@ def test_template_max_nested(tmp_path):
         }
         with pytest.raises(RuntimeError, match=r"Maximum template depth .* exceeded"):
             mapyde.utils.build_config(config)
+
+
+def test_madgraph_copy_proc_card(tmp_path):
+    user_config = {
+        "base": {
+            "path": str(tmp_path.resolve()),
+            "output": "test_madgraph_copy_proc_card",
+        },
+        "madgraph": {
+            "proc": {"name": "charginos", "card": "{{madgraph['proc']['name']}}"},
+            "masses": {"MN2": 500},
+        },
+    }
+
+    config = mapyde.utils.build_config(user_config)
+    madgraph.generate_mg5config(config)
+
+    output = tmp_path / user_config["base"]["output"]
+    assert (output / "charginos").exists()
+    assert (
+        (output / "charginos").read_text().startswith("set default_unset_couplings 99")
+    )
+
+
+def test_madgraph_generate_proc_card(tmp_path):
+    user_config = {
+        "base": {
+            "path": str(tmp_path.resolve()),
+            "output": "test_madgraph_generate_proc_card",
+        },
+        "madgraph": {
+            "proc": {
+                "name": "charginos",
+                "card": False,
+                "contents": "import model MSSM_SLHA2\ndefine lep = e- e+ mu- mu+ ta- ta+\ngenerate p p > z, z > lep lep\noutput -f",
+            },
+            "masses": {"MN2": 500},
+        },
+    }
+
+    config = mapyde.utils.build_config(user_config)
+    madgraph.generate_mg5config(config)
+
+    output = tmp_path / user_config["base"]["output"]
+    assert (output / "charginos").exists()
+    assert (output / "charginos").read_text().startswith("import model MSSM_SLHA2")
+
+
+def test_madgraph_proc_card_error(tmp_path):
+    user_config = {
+        "base": {
+            "path": str(tmp_path.resolve()),
+            "output": "test_madgraph_proc_card_error",
+        },
+        "madgraph": {
+            "proc": {
+                "name": "charginos",
+                "card": "{{madgraph['proc']['name']}}",
+                "contents": "import model MSSM_SLHA2\ndefine lep = e- e+ mu- mu+ ta- ta+\ngenerate p p > z, z > lep lep\noutput -f",
+            },
+            "masses": {"MN2": 500},
+        },
+    }
+
+    config = mapyde.utils.build_config(user_config)
+    with pytest.raises(AssertionError):
+        madgraph.generate_mg5config(config)

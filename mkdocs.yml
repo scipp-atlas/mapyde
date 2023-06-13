@@ -41,6 +41,8 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.instant
+    - content.code.copy
+    - content.code.annotate
 
 nav:
   - Home:
