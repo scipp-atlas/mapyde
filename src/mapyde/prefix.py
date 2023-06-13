@@ -16,10 +16,11 @@ class Prefix(sys.modules[__name__].__class__):  # type: ignore[misc]
     """
     A module-level wrapper around :mod:`mapyde` which will provide the prefixes
 
-    .. rubric:: Example (callable)
+    Examples:
 
-    .. code-block:: pycon
+    === "Callable"
 
+        ```pycon
         >>> import mapyde.prefix
         >>> import pathlib
         >>> curr_path = mapyde.prefix.data
@@ -34,11 +35,11 @@ class Prefix(sys.modules[__name__].__class__):  # type: ignore[misc]
         <module 'mapyde.prefix' from ...>
         >>> mapyde.prefix.data  # doctest: +ELLIPSIS
         PosixPath('.../pyhf/schemas')
+        ```
 
-    .. rubric:: Example (context-manager)
+    === "Context Manager"
 
-    .. code-block:: pycon
-
+        ```pycon
         >>> import mapyde.prefix
         >>> import pathlib
         >>> curr_path = mapyde.prefix.data
@@ -51,7 +52,7 @@ class Prefix(sys.modules[__name__].__class__):  # type: ignore[misc]
         PosixPath('/home/root/my/new/path')
         >>> mapyde.prefix.data  # doctest: +ELLIPSIS
         PosixPath('.../pyhf/schemas')
-
+        ```
     """
 
     suffix_cards: str = "cards"
