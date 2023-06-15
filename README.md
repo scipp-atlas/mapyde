@@ -80,6 +80,9 @@ steps in the chain of `mapyde`. Use the command line interface to get started:
 # display the help
 mapyde --help
 
+# open Textual TUI
+mapyde --tui
+
 # display the prefix path for data cards shipped with mapyde
 mapyde --prefix cards
 

@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Optional
 
 import typer
+from trogon import Trogon
 
 import mapyde
 from mapyde.cli import config, run
@@ -33,10 +34,12 @@ PrefixOrNone = Optional[Prefix]
 
 @app.callback(invoke_without_command=True)
 def main(
+    ctx: typer.Context,
     version: bool = typer.Option(False, "--version", help="Print the current version."),
     prefix: PrefixOrNone = typer.Option(
         None, help="Print the path prefix for data files."
     ),
+    tui: bool = typer.Option(False, "--tui", help="Open Textual TUI."),
 ) -> None:
     """
     Manage top-level options
@@ -47,6 +50,9 @@ def main(
     if prefix:
         typer.echo(getattr(mapyde.prefix, prefix.value).resolve())
         raise typer.Exit()
+    if tui:
+        Trogon(ctx.command, app_name=ctx.info_name, click_context=ctx).run()
+        ctx.exit()
 
 
 # for generating documentation using mkdocs-click
