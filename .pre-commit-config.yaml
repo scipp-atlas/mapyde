@@ -62,7 +62,7 @@ repos:
         files: src
         args: []
         additional_dependencies:
-          ["types-Jinja2", "typer", "importlib_resources", "rich"]
+          ["types-Jinja2", "typer", "importlib_resources"]
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.4
