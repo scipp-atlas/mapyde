@@ -42,6 +42,7 @@ dependencies = [
     "jinja2",
     "in_place",
     "importlib_resources>=1.3.0; python_version<'3.9'",  # for resources in schema
+    "trogon", # tui
 ]
 
 # see https://github.com/pypi/warehouse/blob/main/warehouse/templates/packaging/detail.html
@@ -187,6 +188,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = 'tomli_w'
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = 'trogon'
 ignore_missing_imports = true
 
 [tool.ruff]
