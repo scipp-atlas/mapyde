@@ -1,8 +1,8 @@
 {
   "description": "Generation, simulation, analysis, and statistical inference in one go",
   "license": "Apache-2.0",
-  "title": "scipp-atlas/mapyde: v0.4.9",
-  "version": "v0.4.9",
+  "title": "scipp-atlas/mapyde: v0.5.0",
+  "version": "v0.5.0",
   "upload_type": "software",
   "creators": [
     {
@@ -34,7 +34,7 @@
   "related_identifiers": [
     {
       "scheme": "url",
-      "identifier": "https://github.com/scipp-atlas/mapyde/tree/v0.4.9",
+      "identifier": "https://github.com/scipp-atlas/mapyde/tree/v0.5.0",
       "relation": "isSupplementTo"
     }
   ]
