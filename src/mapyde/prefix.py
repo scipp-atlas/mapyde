@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 from mapyde.typing import PathOrStr, Self
 
@@ -66,7 +66,7 @@ class Prefix(sys.modules[__name__].__class__):  # type: ignore[misc]
     _templates_path: Path | None = None
     _orig_path: Path = Path()
 
-    __all__ = [
+    __all__: ClassVar[list[str]] = [
         "data",
         "cards",
         "likelihoods",
