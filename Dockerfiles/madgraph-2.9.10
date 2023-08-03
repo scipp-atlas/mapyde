@@ -87,8 +87,9 @@ ENV MG_VERSION_ "${MG_VERSION_}"
 ENV PATH /usr/local/MG5_aMC_v${MG_VERSION_}/bin:$PATH
 
 RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
-    wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models//mssm_v4.tgz && \
-    tar -zxvf mssm_v4.tgz
+    wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models//mssm_v4.tgz http://madgraph.physics.illinois.edu/Downloads/models/heft_v4.tgz && \
+    tar -zxvf mssm_v4.tgz && \
+    tar -zxvf heft_v4.tgz
 
 RUN echo "install pythia8" | mg5_aMC && \
     echo "install mg5amc_py8_interface" | mg5_aMC
