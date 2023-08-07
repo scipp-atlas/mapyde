@@ -2,77 +2,77 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/install/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/intro/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/cli/about/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/cli/reference/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/meta/authors/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/meta/faq/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/reference/mapyde/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/reference/mapyde/container/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/reference/mapyde/prefix/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/reference/mapyde/runner/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/reference/mapyde/typing/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/reference/mapyde/utils/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/reference/mapyde/backends/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://scipp-atlas.github.io/mapyde/dev/reference/mapyde/backends/madgraph/</loc>
-         <lastmod>2023-08-04</lastmod>
+         <lastmod>2023-08-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
