@@ -101,6 +101,11 @@ RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/vendor/CutTools && \
     make clean && \
     make
 
+# build iregi
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/vendor/IREGI/src && \
+    make clean && \
+    make
+
 RUN chown -R root:root /usr/local/MG5_aMC_v${MG_VERSION_}/
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
