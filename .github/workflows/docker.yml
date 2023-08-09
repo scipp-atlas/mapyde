@@ -197,6 +197,7 @@ jobs:
           platforms: linux/amd64
 
       - name: Build image (arm64)
+        if: false
         id: docker_build_test_arm64
         uses: docker/build-push-action@v4
         with:
@@ -213,7 +214,7 @@ jobs:
       - name: Image digest
         run: |
           echo ${{ steps.docker_build_test_amd64.outputs.digest }}
-          echo ${{ steps.docker_build_test_arm64.outputs.digest }}
+          # echo ${{ steps.docker_build_test_arm64.outputs.digest }}
 
       - name: List built images
         run: docker images
