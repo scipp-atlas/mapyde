@@ -96,6 +96,11 @@ RUN echo "install pythia8" | mg5_aMC && \
     echo "convert model /usr/local/MG5_aMC_v${MG_VERSION_}/models/heft" | mg5_aMC && \
     echo "install ninja" | mg5_aMC
 
+# build cuttools
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/vendor/CutTools &&
+    make clean &&
+    make
+
 RUN chown -R root:root /usr/local/MG5_aMC_v${MG_VERSION_}/
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
