@@ -91,9 +91,14 @@ RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
     wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models/heft.tgz && \
     tar -zxvf heft.tgz
 
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
+    wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models/loop_qcd_qed_sm.tgz && \
+    tar -zxvf loop_qcd_qed_sm.tgz
+
 RUN echo "install pythia8" | mg5_aMC && \
     echo "install mg5amc_py8_interface" | mg5_aMC && \
     echo "convert model /usr/local/MG5_aMC_v${MG_VERSION_}/models/heft" | mg5_aMC && \
+    echo "convert model /usr/local/MG5_aMC_v${MG_VERSION_}/models/loop_qcd_qed_sm" | mg5_aMC && \
     echo "install ninja" | mg5_aMC
 
 # build cuttools
