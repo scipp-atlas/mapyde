@@ -117,7 +117,7 @@ RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/vendor/IREGI/src && \
     make
 
 # install a PDF set we commonly use
-RUN lhapdf install NNPDF23_nnlo_as_0118
+RUN lhapdf install NNPDF23_nlo_as_0118
 
 # make it easier for users to modify things in the MG installation later
 RUN chown -R root:root /usr/local/MG5_aMC_v${MG_VERSION_}/
