@@ -51,8 +51,9 @@ RUN mkdir /code && \
 
 # Install MadGraph5_aMC@NLO for Python 3
 RUN cd /usr/local && \
-    wget --no-check-certificate https://launchpad.net/mg5amcnlo/2.0/${MG_VERSION_x}/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
+    wget --no-check-certificate https://launchpad.net/mg5amcnlo/lts/${MG_VERSION_x}/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
     tar xzf MG5_aMC_v${MG_VERSION}.tar.gz && \
+    chmod -R a+w /usr/local/MG5_aMC_v${MG_VERSION_}/ && \
     rm MG5_aMC_v${MG_VERSION}.tar.gz
 
 
@@ -91,8 +92,35 @@ RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
     wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models//mssm_v4.tgz && \
     tar -zxvf mssm_v4.tgz
 
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
+    wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models/heft.tgz && \
+    tar -zxvf heft.tgz
+
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
+    wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models/loop_qcd_qed_sm.tgz && \
+    tar -zxvf loop_qcd_qed_sm.tgz
+
 RUN echo "install pythia8" | mg5_aMC && \
-    echo "install mg5amc_py8_interface" | mg5_aMC
+    echo "install mg5amc_py8_interface" | mg5_aMC && \
+    echo "convert model /usr/local/MG5_aMC_v${MG_VERSION_}/models/heft" | mg5_aMC && \
+    echo "convert model /usr/local/MG5_aMC_v${MG_VERSION_}/models/loop_qcd_qed_sm" | mg5_aMC && \
+    echo "install ninja" | mg5_aMC
+
+# build cuttools
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/vendor/CutTools && \
+    make clean && \
+    make
+
+# build iregi
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/vendor/IREGI/src && \
+    make clean && \
+    make
+
+# install a PDF set we commonly use
+RUN lhapdf install NNPDF23_nnlo_as_0118
+
+# make it easier for users to modify things in the MG installation later
+RUN chown -R root:root /usr/local/MG5_aMC_v${MG_VERSION_}/
 
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
 CMD ["/bin/bash"]

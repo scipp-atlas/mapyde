@@ -27,6 +27,7 @@ RUN apt-get -qq -y update && \
       python3-dev \
       less \
       coreutils \
+      libboost-all-dev \
       wget && \
     apt-get -y autoclean && \
     apt-get -y autoremove && \
@@ -86,6 +87,10 @@ ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 ENV PATH ${HOME}/.local/bin:$PATH
 ENV MG_VERSION_ "${MG_VERSION_}"
 ENV PATH /usr/local/MG5_aMC_v${MG_VERSION_}/bin:$PATH
+
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
+    wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models//mssm_v4.tgz && \
+    tar -zxvf mssm_v4.tgz
 
 RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
     wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models/heft.tgz && \
