@@ -202,6 +202,7 @@ def generate_mg5config(config: ImmutableConfig) -> None:
 
             # note that we've already processed this mass so we can avoid doing it again later
             masses_to_remove.append(pdgid)
+        # pylint: disable-next=bare-except
         except:  # noqa: E722
             # should throw a "ValueError", but I can't predict all the silly ways
             # people may do templated substitution....
