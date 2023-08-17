@@ -152,12 +152,6 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         msg = "Particles cannot be named ecms, nevents, or iseed."
         raise ValueError(msg)
 
-    substitution.update(masses)
-
-    log.info("The following values will be substituted in where possible:")
-    for key, value in substitution.items():
-        log.info("    $%s = %s", key, value)
-
     # Update the param card
     param_card_path = (
         Path(config["base"]["param_path"])
@@ -167,10 +161,65 @@ def generate_mg5config(config: ImmutableConfig) -> None:
     new_param_card_path = output_path.joinpath(param_card_path.name)
     log.info("Param Card: %s", new_param_card_path)
 
+    # mass substitutions can be either of the form:
+    #
+    # > MSLEP = 100
+    #
+    # where "MSLEP" is a placeholder mass string inside the param card that must be replaced with a number before running madgraph, or
+    #
+    # > 1000011 = 100
+    #
+    # where 1000011 is the PDG ID of the particle that can already have a placeholder mass that we want to replace with the value specified in the toml file.
+    #
+    # the two different types of substitutions need to be handled differently.
+
+    param_card_read_text = param_card_path.read_text(encoding="utf-8")
+
+    # do the second kind of substitution
+    masses_to_remove = []
+    for pdgid, mass in masses.items():
+        # avoid dealing with the templated replacement syntax here
+        try:
+            int(pdgid)  # force an exception for entries like "MSLEP = 100"
+
+            # figure out where the mass block is, so we only modify things in there
+            blockmassbegin = param_card_read_text.find("Block mass")
+            blockmassend = param_card_read_text.find("Block", blockmassbegin + 1)
+
+            # figure out where this specific particle is, within the block
+            pdgidloc = param_card_read_text.find(
+                " " + pdgid, blockmassbegin, blockmassend
+            )
+            pdgidloclineend = param_card_read_text.find("\n", pdgidloc)
+
+            # now rebuild the param card around the new mass
+            param_card_read_text = (
+                param_card_read_text[: pdgidloc + len(pdgid) + 2]
+                + "   "
+                + str(mass)
+                + param_card_read_text[pdgidloclineend:]
+            )
+
+            # note that we've already processed this mass so we can avoid doing it again later
+            masses_to_remove.append(pdgid)
+        except:  # noqa: E722
+            # should throw a "ValueError", but I can't predict all the silly ways
+            # people may do templated substitution....
+            pass
+
+    # don't try to update masses that have already been dealt with above.
+    for pdgid in masses_to_remove:
+        masses.pop(pdgid)
+
+    # now do the first kind of substitution
+    substitution.update(masses)
+
+    log.info("The following values will be substituted in where possible:")
+    for key, value in substitution.items():
+        log.info("    $%s = %s", key, value)
+
     new_param_card_path.write_text(
-        Template(
-            param_card_path.read_text(encoding="utf-8"), undefined=StrictUndefined
-        ).render(substitution),
+        Template(param_card_read_text, undefined=StrictUndefined).render(substitution),
         encoding="utf-8",
     )
 
