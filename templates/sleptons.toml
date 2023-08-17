@@ -12,6 +12,7 @@ pythia_path = "{{MAPYDE_CARDS}}/pythia/"
 delphes_path = "{{MAPYDE_CARDS}}/delphes/"
 madspin_path = "{{MAPYDE_CARDS}}/madspin/"
 likelihoods_path = "{{MAPYDE_LIKELIHOODS}}"
+template = false
 
 [madgraph]
 skip = false
@@ -44,6 +45,7 @@ ptj1min = 50
 [madgraph.proc]
 name = "isrslep"
 card = "{{madgraph['proc']['name']}}"
+contents = false
 
 [madspin]
 skip = true
