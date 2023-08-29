@@ -162,7 +162,7 @@ fatjets = ObjectVector("fatjet", outTree, True)
 
 # bit of a hack, but should work:
 sumweights = 0.0
-for entry in range(0, numberOfEntries):
+for entry in range(numberOfEntries):
     treeReader.ReadEntry(entry)
     sumweights += float(branchEvent.At(0).Weight)
 
@@ -172,7 +172,7 @@ weightscale = float(args.XS) / sumweights
 
 # Loop over all events
 print(f"Looping over {numberOfEntries} events")
-for entry in range(0, numberOfEntries):
+for entry in range(numberOfEntries):
     for vec in outVectors:
         vec.clear()
 
