@@ -621,7 +621,7 @@ class tthhTree:
 
         # chi^2
         chisq = [defaultfill]
-        for i1 in range(0, nbjets):
+        for i1 in range(nbjets):
             for i2 in range(i1 + 1, nbjets):
                 for i3 in range(i2 + 1, nbjets):
                     for i4 in range(i3 + 1, nbjets):
