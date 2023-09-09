@@ -46,7 +46,7 @@ RUN apt-get -qq -y update && \
 RUN mkdir /code && \
     cd /code && \
     wget --no-check-certificate http://hepmc.web.cern.ch/hepmc/releases/hepmc${HEPMC_VERSION}.tgz && \
-    tar xvfz hepmc${HEPMC_VERSION}.tgz && \
+    tar -xvfz hepmc${HEPMC_VERSION}.tgz && \
     mv HepMC-${HEPMC_VERSION} src && \
     cmake \
       -DCMAKE_CXX_COMPILER=$(command -v g++) \
@@ -66,7 +66,7 @@ RUN mkdir /code && \
 RUN mkdir /code && \
     cd /code && \
     wget --no-check-certificate http://fastjet.fr/repo/fastjet-${FASTJET_VERSION}.tar.gz && \
-    tar xvfz fastjet-${FASTJET_VERSION}.tar.gz && \
+    tar -xvfz fastjet-${FASTJET_VERSION}.tar.gz && \
     cd fastjet-${FASTJET_VERSION} && \
     ./configure --help && \
     export CXX=$(command -v g++) && \
@@ -85,7 +85,7 @@ RUN mkdir /code && \
 RUN mkdir /code && \
     cd /code && \
     wget --no-check-certificate https://lhapdf.hepforge.org/downloads/?f=LHAPDF-${LHAPDF_VERSION}.tar.gz -O LHAPDF-${LHAPDF_VERSION}.tar.gz && \
-    tar xvfz LHAPDF-${LHAPDF_VERSION}.tar.gz && \
+    tar -xvfz LHAPDF-${LHAPDF_VERSION}.tar.gz && \
     cd LHAPDF-${LHAPDF_VERSION} && \
     ./configure --help && \
     export CXX=$(command -v g++) && \
@@ -101,7 +101,7 @@ RUN mkdir /code && \
 RUN mkdir /code && \
     cd /code && \
     wget --no-check-certificate "https://pythia.org/download/pythia${PYTHIA_VERSION:0:2}/pythia${PYTHIA_VERSION}.tgz" && \
-    tar xvfz pythia${PYTHIA_VERSION}.tgz && \
+    tar -xvfz pythia${PYTHIA_VERSION}.tgz && \
     cd pythia${PYTHIA_VERSION} && \
     ./configure --help && \
     export PYTHON_MINOR_VERSION="${PYTHON_VERSION%.*}" && \
