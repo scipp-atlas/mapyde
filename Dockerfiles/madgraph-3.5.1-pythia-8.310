@@ -1,0 +1,241 @@
+ARG BUILDER_IMAGE=python:3.8-slim-buster
+FROM ${BUILDER_IMAGE} as builder
+ARG LHAPDF_VERSION=6.3.0
+ARG PYTHIA_VERSION=8310
+ARG FASTJET_VERSION=3.3.4
+ARG HEPMC_VERSION=2.06.11
+ARG MG_VERSION=3.5.1
+ARG MG_VERSION_=3_5_1
+ARG MG_VERSION_x=3.5.x
+ARG FASTJET_VERSION=3.3.4
+ARG BOOST_VERSION=1.76.0
+ARG MG5aMC_PY8_INTERFACE_VERSION=1.3
+LABEL org.opencontainers.image.version=${MG_VERSION}
+LABEL org.opencontainers.image.ref.name=${MG_VERSION}
+
+USER root
+WORKDIR /usr/local
+
+SHELL [ "/bin/bash", "-c" ]
+
+RUN apt-get -qq -y update && \
+    apt-get -qq -y install \
+      gcc \
+      g++ \
+      gfortran \
+      make \
+      vim \
+      cmake \
+      bc \
+      zlibc \
+      zlib1g-dev \
+      libbz2-dev \
+      rsync \
+      curl \
+      bash-completion \
+      python3-dev \
+      less \
+      coreutils \
+      libboost-all-dev \
+      wget && \
+    apt-get -y autoclean && \
+    apt-get -y autoremove && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install HepMC
+RUN mkdir /code && \
+    cd /code && \
+    wget --no-check-certificate http://hepmc.web.cern.ch/hepmc/releases/hepmc${HEPMC_VERSION}.tgz && \
+    tar xvfz hepmc${HEPMC_VERSION}.tgz && \
+    mv HepMC-${HEPMC_VERSION} src && \
+    cmake \
+      -DCMAKE_CXX_COMPILER=$(command -v g++) \
+      -DCMAKE_BUILD_TYPE=Release \
+      -Dbuild_docs:BOOL=OFF \
+      -Dmomentum:STRING=MEV \
+      -Dlength:STRING=MM \
+      -DCMAKE_INSTALL_PREFIX=/usr/local \
+      -S src \
+      -B build && \
+    cmake build -L && \
+    cmake --build build -- -j$(($(nproc) - 1)) && \
+    cmake --build build --target install && \
+    rm -rf /code
+
+# Install FastJet
+RUN mkdir /code && \
+    cd /code && \
+    wget --no-check-certificate http://fastjet.fr/repo/fastjet-${FASTJET_VERSION}.tar.gz && \
+    tar xvfz fastjet-${FASTJET_VERSION}.tar.gz && \
+    cd fastjet-${FASTJET_VERSION} && \
+    ./configure --help && \
+    export CXX=$(command -v g++) && \
+    export PYTHON=$(command -v python3) && \
+    export PYTHON_CONFIG=$(find /usr/local/ -iname "python-config.py") && \
+    ./configure \
+      --prefix=/usr/local \
+      --enable-pyext=yes && \
+    make -j$(($(nproc) - 1)) && \
+    make check && \
+    make install && \
+    rm -rf /code
+
+
+# Install LHAPDF
+RUN mkdir /code && \
+    cd /code && \
+    wget --no-check-certificate https://lhapdf.hepforge.org/downloads/?f=LHAPDF-${LHAPDF_VERSION}.tar.gz -O LHAPDF-${LHAPDF_VERSION}.tar.gz && \
+    tar xvfz LHAPDF-${LHAPDF_VERSION}.tar.gz && \
+    cd LHAPDF-${LHAPDF_VERSION} && \
+    ./configure --help && \
+    export CXX=$(command -v g++) && \
+    export PYTHON=$(command -v python3) && \
+    ./configure \
+      --prefix=/usr/local && \
+    make -j$(($(nproc) - 1)) && \
+    make install && \
+    chmod a+w /usr/local/share/LHAPDF/ && \
+    rm -rf /code
+
+# Install PYTHIA
+RUN mkdir /code && \
+    cd /code && \
+    wget --no-check-certificate "https://pythia.org/download/pythia${PYTHIA_VERSION:0:2}/pythia${PYTHIA_VERSION}.tgz" && \
+    tar xvfz pythia${PYTHIA_VERSION}.tgz && \
+    cd pythia${PYTHIA_VERSION} && \
+    ./configure --help && \
+    export PYTHON_MINOR_VERSION="${PYTHON_VERSION%.*}" && \
+    ./configure \
+      --prefix=/usr/local \
+      --arch=Linux \
+      --cxx=g++ \
+      --enable-64bit \
+      --with-gzip \
+      --with-hepmc2=/usr/local \
+      --with-lhapdf6=/usr/local \
+      --with-fastjet3=/usr/local \
+      --with-python-bin=/usr/local/bin/ \
+      --with-python-lib=/usr/local/lib/python${PYTHON_MINOR_VERSION} \
+      --with-python-include=/usr/local/include/python${PYTHON_MINOR_VERSION} \
+      --cxx-common="-O2 -m64 -pedantic -W -Wall -Wshadow -fPIC -std=c++11" \
+      --cxx-shared="-shared -std=c++11 -lpthread" && \
+    make -j$(($(nproc) - 1)) && \
+    make install && \
+    rm -rf /code
+
+# Install BOOST
+# c.f. https://www.boost.org/doc/libs/1_76_0/more/getting_started/unix-variants.html
+# hadolint ignore=SC2046
+RUN mkdir -p /code && \
+    cd /code && \
+    BOOST_VERSION_UNDERSCORE="${BOOST_VERSION//\./_}" && \
+    curl --silent --location --remote-name "https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_UNDERSCORE}.tar.gz" && \
+    tar -xzf "boost_${BOOST_VERSION_UNDERSCORE}.tar.gz" && \
+    cd "boost_${BOOST_VERSION_UNDERSCORE}" && \
+    ./bootstrap.sh --help && \
+    ./bootstrap.sh \
+      --prefix=/usr/local \
+      --with-python=$(command -v python3) && \
+    ./b2 install -j$(($(nproc) - 1)) && \
+    cd / && \
+    rm -rf /code
+
+
+# Install MadGraph5_aMC@NLO for Python 3
+RUN cd /usr/local && \
+    wget --no-check-certificate https://launchpad.net/mg5amcnlo/3.0/${MG_VERSION_x}/+download/MG5_aMC_v${MG_VERSION}.tar.gz && \
+    tar -xzf MG5_aMC_v${MG_VERSION}.tar.gz && \
+    chmod -R a+w /usr/local/MG5_aMC_v${MG_VERSION_}/ && \
+    rm MG5_aMC_v${MG_VERSION}.tar.gz && \
+    echo "Installing MG5aMC_PY8_interface" && \
+    mkdir /code && \
+    cd /code && \
+    wget --quiet http://madgraph.phys.ucl.ac.be/Downloads/MG5aMC_PY8_interface/MG5aMC_PY8_interface_V${MG5aMC_PY8_INTERFACE_VERSION}.tar.gz && \
+    mkdir -p /code/MG5aMC_PY8_interface && \
+    tar -xzf MG5aMC_PY8_interface_V${MG5aMC_PY8_INTERFACE_VERSION}.tar.gz --directory=MG5aMC_PY8_interface && \
+    cd MG5aMC_PY8_interface && \
+    python compile.py /usr/local --pythia8_makefile /usr/local/MG5_aMC_v${MG_VERSION_} && \
+    echo "hi" && \
+    mkdir -p /usr/local/MG5_aMC_v${MG_VERSION_}/HEPTools/MG5aMC_PY8_interface && \
+    cp *.h /usr/local/MG5_aMC_v${MG_VERSION_}/HEPTools/MG5aMC_PY8_interface/ && \
+    cp *_VERSION_ON_INSTALL /usr/local/MG5_aMC_v${MG_VERSION_}/HEPTools/MG5aMC_PY8_interface/ && \
+    cp MG5aMC_PY8_interface /usr/local/MG5_aMC_v${MG_VERSION_}/HEPTools/MG5aMC_PY8_interface/ && \
+    rm -rf /code
+
+# Change the MadGraph5_aMC@NLO configuration settings
+RUN sed -i '/fastjet =/s/^# //g' /usr/local/MG5_aMC_v${MG_VERSION_}/input/mg5_configuration.txt && \
+    sed -i '/lhapdf_py3 =/s/^# //g' /usr/local/MG5_aMC_v${MG_VERSION_}/input/mg5_configuration.txt && \
+    sed -i 's|# pythia8_path.*|pythia8_path = /usr/local|g' /usr/local/MG5_aMC_v${MG_VERSION_}/input/mg5_configuration.txt && \
+    sed -i '/mg5amc_py8_interface_path =/s/^# //g' /usr/local/MG5_aMC_v${MG_VERSION_}/input/mg5_configuration.txt && \
+    sed -i 's|# eps_viewer.*|eps_viewer = '$(command -v ghostscript)'|g' /usr/local/MG5_aMC_v${MG_VERSION_}/input/mg5_configuration.txt && \
+    sed -i 's|# fortran_compiler.*|fortran_compiler = '$(command -v gfortran)'|g' /usr/local/MG5_aMC_v${MG_VERSION_}/input/mg5_configuration.txt
+
+# Enable tab completion by uncommenting it from /etc/bash.bashrc
+# The relevant lines are those below the phrase "enable bash completion in interactive shells"
+RUN export SED_RANGE="$(($(sed -n '\|enable bash completion in interactive shells|=' /etc/bash.bashrc)+1)),$(($(sed -n '\|enable bash completion in interactive shells|=' /etc/bash.bashrc)+7))" && \
+    sed -i -e "${SED_RANGE}"' s/^#//' /etc/bash.bashrc && \
+    unset SED_RANGE
+
+# Use C.UTF-8 locale to avoid issues with ASCII encoding
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
+ENV HOME /home/docker
+WORKDIR ${HOME}/data
+RUN cp /root/.profile ${HOME}/.profile && \
+    cp /root/.bashrc ${HOME}/.bashrc && \
+    echo "" >> ${HOME}/.bashrc && \
+    echo "export MG_VERSION_=${MG_VERSION_}" && \
+    echo 'export PATH=${HOME}/.local/bin:$PATH' >> ${HOME}/.bashrc && \
+    echo 'export PATH=/usr/local/MG5_aMC_v${MG_VERSION_}/bin:$PATH' >> ${HOME}/.bashrc && \
+    echo 'alias ls="ls -ltrh --color"' >> ${HOME}/.bashrc && \
+    python -m pip install --upgrade --no-cache-dir pip setuptools wheel && \
+    python -m pip install --no-cache-dir six numpy
+
+ENV PYTHONPATH=/usr/local/lib:$PYTHONPATH
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+ENV PATH ${HOME}/.local/bin:$PATH
+ENV MG_VERSION_ "${MG_VERSION_}"
+ENV PATH /usr/local/MG5_aMC_v${MG_VERSION_}/bin:$PATH
+
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
+    wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models//mssm_v4.tgz && \
+    tar -zxvf mssm_v4.tgz
+
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
+    wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models/heft.tgz && \
+    tar -zxvf heft.tgz
+
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/models && \
+    wget --no-check-certificate http://madgraph.physics.illinois.edu/Downloads/models/loop_qcd_qed_sm.tgz && \
+    tar -zxvf loop_qcd_qed_sm.tgz
+
+RUN echo "convert model /usr/local/MG5_aMC_v${MG_VERSION_}/models/heft" | mg5_aMC && \
+    echo "convert model /usr/local/MG5_aMC_v${MG_VERSION_}/models/loop_qcd_qed_sm" | mg5_aMC && \
+    echo "install ninja" | mg5_aMC
+
+# build cuttools
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/vendor/CutTools && \
+    make clean && \
+    make
+
+# build iregi
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/vendor/IREGI/src && \
+    make clean && \
+    make
+
+# build StdHEP
+RUN cd /usr/local/MG5_aMC_v${MG_VERSION_}/vendor/StdHEP && \
+    make
+
+# install a PDF sets we commonly use
+RUN lhapdf install NNPDF30_nlo_as_0118
+RUN lhapdf install NNPDF23_nlo_as_0119_qed
+
+# make it easier for users to modify things in the MG installation later
+RUN chown -R root:root /usr/local/MG5_aMC_v${MG_VERSION_}/
+RUN chmod -R a+w       /usr/local/MG5_aMC_v${MG_VERSION_}/
+RUN chmod    a+x       $(find /usr/local/ -name pythia8-config)
+
+ENTRYPOINT ["/bin/bash", "-l", "-c"]
+CMD ["/bin/bash"]
