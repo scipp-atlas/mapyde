@@ -184,7 +184,7 @@ jobs:
 
       - name: Build image (amd64)
         id: docker_build_test_amd64
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: Dockerfiles
           tags: ghcr.io/${{github.repository}}/${{ matrix.image }}
@@ -199,7 +199,7 @@ jobs:
       - name: Build image (arm64)
         if: false
         id: docker_build_test_arm64
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: Dockerfiles
           tags: ghcr.io/${{github.repository}}/${{ matrix.image }}
