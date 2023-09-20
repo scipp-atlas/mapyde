@@ -166,7 +166,9 @@ def run_ana(config: ImmutableConfig) -> tuple[bytes, bytes]:
     """
     xsec = 1000.0
 
-    xqcut_gt_0 = (("xqcut" in config["madgraph"]["run"]["options"]) and (config["madgraph"]["run"]["options"]["xqcut"] > 0))
+    xqcut_gt_0 = ("xqcut" in config["madgraph"]["run"]["options"]) and (
+        config["madgraph"]["run"]["options"]["xqcut"] > 0
+    )
 
     if config["analysis"]["XSoverride"] > 0:
         xsec = config["analysis"]["XSoverride"]
