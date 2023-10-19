@@ -324,30 +324,17 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         madspin_onoff = "ON"
         madspin_config_path = f"/data/{new_madspin_card_path.name}"
 
-    mg5config = f"""
-{run_mode}
-launch PROC_madgraph
-madspin={madspin_onoff}
-shower={pythia_onoff}
-reweight=OFF
-{madspin_config_path}
-/data/{new_param_card_path.name}
-/data/{new_run_card_path.name}
-{pythia_config_path}
-set iseed {config['madgraph']['run']['seed']}
-done
-"""
+    mg5config = config["madgraph"]["config"]
     if is_old_version:
-        mg5config = f"""
-{run_mode}
-launch PROC_madgraph
-madspin={madspin_onoff}
-reweight=OFF
-{madspin_config_path}
-/data/{new_param_card_path.name}
-/data/{new_run_card_path.name}
-done
-"""
+        mg5config = "\n".join(
+            line
+            for line in mg5config.splitlines()
+            if not line.startswith("set iseed")
+            and not line.startswith("shower=")
+            and not line.startswith("{pythia_config_path}")
+        )
+
+    mg5config_parsed = mg5config.format(**locals())
 
     with mgconfig_card_path.open(mode="w", encoding="utf-8") as fpointer:
         # pylint: disable-next=consider-using-with
@@ -359,4 +346,4 @@ done
                     fpointer.write("output PROC_madgraph\n")
                 else:
                     fpointer.write(proc_line)
-        fpointer.write(mg5config)
+        fpointer.write(mg5config_parsed)
