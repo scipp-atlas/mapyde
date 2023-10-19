@@ -102,7 +102,9 @@ def generate_mg5commands(config: ImmutableConfig) -> None:
         sys.exit(1)
 
     # Controls whether to run Pythia8 or not
+    # pylint: disable-next=possibly-unused-variable
     pythia_config_path = ""
+    # pylint: disable-next=possibly-unused-variable
     pythia_onoff = "OFF"
     if not config["pythia"]["skip"]:
         # Copy the pythia card
@@ -287,6 +289,8 @@ def generate_mg5commands(config: ImmutableConfig) -> None:
     )
     log.info("MadGraph Config: %s", mgcommands_card_path)
 
+    # pylint: disable-next=possibly-unused-variable
+    run_mode = ""
     # Figure out the run_mode.  0=single core, 1=cluster, 2=multicore.
     if config["madgraph"]["batch"]:
         run_mode = "set run_mode 0"  # we don't have MadGraph launch cluster jobs for us, we handle that ourselves.
@@ -296,7 +300,9 @@ def generate_mg5commands(config: ImmutableConfig) -> None:
         run_mode = f"set run_mode 2\nset nb_core {multiprocessing.cpu_count() / 2}"
 
     # figure out if running with madspin or not, and if so, put the card in the right place
+    # pylint: disable-next=possibly-unused-variable
     madspin_onoff = "OFF"
+    # pylint: disable-next=possibly-unused-variable
     madspin_config_path = ""
     if not config["madspin"]["skip"]:
         # Copy the madspin card
