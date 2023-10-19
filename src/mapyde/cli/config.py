@@ -33,4 +33,4 @@ def generate_mg5(filename: str) -> None:
     user = load_config(filename)
     config = build_config(user)
 
-    madgraph.generate_mg5config(config)
+    madgraph.generate_mg5commands(config)

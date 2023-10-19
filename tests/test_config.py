@@ -111,7 +111,7 @@ def test_madgraph_copy_proc_card(tmp_path):
     }
 
     config = mapyde.utils.build_config(user_config)
-    madgraph.generate_mg5config(config)
+    madgraph.generate_mg5commands(config)
 
     output = tmp_path / user_config["base"]["output"]
     assert (output / "charginos").exists()
@@ -137,7 +137,7 @@ def test_madgraph_generate_proc_card(tmp_path):
     }
 
     config = mapyde.utils.build_config(user_config)
-    madgraph.generate_mg5config(config)
+    madgraph.generate_mg5commands(config)
 
     output = tmp_path / user_config["base"]["output"]
     assert (output / "charginos").exists()
@@ -162,4 +162,4 @@ def test_madgraph_proc_card_error(tmp_path):
 
     config = mapyde.utils.build_config(user_config)
     with pytest.raises(AssertionError):
-        madgraph.generate_mg5config(config)
+        madgraph.generate_mg5commands(config)

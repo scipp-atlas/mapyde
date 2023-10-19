@@ -22,8 +22,9 @@ cores = 20
 version = "madgraph"
 batch = false
 paramcard = "{{madgraph['params']}}.slha"
-output = "run.mg5"
-config = """{run_mode}
+
+[madgraph.commands]
+contents = """{run_mode}
 launch PROC_madgraph
 madspin={madspin_onoff}
 shower={pythia_onoff}
@@ -34,6 +35,7 @@ reweight=OFF
 {pythia_config_path}
 set iseed {config['madgraph']['run']['seed']}
 done"""
+output = "run.mg5"
 
 [madgraph.masses]
 MN1 = 100

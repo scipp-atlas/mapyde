@@ -78,7 +78,7 @@ def generate_proc_card(config: ImmutableConfig, output_path: Path) -> Path:
     return new_proc_card_path
 
 
-def generate_mg5config(config: ImmutableConfig) -> None:
+def generate_mg5commands(config: ImmutableConfig) -> None:
     """
     Helper for generating the madgraph configs. Replaces mg5creator.py.
     """
@@ -282,8 +282,10 @@ def generate_mg5config(config: ImmutableConfig) -> None:
     new_proc_card_path = generate_proc_card(config, output_path)
 
     # Create the madgraph configuration card
-    mgconfig_card_path = output_path.joinpath(config["madgraph"]["output"])
-    log.info("MadGraph Config: %s", mgconfig_card_path)
+    mgcommands_card_path = output_path.joinpath(
+        config["madgraph"]["commands"]["output"]
+    )
+    log.info("MadGraph Config: %s", mgcommands_card_path)
 
     # Figure out the run_mode.  0=single core, 1=cluster, 2=multicore.
     if config["madgraph"]["batch"]:
@@ -324,19 +326,19 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         madspin_onoff = "ON"
         madspin_config_path = f"/data/{new_madspin_card_path.name}"
 
-    mg5config = config["madgraph"]["config"]
+    mg5commands = config["madgraph"]["config"]
     if is_old_version:
-        mg5config = "\n".join(
+        mg5commands = "\n".join(
             line
-            for line in mg5config.splitlines()
+            for line in mg5commands.splitlines()
             if not line.startswith("set iseed")
             and not line.startswith("shower=")
             and not line.startswith("{pythia_config_path}")
         )
 
-    mg5config_parsed = mg5config.format(**locals())
+    mg5commands_parsed = mg5commands.format(**locals())
 
-    with mgconfig_card_path.open(mode="w", encoding="utf-8") as fpointer:
+    with mgcommands_card_path.open(mode="w", encoding="utf-8") as fpointer:
         # pylint: disable-next=consider-using-with
         with new_proc_card_path.open(encoding="utf-8") as proc_lines:
             for proc_line in proc_lines:
@@ -346,4 +348,4 @@ def generate_mg5config(config: ImmutableConfig) -> None:
                     fpointer.write("output PROC_madgraph\n")
                 else:
                     fpointer.write(proc_line)
-        fpointer.write(mg5config_parsed)
+        fpointer.write(mg5commands_parsed)
