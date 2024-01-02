@@ -98,8 +98,16 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
     madgraph.generate_mg5config(config)
 
     image = f"ghcr.io/scipp-atlas/mapyde/{config['madgraph']['version']}"
+
+    if (
+        "image" in config["madgraph"]
+        and config["madgraph"]["image"] is not None
+        and config["madgraph"]["image"] != ""
+    ):
+        image = config["madgraph"]["image"]
+
     command = bytes(
-        f"mg5_aMC /data/{config['madgraph']['output']} && rsync -a PROC_madgraph /data/madgraph\n",
+        f"mg5_aMC /data/{config['madgraph']['output']} && rsync -a PROC_madgraph /data/madgraph \n",
         "utf-8",
     )
     if config["madgraph"].get("keep_output", False):
