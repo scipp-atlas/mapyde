@@ -32,7 +32,7 @@ reweight=OFF
 /data/{new_param_card_path.name}
 /data/{new_run_card_path.name}
 {pythia_config_path}
-set iseed {config['madgraph']['run']['seed']}
+set iseed {madgraph['run']['seed']}
 done"""
 output = "run.mg5"
 
