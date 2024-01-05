@@ -339,12 +339,12 @@ def generate_mg5commands(config: ImmutableConfig) -> None:
 
     mg5commands_parsed = render_string(
         mg5commands,
-        dict(
+        {
+            "run_mode": run_mode,
+            "pythia_config_path": pythia_config_path,
+            "madspin_config_path": madspin_config_path,
             **config,
-            run_mode=run_mode,
-            pythia_config_path=pythia_config_path,
-            madspin_config_path=madspin_config_path,
-        ),
+        },
     )
 
     with mgcommands_card_path.open(mode="w", encoding="utf-8") as fpointer:
