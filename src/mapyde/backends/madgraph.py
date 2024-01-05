@@ -332,7 +332,7 @@ def generate_mg5commands(config: ImmutableConfig) -> None:
         madspin_onoff = "ON"
         madspin_config_path = f"/data/{new_madspin_card_path.name}"
 
-    mg5commands = config["madgraph"]["config"]
+    mg5commands = config["madgraph"]["commands"]["contents"]
     if is_old_version:
         mg5commands = "\n".join(
             line
