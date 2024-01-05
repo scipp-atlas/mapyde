@@ -15,6 +15,7 @@ import in_place
 from jinja2 import StrictUndefined, Template
 
 from mapyde.typing import ImmutableConfig
+from mapyde.utils import render_string
 
 logging.basicConfig()
 log = logging.getLogger()
@@ -104,8 +105,6 @@ def generate_mg5commands(config: ImmutableConfig) -> None:
     # Controls whether to run Pythia8 or not
     # pylint: disable-next=possibly-unused-variable
     pythia_config_path = ""
-    # pylint: disable-next=possibly-unused-variable
-    pythia_onoff = "OFF"
     if not config["pythia"]["skip"]:
         # Copy the pythia card
         pythia_card_path = (
@@ -140,7 +139,6 @@ def generate_mg5commands(config: ImmutableConfig) -> None:
                 new_pythia_card.write(config["pythia"]["additional_opts"])
 
         log.info("Pythia Card: %s", new_pythia_card_path)
-        pythia_onoff = "Pythia8"
         pythia_config_path = f"/data/{new_pythia_card_path.name}"
 
     substitution = {
@@ -301,8 +299,6 @@ def generate_mg5commands(config: ImmutableConfig) -> None:
 
     # figure out if running with madspin or not, and if so, put the card in the right place
     # pylint: disable-next=possibly-unused-variable
-    madspin_onoff = "OFF"
-    # pylint: disable-next=possibly-unused-variable
     madspin_config_path = ""
     if not config["madspin"]["skip"]:
         # Copy the madspin card
@@ -329,7 +325,6 @@ def generate_mg5commands(config: ImmutableConfig) -> None:
                     new_madspin_card.write(line)
 
         log.info("MadSpin Card: %s", new_madspin_card_path)
-        madspin_onoff = "ON"
         madspin_config_path = f"/data/{new_madspin_card_path.name}"
 
     mg5commands = config["madgraph"]["commands"]["contents"]
@@ -342,7 +337,15 @@ def generate_mg5commands(config: ImmutableConfig) -> None:
             and not line.startswith("{pythia_config_path}")
         )
 
-    mg5commands_parsed = mg5commands.format(**locals())
+    mg5commands_parsed = render_string(
+        mg5commands,
+        dict(
+            **config,
+            run_mode=run_mode,
+            pythia_config_path=pythia_config_path,
+            madspin_config_path=madspin_config_path,
+        ),
+    )
 
     with mgcommands_card_path.open(mode="w", encoding="utf-8") as fpointer:
         # pylint: disable-next=consider-using-with
