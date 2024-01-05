@@ -15,6 +15,7 @@ import in_place
 from jinja2 import StrictUndefined, Template
 
 from mapyde.typing import ImmutableConfig
+from mapyde.utils import render_string
 
 logging.basicConfig()
 log = logging.getLogger()
@@ -78,7 +79,7 @@ def generate_proc_card(config: ImmutableConfig, output_path: Path) -> Path:
     return new_proc_card_path
 
 
-def generate_mg5config(config: ImmutableConfig) -> None:
+def generate_mg5commands(config: ImmutableConfig) -> None:
     """
     Helper for generating the madgraph configs. Replaces mg5creator.py.
     """
@@ -102,8 +103,8 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         sys.exit(1)
 
     # Controls whether to run Pythia8 or not
+    # pylint: disable-next=possibly-unused-variable
     pythia_config_path = ""
-    pythia_onoff = "OFF"
     if not config["pythia"]["skip"]:
         # Copy the pythia card
         pythia_card_path = (
@@ -138,7 +139,6 @@ def generate_mg5config(config: ImmutableConfig) -> None:
                 new_pythia_card.write(config["pythia"]["additional_opts"])
 
         log.info("Pythia Card: %s", new_pythia_card_path)
-        pythia_onoff = "Pythia8"
         pythia_config_path = f"/data/{new_pythia_card_path.name}"
 
     substitution = {
@@ -282,9 +282,13 @@ def generate_mg5config(config: ImmutableConfig) -> None:
     new_proc_card_path = generate_proc_card(config, output_path)
 
     # Create the madgraph configuration card
-    mgconfig_card_path = output_path.joinpath(config["madgraph"]["output"])
-    log.info("MadGraph Config: %s", mgconfig_card_path)
+    mgcommands_card_path = output_path.joinpath(
+        config["madgraph"]["commands"]["output"]
+    )
+    log.info("MadGraph Config: %s", mgcommands_card_path)
 
+    # pylint: disable-next=possibly-unused-variable
+    run_mode = ""
     # Figure out the run_mode.  0=single core, 1=cluster, 2=multicore.
     if config["madgraph"]["batch"]:
         run_mode = "set run_mode 0"  # we don't have MadGraph launch cluster jobs for us, we handle that ourselves.
@@ -294,7 +298,7 @@ def generate_mg5config(config: ImmutableConfig) -> None:
         run_mode = f"set run_mode 2\nset nb_core {multiprocessing.cpu_count() / 2}"
 
     # figure out if running with madspin or not, and if so, put the card in the right place
-    madspin_onoff = "OFF"
+    # pylint: disable-next=possibly-unused-variable
     madspin_config_path = ""
     if not config["madspin"]["skip"]:
         # Copy the madspin card
@@ -321,35 +325,29 @@ def generate_mg5config(config: ImmutableConfig) -> None:
                     new_madspin_card.write(line)
 
         log.info("MadSpin Card: %s", new_madspin_card_path)
-        madspin_onoff = "ON"
         madspin_config_path = f"/data/{new_madspin_card_path.name}"
 
-    mg5config = f"""
-{run_mode}
-launch PROC_madgraph
-madspin={madspin_onoff}
-shower={pythia_onoff}
-reweight=OFF
-{madspin_config_path}
-/data/{new_param_card_path.name}
-/data/{new_run_card_path.name}
-{pythia_config_path}
-set iseed {config['madgraph']['run']['seed']}
-done
-"""
+    mg5commands = config["madgraph"]["commands"]["contents"]
     if is_old_version:
-        mg5config = f"""
-{run_mode}
-launch PROC_madgraph
-madspin={madspin_onoff}
-reweight=OFF
-{madspin_config_path}
-/data/{new_param_card_path.name}
-/data/{new_run_card_path.name}
-done
-"""
+        mg5commands = "\n".join(
+            line
+            for line in mg5commands.splitlines()
+            if not line.startswith("set iseed")
+            and not line.startswith("shower=")
+            and not line.startswith("{pythia_config_path}")
+        )
 
-    with mgconfig_card_path.open(mode="w", encoding="utf-8") as fpointer:
+    mg5commands_parsed = render_string(
+        mg5commands,
+        {
+            "run_mode": run_mode,
+            "pythia_config_path": pythia_config_path,
+            "madspin_config_path": madspin_config_path,
+            **config,
+        },
+    )
+
+    with mgcommands_card_path.open(mode="w", encoding="utf-8") as fpointer:
         # pylint: disable-next=consider-using-with
         with new_proc_card_path.open(encoding="utf-8") as proc_lines:
             for proc_line in proc_lines:
@@ -359,4 +357,4 @@ done
                     fpointer.write("output PROC_madgraph\n")
                 else:
                     fpointer.write(proc_line)
-        fpointer.write(mg5config)
+        fpointer.write(mg5commands_parsed)

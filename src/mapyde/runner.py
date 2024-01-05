@@ -71,7 +71,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         config["base"]["output"] = config["base"]["output"] + "_nodecays"
         config["pythia"]["skip"] = True
 
-        madgraph.generate_mg5config(config)
+        madgraph.generate_mg5commands(config)
 
         image = f"ghcr.io/scipp-atlas/mapyde/{config['madgraph']['version']}"
         command = bytes(
@@ -95,7 +95,7 @@ def run_madgraph(config: ImmutableConfig) -> tuple[bytes, bytes]:
         config["base"]["output"] = origout
         config["pythia"]["skip"] = origpythia
 
-    madgraph.generate_mg5config(config)
+    madgraph.generate_mg5commands(config)
 
     image = f"ghcr.io/scipp-atlas/mapyde/{config['madgraph']['version']}"
 
