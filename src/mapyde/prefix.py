@@ -2,7 +2,6 @@
 Copyright (c) 2022 Michael Hance and Giordon Stark. All rights reserved.
 """
 
-
 from __future__ import annotations
 
 import sys
