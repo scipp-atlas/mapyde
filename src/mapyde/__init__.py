@@ -4,7 +4,6 @@ Copyright (c) 2022 Michael Hance and Giordon Stark. All rights reserved.
 mapyde: A great package.
 """
 
-
 from __future__ import annotations
 
 import sysconfig
