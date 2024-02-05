@@ -167,14 +167,14 @@ filterwarnings = ["error"]
 testpaths = [
     "tests",
 ]
-
+log_cli_level = "INFO"
 
 [tool.mypy]
 files = "src"
 python_version = "3.7"
 warn_unused_configs = true
 strict = true
-show_error_codes = true
+hide_error_codes = false
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 warn_unreachable = true
 
@@ -225,12 +225,12 @@ select = [
   "UP",          # pyupgrade
   "YTT",         # flake8-2020
 ]
-extend-ignore = ["PLR", "E501"]
+ignore = ["PLR", "E501"]
 typing-modules = ["mapyde._compat.typing"]
 unfixable = ["T20", "F841"]
 isort.required-imports = ["from __future__ import annotations"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/**" = ["T20"]
 "scripts/**" = ["T20", "PTH", "SIM115"]
 "scripts/SAtoJSON.py" = ["T20", "B905"]

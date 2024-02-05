@@ -56,9 +56,7 @@ outfile = ROOT.TFile.Open(args.output, "RECREATE")
 allev = lowlevelTree("allev", outfile)
 
 # Loop through all events in chain
-entry = 0
-for event in chain:
-    entry += 1
+for entry, event in enumerate(chain, 1):
 
     if entry != 0 and entry % 10000 == 0:
         print("%d events processed" % entry)

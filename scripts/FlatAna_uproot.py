@@ -18,9 +18,7 @@ a_MET = []
 a_weights = []
 
 # loop over events
-entry = 0
-for i in range(numevents):
-    entry += 1
+for entry, i in enumerate(range(numevents), 1):
 
     if entry != 0 and entry % 10000 == 0:
         print("%d events processed" % entry)
