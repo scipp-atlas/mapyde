@@ -199,6 +199,11 @@ module = 'trogon'
 ignore_missing_imports = true
 
 [tool.ruff]
+target-version = "py37"
+src = ["src"]
+exclude = []
+
+[tool.ruff.lint]
 select = [
   "E", "F", "W", # flake8
   "B",  "B904",  # flake8-bugbear
@@ -221,11 +226,8 @@ select = [
   "YTT",         # flake8-2020
 ]
 extend-ignore = ["PLR", "E501"]
-target-version = "py37"
 typing-modules = ["mapyde._compat.typing"]
-src = ["src"]
 unfixable = ["T20", "F841"]
-exclude = []
 isort.required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.per-file-ignores]
