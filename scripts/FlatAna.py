@@ -51,9 +51,7 @@ h_MET = ROOT.TH1F("MET", "MET", 100, 0, 1000)
 # a_weights = []
 
 # Loop through all events in chain
-entry = 0
-for event in chain:
-    entry += 1
+for entry, event in enumerate(chain, 1):
 
     if entry != 0 and entry % 10000 == 0:
         print("%d events processed" % entry)

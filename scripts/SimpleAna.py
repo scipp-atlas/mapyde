@@ -80,10 +80,8 @@ weightscale = float(args.lumi) / numFiles
 # There should be a better way to do this....
 if reweightEvents:
     print("Computing sum of weights")
-    entry = 0
     sumofweights = 0
-    for event in chain:
-        entry += 1
+    for entry, event in enumerate(chain, 1):
 
         if entry != 0 and entry % 10000 == 0:
             print("%d events processed for sum of weights" % entry)
@@ -98,9 +96,7 @@ if reweightEvents:
 
 # Loop through all events in chain
 print("Processing events")
-entry = 0
-for event in chain:
-    entry += 1
+for entry, event in enumerate(chain, 1):
 
     if entry != 0 and entry % 10000 == 0:
         print("%d events processed" % entry)
