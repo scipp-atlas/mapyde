@@ -27,6 +27,11 @@ analysis with the results, such as running CERN ATLAS SimpleAnalysis or pyhf.
 
 mapyde is distributed under the terms of the [Apache 2.0][license-link] license.
 
+## Publications
+
+- https://scipost.org/SciPostPhysCodeb.27-r0.5
+- https://arxiv.org/abs/2306.11055
+
 ## Navigation
 
 Documentation for specific `MAJOR.MINOR` versions can be chosen by using the
