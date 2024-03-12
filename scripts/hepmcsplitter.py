@@ -43,7 +43,9 @@ with hep.open(inputfile) as f:
     while not f.failed():
         if evtcount % neventsperfile == 0:
             filecounter += 1
-            outputfile = f"{args.base}/{args.tag}/{madgraphpath}/{newhepmc % filecounter}"
+            outputfile = (
+                f"{args.base}/{args.tag}/{madgraphpath}/{newhepmc % filecounter}"
+            )
             outfiles[filecounter] = hep.open(outputfile, "w")
         ok = f.read_event(evt)
         outfiles[filecounter].write(evt)
