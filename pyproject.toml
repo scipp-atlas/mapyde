@@ -232,7 +232,7 @@ isort.required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["T20"]
-"scripts/**" = ["T20", "PTH", "SIM115"]
+"scripts/**" = ["T20", "PTH", "SIM115", "UP031"]
 "scripts/SAtoJSON.py" = ["T20", "B905"]
 "src/mapyde/cli/**" = ["B008"]
 
