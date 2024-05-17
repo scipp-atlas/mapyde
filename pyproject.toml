@@ -16,7 +16,7 @@ maintainers = [
 description = "Generation, simulation, analysis, and statistical inference in one go."
 readme = "README.md"
 
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 classifiers = [
     "License :: OSI Approved :: BSD License",
@@ -27,7 +27,7 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -35,7 +35,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "typing_extensions >=3.7; python_version<'3.11'",
+    "typing_extensions >=3.8; python_version<'3.11'",
     "typer",
     "tomli; python_version<'3.11'",
     "tomli-w",
@@ -114,7 +114,7 @@ dependencies = [
 test = "pytest -ra {args}"
 
 [[tool.hatch.envs.dev.matrix]]
-python = ["3.7", "3.8", "3.9", "3.10", "3.11", "pypy3.8"]
+python = ["3.8", "3.9", "3.10", "3.11", "pypy3.8"]
 
 [tool.hatch.envs.docs]
 template = "docs"
@@ -171,7 +171,7 @@ log_cli_level = "INFO"
 
 [tool.mypy]
 files = "src"
-python_version = "3.7"
+python_version = "3.8"
 warn_unused_configs = true
 strict = true
 hide_error_codes = false
@@ -237,7 +237,7 @@ isort.required-imports = ["from __future__ import annotations"]
 "src/mapyde/cli/**" = ["B008"]
 
 [tool.pylint]
-master.py-version = "3.7"
+master.py-version = "3.8"
 master.ignore-paths= ["src/mapyde/_version.py", "src/mapyde/data"]
 reports.output-format = "colorized"
 similarities.ignore-imports = "yes"
