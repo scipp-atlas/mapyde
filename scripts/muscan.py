@@ -10,7 +10,7 @@ import jsonpatch
 import numpy as np
 
 os.environ["MPLCONFIGDIR"] = os.getcwd() + "/configs/"
-import matplotlib.pyplot as plt  # noqa: E402
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description="Process some arguments.")
 parser.add_argument("-s", "--signal", help="name of analysis")
