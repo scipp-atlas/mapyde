@@ -9,7 +9,7 @@ import mapyde
 from mapyde.cli import app
 
 
-@pytest.fixture()
+@pytest.fixture
 def runner():
     return CliRunner()
 
