@@ -30,8 +30,8 @@ else:
 __all__ = (
     "Literal",
     "PathOrStr",
-    "Self",
     "PopenBytes",
+    "Self",
 )
 
 
