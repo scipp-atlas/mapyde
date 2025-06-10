@@ -107,7 +107,7 @@ class Container:
                 )
 
             else:
-                log.warning("%s already exists. Re-using it.", sif_path)
+                log.warning("%s already exists. Reusing it.", sif_path)
 
             self.process = subprocess.Popen(
                 [
