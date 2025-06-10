@@ -163,7 +163,10 @@ build-check = [
 minversion = "6.0"
 addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
 xfail_strict = true
-filterwarnings = ["error"]
+filterwarnings = [
+    "error",
+    "ignore:'BaseCommand' is deprecated and will be removed in Click 9.0. Use 'Command' instead:DeprecationWarning"
+]
 testpaths = [
     "tests",
 ]
