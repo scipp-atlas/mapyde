@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install uv
-          uv pip install --system hatch
+          uv pip install --system hatch 'click < 8.3.0'
 
       - name: Check documentation
         run: hatch run docs:build-check
