@@ -97,7 +97,7 @@ jobs:
       - name: Build sdist and wheel; and check products
         run: hatch run build-check
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           path: dist
 
