@@ -177,14 +177,14 @@ jobs:
           echo ::set-output name=dockerfile::$(echo "${{ matrix.image }}" | tr ':' '-')
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build image (amd64)
         id: docker_build_test_amd64
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: Dockerfiles
           tags: ghcr.io/${{github.repository}}/${{ matrix.image }}
@@ -199,7 +199,7 @@ jobs:
       - name: Build image (arm64)
         if: false
         id: docker_build_test_arm64
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: Dockerfiles
           tags: ghcr.io/${{github.repository}}/${{ matrix.image }}
@@ -314,7 +314,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -438,7 +438,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
