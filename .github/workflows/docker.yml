@@ -134,7 +134,7 @@ jobs:
       unchanged_images: ${{ steps.set.outputs.unchanged_images }}
     steps:
       - uses: actions/checkout@v6
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           list-files: json
