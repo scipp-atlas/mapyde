@@ -18,8 +18,8 @@ specific jobs:
 
 ```console
 $ hatch run lint  # Lint only
-$ hatch run +py=3.9 dev:test  # Python 3.9 tests only
-$ hatch run dev:py3.9:test  # Python 3.9 tests only
+$ hatch run +py=3.13 dev:test  # Python 3.13 tests only
+$ hatch run dev:py3.13:test  # Python 3.13 tests only
 $ hatch run docs:serve  # Build and serve the docs
 $ hatch run build  # Make an SDist and wheel
 ```
