@@ -157,15 +157,15 @@ jobs:
           echo "::set-output name=all_images::${ALL_IMAGES}"
           printf "Setting all_images=${ALL_IMAGES}\n"
 
-          CHANGED_IMAGES=$(printf ${CHANGED_FILES}  | jq -c '.[] |= split("/")[1]' | tr '-' ':')
+          CHANGED_IMAGES=$(printf '%s' "${CHANGED_FILES}"  | jq -c '.[] |= split("/")[1]' | tr '-' ':')
           echo "::set-output name=changed_images::${CHANGED_IMAGES}"
           printf "Setting changed_images=${CHANGED_IMAGES}\n"
 
-          UNCHANGED_IMAGES=$(jq -n -c --argjson all_images ${ALL_IMAGES} --argjson changed_images ${CHANGED_IMAGES} '$all_images-$changed_images')
+          UNCHANGED_IMAGES=$(jq -n -c --argjson all_images "${ALL_IMAGES}" --argjson changed_images "${CHANGED_IMAGES}" '$all_images-$changed_images')
           echo "::set-output name=unchanged_images::${UNCHANGED_IMAGES}"
           printf "Setting unchanged_images=${UNCHANGED_IMAGES}\n"
         env:
-          CHANGED_FILES: ${{ toJSON(steps.filter.outputs.changed_files) }}
+          CHANGED_FILES: ${{ steps.filter.outputs.changed_files }}
 
   build:
     name: Build ${{ matrix.image }}
